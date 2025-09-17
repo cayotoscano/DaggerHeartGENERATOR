@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaggerHeart Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="navbar navbar-dark shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">DH GENERATOR</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Seção principal: Cards -->
+        <div id="cards-section">
+            <h2 class="mb-4">Minhas Fichas</h2>
+            <div class="card-grid" id="cards-container"></div>
+        </div>
+
+        <!-- Seção da ficha individual -->
+        <div id="ficha-section" class="hidden">
+            <button class="btn btn-secondary mb-3" onclick="backToCards()">← Voltar</button>
+            <div class="ficha-section p-4">
+                <ul class="nav nav-tabs" id="fichaTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info"
+                            type="button" role="tab">Informações</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="atributos-tab" data-bs-toggle="tab" data-bs-target="#atributos"
+                            type="button" role="tab">Atributos & Defesa</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="dano-tab" data-bs-toggle="tab" data-bs-target="#dano" type="button"
+                            role="tab">Dano & Vida</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#recursos"
+                            type="button" role="tab">Recursos</button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <!-- Informações -->
+                    <div class="tab-pane fade show active" id="info" role="tabpanel">
+                        <!-- Linha: Nome e LVL -->
+                        <div class="row mb-2">
+                            <div class="col-9">
+                                <label>Nome do Personagem</label>
+                                <input type="text" id="ficha-name" class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <label>LVL</label>
+                                <input type="number" id="ficha-level" class="form-control" value="1" min="1">
+                            </div>
+                        </div>
+
+                        <hr class="atributos-separador">
+
+                        <!-- Linha: Ancestralidade e Comunidade -->
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <label>Ancestralidade</label>
+                                <select id="ficha-race" class="form-select"></select>
+                            </div>
+                            <div class="col-6">
+                                <label>Comunidade</label>
+                                <select id="ficha-community" class="form-select"></select>
+                            </div>
+                        </div>
+                        <!-- Linha: Classe e Subclasse -->
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <label>Classe</label>
+                                <select id="ficha-class" class="form-select" onchange="updateSubclasses()"></select>
+                            </div>
+                            <div class="col-6">
+                                <label>Subclasse</label>
+                                <select id="ficha-subclass" class="form-select" disabled></select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Atributos & Defesa -->
+                    <div class="tab-pane fade" id="atributos" role="tabpanel">
+                        <div class="atributos-grid">
+                            <div class="atributo"><label>AGILIDADE</label><input type="number" id="attr-agi"
+                                    class="form-control" value=""></div>
+                            <div class="atributo"><label>FORÇA</label><input type="number" id="attr-for"
+                                    class="form-control" value=""></div>
+                            <div class="atributo"><label>FINESSE</label><input type="number" id="attr-fin"
+                                    class="form-control" value=""></div>
+                            <div class="atributo"><label>INSTINTO</label><input type="number" id="attr-inst"
+                                    class="form-control" value=""></div>
+                            <div class="atributo"><label>PRESENÇA</label><input type="number" id="attr-pre"
+                                    class="form-control" value=""></div>
+                            <div class="atributo"><label>CONSTITUIÇÃO</label><input type="number" id="attr-con"
+                                    class="form-control" value=""></div>
+                        </div>
+
+                        <hr class="atributos-separador">
+
+                        <div class="evasao-armadura-container">
+                            <div class="evasao-armadura-item">
+                                <h5>Evasão</h5>
+                                <input type="number" id="evasao" class="form-control" placeholder="Evasão" value="">
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- Dano & Vida -->
+                    <div class="tab-pane fade" id="dano" role="tabpanel">
+                        <div class="grupo vida">
+                            <h5>Danos & Vida</h5>
+                            <div class="limiares-dano">
+                                <span class="limiar">Menor <small>1 HP</small></span>
+                                <input name="danoMenor" type="number" class="limiar-input">
+
+                                <span class="limiar">Maior <small>2 HP</small></span>
+                                <input name="danoMaior" type="number" class="limiar-input">
+
+                                <span class="limiar">Severo <small>3 HP</small></span>
+                            </div>
+
+                            <hr class="atributos-separador">
+
+                            <div class="recursos-container">
+                                <div class="grupo">
+                                    <label>Quantidade de HP</label>
+                                    <input type="number" id="hpQtd" min="1" value="6"
+                                        onchange="generateChecks('hpChecks', this.value)">
+                                    <div class="check-group" id="hpChecks"></div>
+                                </div>
+
+                                <div class="grupo">
+                                    <label>Quantidade de Armadura</label>
+                                    <input type="number" id="armaduraQtd" min="1" value="6"
+                                        onchange="generateChecks('armaduraChecks', this.value)">
+                                    <div class="check-group" id="armaduraChecks"></div>
+                                </div>
+
+                                <div class="grupo">
+                                    <label>Quantidade de Estresse</label>
+                                    <input type="number" id="estresseQtd" min="1" value="6"
+                                        onchange="generateChecks('estresseChecks', this.value)">
+                                    <div class="check-group" id="estresseChecks"></div>
+                                </div>
+
+                                <div class="grupo esperanca">
+                                    <label>Quantidade de Esperança</label>
+                                    <input type="number" id="esperancaQtd" min="1" value="6"
+                                        onchange="generateChecks('esperancaChecks', this.value)">
+                                    <div class="check-group" id="esperancaChecks"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- Recursos -->
+                    <div class="tab-pane fade" id="recursos" role="tabpanel">
+
+                        <div class="grupo recursos">
+                            <h5>Experiências</h5>
+                            <textarea id="experiencia1" placeholder="Experiência 1" class="exp-text"></textarea>
+                            <textarea id="experiencia2" placeholder="Experiência 2" class="exp-text"></textarea>
+                            <textarea id="experiencia3" placeholder="Experiência 3" class="exp-text"></textarea>
+                            <textarea id="experiencia4" placeholder="Experiência 4" class="exp-text"></textarea>
+                            <textarea id="experiencia5" placeholder="Experiência 5" class="exp-text"></textarea>
+                        </div>
+
+                        <hr class="atributos-separador">
+
+                        <div class="grupo recursos">
+                            <h5>Recursos</h5>
+                            <div id="recursosText" class="mb-2" style="white-space: pre-line;"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3" onclick="saveFicha()">Salvar</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 DaggerHeart Generator. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Modais -->
+    <div class="modal fade" id="modalFicha" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color:#2D2E46; color:#fff; border:none;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="modalTitle">Nova Ficha</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label>Nome</label>
+                    <input type="text" id="modal-name" class="form-control mb-2">
+                    <label>URL da Imagem</label>
+                    <input type="text" id="modal-url" class="form-control mb-2" placeholder="https:// ou arquivo local">
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveModalFicha()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color:#2D2E46; color:#fff; border:none;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Deletar Ficha</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza que deseja deletar esta ficha?
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Deletar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,408 @@
+/* === Tema Escuro === */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #1D1E2C;
+    color: #fff;
+}
+
+header,
+footer {
+    background-color: #2D2E46;
+    padding: 10px 20px;
+}
+
+main {
+    flex: 1;
+    padding: 30px;
+}
+
+.navbar-brand {
+    color: #fff !important;
+}
+
+footer p {
+    text-align: center;
+    margin: 0;
+    color: #fff;
+}
+
+/* === Cards === */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: #2D2E46;
+    color: #fff;
+    border: 1px solid #3c3c3c;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.card:hover {
+    border-color: #5c82c4;
+    transform: translateY(-2px);
+}
+
+.new-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #aaa;
+    cursor: pointer;
+    transition: 0.2s;
+    height: 280px;
+    border-radius: 8px;
+    background-color: #2D2E46;
+}
+
+.new-card:hover {
+    background-color: #3c3d5a;
+    color: #5c82c4;
+}
+
+.card-footer-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #bbb;
+    margin-top: auto;
+    padding: 0.5rem;
+}
+
+.card-footer-custom i {
+    margin-right: 5px;
+}
+
+.actions i {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #bbb;
+    transition: 0.2s;
+}
+
+.actions i:hover {
+    color: #fff;
+}
+
+.hidden {
+    display: none;
+}
+
+/* === Ficha Section === */
+.ficha-section {
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #2D2E46;
+    border: 1px solid #3c3c3c;
+}
+
+.ficha-section label {
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+}
+
+.ficha-section input,
+.ficha-section select,
+.ficha-section textarea {
+    background-color: #3c3d5a;
+    color: #fff;
+    border: 1px solid #4a4b6b;
+    margin-bottom: 10px;
+}
+
+/* === Tabs === */
+.nav-tabs .nav-link {
+    color: #bbb;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #3c3d5a;
+    color: #5c82c4;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+.atributos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.atributo {
+    display: flex;
+    flex-direction: column;
+}
+
+.atributo input {
+    text-align: center;
+}
+
+.evasao-armadura {
+    display: flex;
+    gap: 10px;
+}
+
+.evasao-armadura input {
+    flex: 1;
+}
+
+/* Checkboxes vida/estresse/esperança */
+.check-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.check-group input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+}
+
+.limiares-dano {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.limiar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.limiar-input {
+    width: 50px;
+}
+
+.btn-primary {
+    background-color: #5c82c4;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #4466a0;
+}
+
+.btn-secondary {
+    background-color: #3c3d5a;
+    border: 1px solid #5c82c4;
+    color: #5c82c4;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #5c82c4;
+    color: #fff;
+}
+
+.evasao-armadura-container {
+    display: flex;
+    gap: 20px;
+    /* Espaçamento entre os campos */
+    margin-top: 10px;
+}
+
+.evasao-armadura-item {
+    flex: 1;
+    /* Ambos ocupam o mesmo espaço */
+    display: flex;
+    flex-direction: column;
+}
+
+.evasao-armadura-item input {
+    text-align: center;
+}
+
+/* Remove spinner do Chrome, Edge, Safari */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Remove spinner do Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+
+
+
+
+.limiares-dano {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    /* diminui um pouco para caber em telas pequenas */
+    flex-wrap: nowrap;
+    /* impede quebra de linha */
+    margin-top: 10px;
+    overflow-x: auto;
+    /* se a tela for MUITO pequena, permite rolagem horizontal */
+}
+
+.limiar {
+    font-weight: 600;
+    font-size: 14px;
+    color: #ff9359;
+    white-space: nowrap;
+    /* impede que o texto quebre */
+}
+
+.limiar small {
+    font-size: 12px;
+    color: hsl(54, 100%, 83%);
+    margin-left: 4px;
+}
+
+.limiar-input {
+    width: 55px;
+    height: 26px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+    margin: 0 !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Responsividade: no mobile diminui ainda mais */
+@media (max-width: 480px) {
+    .limiar {
+        font-size: 12px;
+    }
+
+    .limiar small {
+        font-size: 11px;
+    }
+
+    .limiar-input {
+        width: 45px;
+        height: 24px;
+        font-size: 12px;
+    }
+
+    .limiares-dano {
+        gap: 10px;
+    }
+}
+
+
+
+
+
+
+
+/* Container que engloba HP, Estresse e Esperança */
+.recursos-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    /* espaçamento entre blocos */
+    flex-wrap: nowrap;
+    /* no desktop ficam lado a lado */
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Cada bloco (HP, Estresse, Esperança) */
+.recursos-container .grupo {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Labels */
+.recursos-container label {
+    display: block;
+    font-weight: 600;
+    color: #ff9359;
+    margin-bottom: 8px;
+}
+
+/* Inputs numéricos */
+.recursos-container input[type="number"] {
+    width: 80px;
+    height: 32px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 10px;
+}
+
+.recursos-container input[type="number"]:focus {
+    border-color: #1B5B64;
+    box-shadow: 0 0 4px rgba(27, 91, 100, 0.4);
+}
+
+/* Checkboxes */
+.check-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.check-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #1B5B64;
+}
+
+/* Responsividade - empilha no mobile */
+@media (max-width: 768px) {
+    .recursos-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .check-group {
+        margin-bottom: 20px;
+    }
+}
+
+
+.vida .atributos-separador {
+    margin-top: 20px;
+}
+
+.exp-text {
+    width: 100%;
+    min-height: 30px;
+    resize: vertical;
+    /* permite o usuário ajustar verticalmente */
+    box-sizing: border-box;
+    margin-bottom: 5px;
+    overflow: hidden;
+    border-radius: var(--bs-border-radius);
+}
