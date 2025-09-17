@@ -111,16 +111,16 @@ function loadCards() {
         const cardEl = document.createElement('div');
         cardEl.className = 'card shadow-sm';
         cardEl.innerHTML = `
-            ${card.image ? `<img src="${card.image}" style="height:120px; object-fit:cover;">` : ''}
+            ${card.image ? `<img src="${card.image}" style="height:120px; object-fit:cover; object-position:top;">` : ''}
             <div class="card-body d-flex flex-column p-3">
                 <h5 class="card-title">${card.title}</h5>
                 <hr style="border-color:#5c82c4">
                 <div class="card-footer-custom">
                     <div><i class="bi bi-calendar-event"></i> ${card.date}</div>
-                    <div class="actions">
-                        <i class="bi bi-pencil-square" title="Editar" onclick="editCard(event, ${index})"></i>
-                        <i class="bi bi-trash" title="Deletar" onclick="deleteCard(event, ${index})"></i>
-                    </div>
+<div class="actions">
+    <i class="bi bi-pencil-square edit-icon" title="Editar" onclick="editCard(event, ${index})"></i>
+    <i class="bi bi-trash delete-icon" title="Deletar" onclick="deleteCard(event, ${index})"></i>
+</div>
                 </div>
             </div>
         `;
@@ -158,23 +158,38 @@ function openModalFicha(index, isNew = false) {
 
 function saveModalFicha() {
     const name = document.getElementById('modal-name').value.trim();
-    const image = document.getElementById('modal-url').value.trim();
+    const urlInput = document.getElementById('modal-url').value.trim();
+    const fileInput = document.getElementById('modal-file').files[0]; // novo input
     if (!name) return alert('Nome é obrigatório');
 
     let cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
     const date = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-    const fichaData = { title: name, date, image };
 
-    if (currentFichaIndex !== null && cards[currentFichaIndex]) {
-        cards[currentFichaIndex] = { ...cards[currentFichaIndex], ...fichaData };
+    const saveFichaData = (imageData) => {
+        const fichaData = { title: name, date, image: imageData };
+
+        if (currentFichaIndex !== null && cards[currentFichaIndex]) {
+            cards[currentFichaIndex] = { ...cards[currentFichaIndex], ...fichaData };
+        } else {
+            cards.push(fichaData);
+        }
+
+        localStorage.setItem('rpgCards', JSON.stringify(cards));
+        modalFicha.hide();
+        loadCards();
+    };
+
+    if (fileInput) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            saveFichaData(e.target.result); // imagem em Base64
+        };
+        reader.readAsDataURL(fileInput);
     } else {
-        cards.push(fichaData);
+        saveFichaData(urlInput); // usa a URL digitada
     }
-
-    localStorage.setItem('rpgCards', JSON.stringify(cards));
-    modalFicha.hide();
-    loadCards();
 }
+
 
 
 function saveFicha() {

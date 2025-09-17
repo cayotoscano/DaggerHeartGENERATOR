@@ -406,3 +406,21 @@ input[type=number] {
     overflow: hidden;
     border-radius: var(--bs-border-radius);
 }
+
+
+.actions i {
+    cursor: pointer;
+    padding: 2px;
+    transition: color 0.2s, transform 0.2s;
+}
+
+/* Hover nos ícones */
+.actions i.edit-icon:hover {
+    color: yellow;
+    transform: scale(1.2);
+}
+
+.actions i.delete-icon:hover {
+    color: red;
+    transform: scale(1.2);
+}
