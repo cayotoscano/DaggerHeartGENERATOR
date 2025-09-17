@@ -489,20 +489,37 @@ Lifespring: Once per rest, when you have access to a small amount of water, you 
         switch (subclass) {
             // Assassin
             case "Poisoners Guild":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Toxic Concoctions: Mark a Stress to add 1d4+1 tokens to this card. On your next long rest, clear this card. You know these poisons:
+• Gorgon Root: The target gains a permanent -1 penalty to their Difficulty. This can only affect them once.
+• Grave Spore: The target must also mark a Stress.
+• Leech Weed: Gain a +1d6 damage bonus on this attack.
+Envenomate: When you make a successful weapon attack, you can spend a token from this card to afflict the target with a known poison’s effect.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Poison Compendium: You also know these poisons:
+• Midnight’s Veil: The target gains a permanent -2 penalty to attack rolls. This can only affect them once.
+• Ghost Petal: Permanently decrease the damage dice of the target’s standard attack by one step (d10 to d8, d8 to d6, etc.). This can only affect them once.
+Adder’s Blessing: You are immune to poisons and other toxins.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Venomancer: You also know these poisons:
+• Blight Seed: The target gains a permanent -3 penalty to their damage thresholds. This can only affect them once.
+• Fear Leaf: The damage from this attack gains a bonus equal to the result of your Fear Die.
+Twin Fang: When you afflict a target with a known poison’s effect, you can spend an additional token to inflict the effect of a second known poison.<br><br>`;
                 break;
             case "Executioners Guild":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `First Strike: The first time in a scene you succeed on an attack roll, double the damage of the attack.
+Ambush: Your “Marked for Death” feature uses d6s instead of d4s.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Death Strike: When you deal Severe damage to a creature, you can mark a Stress to make them mark an additional Hit Point.
+Scorpion’s Poise: You gain a +2 bonus to your Evasion against any attacks made by the creature Marked for Death.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `True Strike: Once per long rest, when you fail an attack roll, you can spend a Hope to make it a success instead.
+Backstab: Your “Marked for Death” feature uses d8s instead of d6s.<br><br>`;
                 break;
 
             // Bard
@@ -532,200 +549,324 @@ Heart of a Poet: After you make an action roll to impress, persuade, or offend s
 
             // Brawler
             case "Juggernaut":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Powerhouse: Increase the d8 damage dice for your unarmed attack to d10s. Additionally, you can mark a Stress to target two creatures within Melee range with a single attack roll.
+Overwhelm: On a successful attack, you can spend a Hope to force the target to mark a Stress or to throw them within Close range.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Rugged: Gain a permanent +3 bonus to your Severe damage threshold. Additionally, your “Powerhouse” feature can target three creatures instead of two.
+Eye for an Eye: When you mark more than one Hit Point from an attack in melee range, the attacker must make a Reaction Roll (13). On a failure, once per rest, they immediately mark the same number of Hit Points in return.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Pummeljoy: When you critically succeed on a weapon attack in Melee range, you gain an additional Hope, clear an additional Stress, and gain a +1 bonus to your Proficiency for the attack.
+Not Done Yet: When you mark more than one HP from an attack, you may gain a Hope or clear a Stress.<br><br>`;
                 break;
             case "Martial Artist":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Martial Form: Take the Martial Form sheet. You start with two martial stances from Tier 1. When you reach a new tier, take two additional stances at your tier or lower.
+Focus: During a rest, roll a number of d6s equal to your Instinct and place a number of Focus tokens equal to the highest value rolled on this card. Spend a Focus to shift into a stance until you take Severe damage, the scene ends, you mark your last Hit Point, or you shift into another stance.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Keen Defenses: When you are targeted by an attack, you can spend a Focus to make the adversary’s attack roll have disadvantage.
+Spirit Blast: Spend a Focus to make an Instinct Roll against an adversary within Close range. On a success, you deal d20+3 magic damage using your Proficiency and can spend an additional Focus to make them temporarily Vulnerable.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Limit Breaker: Once per rest, you can pull off an unbelievable feat like running across water, leaping between distant rooftops, or scaling the side of a building without needing to roll. When you do, gain a Hope and clear a Stress.<br><br>`;
                 break;
 
             // Druid
             case "Warden of the Elements":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Elemental Incarnation: Mark a Stress to Channel one of the following elements until you take Severe damage or until your next rest:
+• Fire: When an adversary within Melee range deals damage to you, they take 1d10 magic damage.
+• Earth: Gain a bonus to your damage thresholds equal to your Proficiency.
+• Water: When you deal damage to an adversary within Melee range, all other adversaries within Very Close range must mark a Stress.
+• Air: You can hover, gaining advantage on Agility Rolls.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Elemental Aura: Once per rest while Channeling, you can assume an aura matching your element. The aura affects targets within Close range until your Channeling ends.
+• Fire: When an adversary marks 1 or more Hit Points, they must also mark a Stress.
+• Earth: Your allies gain a +1 bonus to Strength.
+• Water: When an adversary deals damage to you, you can mark a Stress to move them anywhere within Very Close range of where they are.
+• Air: When you or an ally takes damage from an attack beyond Melee range, reduce the damage by 1d8.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Elemental Dominion: You further embody your element. While Channeling, you gain the following benefit:
+• Fire: You gain a +1 bonus to your Proficiency for attacks and spells that deal damage.
+• Earth: When you would mark Hit Points, roll a d6 per Hit Point marked. For each result of 6, reduce the number of Hit Points you mark by 1.
+• Water: When an attack against you succeeds, you can mark a Stress to make the attacker temporarily Vulnerable.
+• Air: You gain a +1 bonus to your Evasion and can fly.<br><br>`;
                 break;
             case "Warden of Renewal":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Clarity of Nature: Once per long rest, you can create a space of natural serenity within Close range. When you spend a few minutes resting within the space, clear Stress equal to your Instinct, distributed as you choose between you and your allies.
+Regeneration: Touch a creature and spend 3 Hope. That creature clears 1d4 Hit Points.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Regenerative Reach: You can target creatures within Very Close range with your “Regeneration” feature.
+Warden’s Protection: Once per long rest, spend 2 Hope to clear 2 Hit Points on 1d4 allies within Close range.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Defender: Your animal transformation embodies a healing guardian spirit. When you’re in Beastform and an ally within Close range marks 2 or more Hit Points, you can mark a Stress to reduce the number of Hit Points they mark by 1.<br><br>`;
                 break;
 
             // Guardian
             case "Stalwart":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Unwavering: Gain a permanent +1 bonus to your damage thresholds.
+Iron Will: When you take physical damage, you can mark an additional Armor Slot to reduce the severity.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Unrelenting: Gain a permanent +2 bonus to your damage thresholds.
+Partners-in-Arms: When an ally within Very Close range takes damage, you can mark an Armor Slot to reduce the severity by one threshold.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Undaunted: Gain a permanent +3 bonus to your damage thresholds.
+Loyal Protector: When an ally within Close range has 2 or fewer Hit Points and would take damage, you can mark a Stress to sprint to their side and take the damage instead.<br><br>`;
                 break;
             case "Vengeance":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `At Ease: Gain an additional Stress slot.
+Revenge: When an adversary within Melee range succeeds on an attack against you, you can mark 2 Stress to force the attacker to mark a Hit Point.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Act of Reprisal: When an adversary damages an ally within Melee range, you gain a +1 bonus to your Proficiency for the next successful attack you make against that adversary.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Nemesis: Spend 2 Hope to Prioritize an adversary until your next rest. When you make an attack against your Prioritized adversary, you can swap the results of your Hope and Fear Dice. You can only Prioritize one adversary at a time.<br><br>`;
                 break;
 
             // Ranger
             case "Wayfinder":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Ruthless Predator: When you make a damage roll, you can mark a Stress to gain a +1 bonus to your Proficiency. Additionally, when you deal Severe damage to an adversary, they must mark a Stress.
+Path Forward: When you’re traveling to a place you’ve previously visited or you carry an object that has been at the location before, you can identify the shortest, most direct path to your destination.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Elusive Predator: When your Focus makes an attack against you, you gain a +2 bonus to your Evasion against the attack.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Apex Predator: Before you make an attack roll against your Focus, you can spend a Hope. On a successful attack, you remove a Fear from the GM’s Fear pool.<br><br>`;
                 break;
             case "Beastbound":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Companion: You have an animal companion of your choice (at the GM’s discretion). They stay by your side unless you tell them otherwise.
+Take the Ranger Companion sheet. When you level up your character, choose a level-up option for your companion from this sheet as well.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Expert Training: Choose an additional level-up option for your companion.
+Battle-Bonded: When an adversary attacks you while they’re within your companion’s Melee range, you gain a +2 bonus to your Evasion against the attack.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Advanced Training: Choose two additional level-up options for your companion.
+Loyal Friend: Once per long rest, when the damage from an attack would mark your companion’s last Stress or your last Hit Point and you’re within Close range of each other, you or your companion can rush to the other’s side and take that damage instead.<br><br>`;
                 break;
 
             // Rogue
             case "Nightwalker":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Shadow Stepper: You can move from shadow to shadow. When you move into an area of darkness or a shadow cast by another creature or object, you can mark a Stress to disappear from where you are and reappear inside another shadow within Far range. When you reappear, you are Cloaked.
+Dark Cloud: Make a Spellcast Roll (15). On a success, create a temporary dark cloud that covers any area within Close range. Anyone in this cloud can’t see outside of it, and anyone outside of it can’t see in. You’re considered Cloaked from any adversary for whom the cloud blocks line of sight.
+Adrenaline: While you’re Vulnerable, add your level to your damage rolls.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Fleeting Shadow: Gain a permanent +1 bonus to your Evasion. You can use your “Shadow Stepper” feature to move within Very Far range.
+Vanishing Act: Mark a Stress to become Cloaked at any time. When Cloaked from this feature, you automatically clear the Restrained condition if you have it. You remain Cloaked in this way until you roll with Fear or until your next rest.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
                 text += `<br><br>`;
                 break;
             case "Syndicate":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Well-Connected: When you arrive in a prominent town or environment, you know somebody who calls this place home. Give them a name, note how you think they could be useful, and choose one fact from the following list:
+• They owe me a favor, but they’ll be hard to find.
+• They’re going to ask for something in exchange.
+• They’re always in a great deal of trouble.
+• We used to be together. It’s a long story.
+• We didn’t part on great terms.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Contacts Everywhere: Once per session, you can briefly call on a shady contact. Choose one of the following benefits and describe what brought them here to help you in this moment:
+• They provide 1 handful of gold, a unique tool, or a mundane object that the situation requires.
+• On your next action roll, their help provides a +3 bonus to the result of your Hope or Fear Die.
+• The next time you deal damage, they snipe from the shadows, adding 2d8 to your damage roll.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Reliable Backup: You can use your “Contacts Everywhere” feature three times per session. The following options are added to the list of benefits you can choose from when you use that feature:
+• When you mark 1 or more Hit Points, they can rush out to shield you, reducing the Hit Points marked by 1.
+• When you make a Presence Roll in conversation, they back you up. You can roll a d20 as your Hope Die.<br><br>`;
                 break;
 
             // Seraph
             case "Divine Wielder":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Spirit Weapon: When you have an equipped weapon with a range of Melee or Very Close, it can fly from your hand to attack an adversary within Close range and then return to you. You can mark a Stress to target an additional adversary within range with the same attack roll.
+Sparing Touch: Once per long rest, touch a creature and clear 2 Hit Points or 2 Stress from them.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Devout: When you roll your Prayer Dice, you can roll an additional die and discard the lowest result. Additionally, you can use your “Sparing Touch” feature twice instead of once per long rest.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Sacred Resonance: When you roll damage for your “Spirit Weapon” feature, if any of the die results match, double the value of each matching die. For example, if you roll two 5s, they count as two 10s.<br><br>`;
                 break;
             case "Winged Sentinel":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Wings of Light: You can fly. While flying, you can do the following:
+• Mark a Stress to pick up and carry another willing creature approximately your size or smaller.
+• Spend a Hope to deal an extra 1d8 damage on a successful attack.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Ethereal Visage: Your supernatural visage strikes awe and fear. While flying, you have advantage on Presence Rolls. When you succeed with Hope on a Presence Roll, you can remove a Fear from the GM’s Fear pool instead of gaining Hope.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Ascendant: Gain a permanent +4 bonus to your Severe damage threshold.
+Power of the Gods: While flying, you deal an extra 1d12 damage instead of 1d8 from your “Wings of Light” feature.<br><br>`;
                 break;
 
             // Sorcerer
             case "Primal Origin":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Manipulate Magic: Your primal origin allows you to modify the essence of magic itself. After you cast a spell or make an attack using a weapon that deals magic damage, you can mark a Stress to do one of the following:
+• Extend the spell or attack’s reach by one range
+• Gain a +2 bonus to the action roll’s result
+• Double a damage die of your choice
+• Hit an additional target within range<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Enchanted Aid: You can enhance the magic of others with your essence. When you Help an Ally with a Spellcast Roll, you can roll a d8 as your advantage die. Once per long rest, after an ally has made a Spellcast Roll with your help, you can swap the results of their Duality Dice.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Arcane Charge: You can gather magical energy to enhance your capabilities. When you take magic damage, you become Charged. Alternatively, you can spend 2 Hope to become Charged. When you successfully make an attack that deals magic damage while Charged, you can clear your Charge to either gain a +10 bonus to the damage roll or gain a +3 bonus to the Difficulty of a reaction roll the spell causes the target to make. You stop being Charged at your next long rest.<br><br>`;
                 break;
             case "Elemental Origin":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Elementalist: Choose one of the following elements at character creation:
+                Air • Earth • Fire • Lightning • Water
+You can shape this element into harmless effects. Additionally, spend a Hope and describe how your control over this element helps an action roll you’re about to make, then either gain a +2 bonus to the roll or a +3 bonus to the roll’s damage.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Natural Evasion: You can call forth your element to protect you from harm. When an attack roll against you succeeds, you can mark a Stress and describe how you use your element to defend you. When you do, roll a d6 and add its result to your Evasion against the attack.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Transcendence: Once per long rest, you can transform into a physical manifestation of your element. When you do, describe your transformation and choose two of the following benefits to gain until your next rest:
+• +4 bonus to your Severe threshold
+• +1 bonus to a character trait of your choice
+• +1 bonus to your Proficiency
+• +2 bonus to your Evasion<br><br>`;
                 break;
 
             // Warlock
             case "Pact of the Wraithful":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Favored Weapon: Mark a Stress to Imbue your weapon with your Patron’s fury until you deal Severe damage. On a successful Imbued weapon attack, you can spend any number of Favor to gain a +1d6 damage bonus for each Favor spent.
+Herald of Death: When you fail an attack roll, you can spend a Favor to reroll it. If it fails again, mark a Stress and take the new result.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Menacing Reach: When you Imbue your weapon with your Patron’s fury, you can mark an additional Stress to increase its range by one step (Melee to Very Close, Very Close to Close, etc.).
+Diminish My Foes: When you succeed with Hope on an action roll against a target, you can spend a Hope to make your target mark a Stress.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Fearsome Attack: You can always spend a Favor to reroll any number of your damage dice. You can continue spending Favor to reroll the same dice as many times as you’d like.
+Divine Ire: Once per rest, when you take damage, you can spend any number of Favor to target that many adversaries within Close range. Each target must mark a Hit Point.<br><br>`;
                 break;
             case "Pact of the Endless":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Patron’s Mantle: Mark a Stress to cloak yourself in a terrifying aspect of your Patron that lasts until you take Severe damage or the scene ends:
+• When you would mark an Armor Slot, you can spend 2 Favor instead.
+• You gain a bonus equal to your tier on action rolls to intimidate a target.
+Deadly Devotion: On a successful attack, you can spend a Favor to gain a +1 bonus to your Evasion until you mark a Hit Point or take a rest.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Draining Invocation: When an adversary attacks you or an ally within Very Close range, you can spend a Favor to make them roll a d12 instead of a d20 for the attack. Additionally, the adversary must mark a Stress, and you can clear a Stress.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Dark Aegis: Once per long rest, when you would mark any number of Hit Points, you can spend a Favor instead.
+Draining Bane: When an adversary attacks you or an ally within Very Close range, you can spend 2 Favor to temporarily Drain them. When you do, they must mark a Stress and you can clear a Stress. A Drained creature uses a d12 instead of a d20 for attack rolls.<br><br>`;
                 break;
 
             // Warrior
             case "Call of the Brave":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Courage: When you fail a roll with Fear, you gain a Hope.
+Battle Ritual: Once per long rest, before you attempt something incredibly dangerous or face off against a foe who clearly outmatches you, describe what ritual you perform or preparations you make. When you do, clear 2 Stress and gain 2 Hope.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Rise to the Challenge: You are vigilant in the face of mounting danger. While you have 2 or fewer Hit Points unmarked, you can roll a d20 as your Hope Die.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Camaraderie: Your unwavering bravery is a rallying point for your allies. You can initiate a Tag Team Roll one additional time per session. Additionally, when an ally initiates a Tag Team Roll with you, they only need to spend 2 Hope to do so.<br><br>`;
                 break;
             case "Call of the Slayer":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Slayer: You gain a pool of dice called Slayer Dice. On a roll with Hope, you can place a d6 on this card instead of gaining a Hope, adding the die to the pool. You can store a number of Slayer Dice equal to your Proficiency. When you make an attack roll or damage roll, you can spend any number of these Slayer Dice, rolling them and adding their result to the roll. At the end of each session, clear any unspent Slayer Dice on this card and gain a Hope per die cleared.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Weapon Specialist: You can wield multiple weapons with dangerous ease. When you succeed on an attack, you can spend a Hope to add one of the damage dice from your secondary weapon to the damage roll. Additionally, once per long rest when you roll your Slayer Dice, reroll any 1s.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Martial Preparation: You’re an inspirational warrior to all who travel with you. Your party gains access to the Martial Preparation downtime move. To use this move during a rest, describe how you instruct and train with your party. You and each ally who chooses this downtime move gain a d6 Slayer Die. A PC with a Slayer Die can spend it to roll the die and add the result to an attack or damage roll of their choice.<br><br>`;
                 break;
 
             // Witch
             case "Moon":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Night’s Glamour: Mark a Stress to Glamour yourself in a magical facade that lasts until you mark a Hit Point, make an attack, or take a rest. While Glamoured, you can:
+• Disguise yourself to look like any creature of your approximate size that you’ve seen.
+• Enhance your own appearance. You gain advantage on Presence Rolls that leverage this change.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Moonbeam: Once per session, you can conjure a column of moonlight that illuminates the area within Close range until the end of the scene. While bathed in this moonlight, you and any allies gain a +1 bonus to Spellcast Rolls and advantage on rolls to see through illusions.
+Ire of Pale Light: When a Hexed creature within Far range fails an attack roll, they must mark a Stress.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Lunar Phases: Your spirit ebbs and flows like the phases of the moon. At the beginning of each session, roll a d4 and gain the matching effect until the end of the session:
+• 1: New - You can always spend a Hope to reduce Minor damage to None.
+• 2: Waxing - Gain a +2 bonus to your damage rolls.
+• 3: Full - Gain a +2 bonus to your damage thresholds.
+• 4: Waning - Gain a +1 bonus to your Evasion.<br><br>`;
                 break;
             case "Hedge":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Herbal Remedies: When you or an ally clear one or more Hit Points or Stress as the result of using a consumable, increase the number cleared by one.
+Tethered Talisman: Once per rest, you can imbue a small item with your protective essence. When the person holding the talisman takes damage, you can expend its magic to reduce the number of Hit Points they mark by one. You can’t create a new talisman until the old one has been used.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Walk Between Worlds: Make a Spellcast Roll (13) to step beyond the veil of death and converse with any nearby spirits. Place a number of tokens equal to your Spellcast trait on this card and remove one each time a spirit answers a question. You return to the mortal realm when the last token is removed.
+Enhanced Hex: Attacks you make against Hexed creatures gain a damage bonus equal to your Proficiency.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Circle of Power: Once per rest, mark a circle on the ground around you up to Very Close range and place a number of tokens equal to your Spellcast Trait on this card. Each time you or any ally within the circle makes an action roll or is hit with an attack, remove a token. This spell lasts until the last token is removed or you step out of the circle. While within this circle, you and any allies:
+• Gain a +4 bonus to your damage thresholds.
+• Gain a +2 bonus to your attack rolls.
+• Gain a +1 bonus to your Evasion.<br><br>`;
                 break;
 
             // Wizard
             case "School of Knowledge":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Prepared: Take an additional domain card of your level or lower from a domain you have access to.
+Adept: When you Utilize an Experience, you can mark a Stress instead of spending a Hope. If you do, double your Experience modifier for that roll.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Accomplished: Take an additional domain card of your level or lower from a domain you have access to.
+Perfect Recall: Once per rest, when you recall a domain card in your vault, you can reduce its Recall Cost by 1.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Brilliant: Take an additional domain card of your level or lower from a domain you have access to.
+Honed Expertise: When you use an Experience, roll a d6. On a result of 5 or higher, you can use it without spending Hope.<br><br>`;
                 break;
             case "School of War":
-                text += `<strong>Foundation</strong>`;
-                text += `<br>`;
-                text += `<strong>Specialization</strong>`;
-                text += `<br>`;
-                text += `<strong>Mastery</strong>`;
-                text += `<br><br>`;
+                text += `<strong>Foundation</strong><br>`;
+                text += `Battlemage: You’ve focused your studies on becoming an unconquerable force on the battlefield. Gain an additional Hit Point slot.
+Face Your Fear: When you succeed with Fear on an attack roll, you deal an extra 1d10 magic damage.<br><br>`;
+
+                text += `<strong>Specialization</strong><br>`;
+                text += `Conjure Shield: You can maintain a protective barrier of magic. While you have at least 2 Hope, you add your Proficiency to your Evasion.
+Fueled by Fear: The extra magic damage from your “Face Your Fear” feature increases to 2d10.<br><br>`;
+
+                text += `<strong>Mastery</strong><br>`;
+                text += `Thrive in Chaos: When you succeed on an attack, you can mark a Stress after rolling damage to force the target to mark an additional Hit Point.
+Have No Fear: The extra magic damage from your “Face Your Fear” feature increases to 3d10.<br><br>`;
                 break;
         }
     }
