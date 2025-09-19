@@ -8,13 +8,25 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
 
     <header class="navbar navbar-dark shadow-sm">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="#">DH GENERATOR</a>
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <!-- Icone à esquerda -->
+                <img src="img/dh-icon-logo.png" alt="Logo" class="navbar-icon me-2">
+                <a class="navbar-brand fw-bold" href="#">DH GENERATOR</a>
+            </div>
+            <div id="ficha-count" class="text-white">
+                • 0 Personagens
+            </div>
         </div>
     </header>
 
@@ -27,7 +39,7 @@
 
         <!-- Seção da ficha individual -->
         <div id="ficha-section" class="hidden">
-            <button class="btn btn-secondary mb-3" onclick="backToCards()">← Voltar</button>
+            <button class="btn btn-secondary mb-3 btn-back" onclick="backToCards()">Voltar</button>
             <div class="ficha-section p-4">
                 <ul class="nav nav-tabs" id="fichaTabs" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -36,7 +48,7 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="atributos-tab" data-bs-toggle="tab" data-bs-target="#atributos"
-                            type="button" role="tab">Atributos & Defesa</button>
+                            type="button" role="tab">Atributos & Evasao</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="dano-tab" data-bs-toggle="tab" data-bs-target="#dano" type="button"
@@ -45,6 +57,14 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#recursos"
                             type="button" role="tab">Recursos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#itens"
+                            type="button" role="tab">Itens</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#cartas"
+                            type="button" role="tab">Cartas</button>
                     </li>
                 </ul>
                 <div class="tab-content">
@@ -67,7 +87,7 @@
                         <!-- Linha: Ancestralidade e Comunidade -->
                         <div class="row mb-2">
                             <div class="col-6">
-                                <label>Ancestralidade</label>
+                                <label>Raça</label>
                                 <select id="ficha-race" class="form-select"></select>
                             </div>
                             <div class="col-6">
@@ -90,17 +110,17 @@
                     <!-- Atributos & Defesa -->
                     <div class="tab-pane fade" id="atributos" role="tabpanel">
                         <div class="atributos-grid">
-                            <div class="atributo"><label>AGILIDADE</label><input type="number" id="attr-agi"
+                            <div class="atributo"><label>Agilidade</label><input type="number" id="attr-agi"
                                     class="form-control" value=""></div>
-                            <div class="atributo"><label>FORÇA</label><input type="number" id="attr-for"
+                            <div class="atributo"><label>Força</label><input type="number" id="attr-for"
                                     class="form-control" value=""></div>
-                            <div class="atributo"><label>FINESSE</label><input type="number" id="attr-fin"
+                            <div class="atributo"><label>Finesse</label><input type="number" id="attr-fin"
                                     class="form-control" value=""></div>
-                            <div class="atributo"><label>INSTINTO</label><input type="number" id="attr-inst"
+                            <div class="atributo"><label>Instinto</label><input type="number" id="attr-inst"
                                     class="form-control" value=""></div>
-                            <div class="atributo"><label>PRESENÇA</label><input type="number" id="attr-pre"
+                            <div class="atributo"><label>Presença</label><input type="number" id="attr-pre"
                                     class="form-control" value=""></div>
-                            <div class="atributo"><label>CONSTITUIÇÃO</label><input type="number" id="attr-con"
+                            <div class="atributo"><label>Constituicao</label><input type="number" id="attr-con"
                                     class="form-control" value=""></div>
                         </div>
 
@@ -133,29 +153,29 @@
                             <div class="recursos-container">
                                 <div class="grupo">
                                     <label>Quantidade de HP</label>
-                                    <input type="number" id="hpQtd" min="1" value="6"
-                                        onchange="generateChecks('hpChecks', this.value)">
+                                    <input type="number" id="hpQtd" min="0" max="30" value="6"
+                                        oninput="generateChecks('hpChecks', this.value)">
                                     <div class="check-group" id="hpChecks"></div>
                                 </div>
 
                                 <div class="grupo">
                                     <label>Quantidade de Armadura</label>
-                                    <input type="number" id="armaduraQtd" min="1" value="6"
-                                        onchange="generateChecks('armaduraChecks', this.value)">
+                                    <input type="number" id="armaduraQtd" min="0" max="30" value="6"
+                                        oninput="generateChecks('armaduraChecks', this.value)">
                                     <div class="check-group" id="armaduraChecks"></div>
                                 </div>
 
                                 <div class="grupo">
                                     <label>Quantidade de Estresse</label>
-                                    <input type="number" id="estresseQtd" min="1" value="6"
-                                        onchange="generateChecks('estresseChecks', this.value)">
+                                    <input type="number" id="estresseQtd" min="0" max="30" value="6"
+                                        oninput="generateChecks('estresseChecks', this.value)">
                                     <div class="check-group" id="estresseChecks"></div>
                                 </div>
 
                                 <div class="grupo esperanca">
                                     <label>Quantidade de Esperança</label>
-                                    <input type="number" id="esperancaQtd" min="1" value="6"
-                                        onchange="generateChecks('esperancaChecks', this.value)">
+                                    <input type="number" id="esperancaQtd" min="0" max="30" value="6"
+                                        oninput="generateChecks('esperancaChecks', this.value)">
                                     <div class="check-group" id="esperancaChecks"></div>
                                 </div>
                             </div>
@@ -182,7 +202,10 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary mt-3" onclick="saveFicha()">Salvar</button>
+                <div class="btn-container">
+                    <button class="btn btn-primary" onclick="saveFicha()">Salvar</button>
+                </div>
+
             </div>
         </div>
     </main>
@@ -201,9 +224,10 @@
                 </div>
                 <div class="modal-body">
                     <label>Nome</label>
-                    <input type="text" id="modal-name" class="form-control mb-2">
+                    <input type="text" id="modal-name" class="form-control mb-2" autocomplete="off">
                     <label>URL da Imagem</label>
-                    <input type="text" id="modal-url" class="form-control mb-2" placeholder="https://...">
+                    <input type="text" id="modal-url" class="form-control mb-2" placeholder="https://..."
+                        autocomplete="off">
                     <label>Ou escolha do dispositivo</label>
                     <input type="file" id="modal-file" class="form-control mb-2" accept="image/*">
                 </div>
@@ -232,6 +256,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Container para notificações -->
+    <div id="toast-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>

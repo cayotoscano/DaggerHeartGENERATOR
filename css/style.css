@@ -1,3 +1,74 @@
+:root {
+    --color-background: #12141D;
+    /* Um preto azulado mais profundo */
+    --color-surface: #1E202E;
+    /* Cor de fundo para cards e seções */
+    --color-overlay: #272A3B;
+    /* Cor para inputs e elementos secundários */
+    --color-border: #414561;
+    /* Cor para bordas sutis */
+    --color-text-primary: #F0F0F5;
+    /* Branco suave para textos */
+    --color-text-secondary: #A0A3C0;
+    /* Cinza azulado para textos secundários */
+
+    --color-accent-primary: #8C64E8;
+    /* Roxo vibrante para destaques */
+    --color-accent-secondary: #5EE2A0;
+    /* Verde menta para sucessos e confirmações */
+
+    --font-family: 'Poppins', sans-serif;
+    --border-radius: 12px;
+    /* Bordas mais arredondadas */
+    --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* === Estilos Globais === */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-background);
+    /* gradiente radial suave, imperceptível */
+    background-image: radial-gradient(circle at center, #0F1327 0%, #101023 100%);
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
+}
+
+header,
+footer {
+    /* degradê horizontal das extremidades (#1A1B2F) para o centro (#192347) */
+    background: linear-gradient(to right, #1A1B2F 0%, #192347 50%, #1A1B2F 100%);
+    padding: 10px 20px;
+    backdrop-filter: blur(10px);
+    /* mantém o efeito glassmorphism se quiser */
+    border-bottom: 1px solid #25274e;
+    border-top: 1px solid #25274e;
+}
+
+footer p {
+    color: #939BA9 !important;
+}
+
+.text-white {
+    color: #939BA9 !important;
+}
+
+main {
+    flex: 1;
+    padding: 40px;
+    /* Mais espaçamento */
+}
+
+.navbar-icon {
+    width: 3em;
+    /* um pouco maior que o texto */
+    height: 3em;
+    object-fit: contain;
+}
+
+
 /* === Tema Escuro === */
 body {
     min-height: 100vh;
@@ -36,21 +107,58 @@ footer p {
 }
 
 .card {
-    background-color: #2D2E46;
-    color: #fff;
-    border: 1px solid #3c3c3c;
+    background-color: #211E41;
+    color: #f0f0f0;
+    border: 1px solid #373376;
     height: 280px;
     display: flex;
     flex-direction: column;
-    border-radius: 8px;
-    overflow: hidden;
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: box-shadow 0.3s, transform 0.2s, border-color 0.3s;
+    position: relative;
+    overflow: visible;
+    /* permite que a sombra vaze */
+    z-index: 0;
 }
 
+/* Hover com efeito neon */
 .card:hover {
-    border-color: #5c82c4;
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    background-color: #292651;
+    border-color: #5a58a5;
+    box-shadow: 0 0 15px 5px rgba(90, 88, 165, 0.7),
+        0 0 30px 10px rgba(55, 51, 118, 0.6),
+        0 0 45px 15px rgba(90, 88, 165, 0.5);
+    z-index: 1;
+    /* garante que a sombra fique por cima de outros elementos */
+}
+
+
+
+.card-title {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.card-date {
+    color: #c3c3e6;
+}
+
+/* Botões de ação dentro do card */
+.action-btn {
+    background: none;
+    border: none;
+    color: #c3c3e6;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.action-btn:hover {
+    color: #ffffff;
+    text-shadow: 0 0 5px #5a58a5, 0 0 10px #373376;
+    /* efeito neon nos ícones */
 }
 
 .new-card {
@@ -63,12 +171,12 @@ footer p {
     transition: 0.2s;
     height: 280px;
     border-radius: 8px;
-    background-color: #2D2E46;
+    background-color: #211E41;
 }
 
 .new-card:hover {
-    background-color: #3c3d5a;
-    color: #5c82c4;
+    background-color: #292651;
+    color: #ffffff;
 }
 
 .card-footer-custom {
@@ -82,7 +190,7 @@ footer p {
 }
 
 .card-footer-custom i {
-    margin-right: 5px;
+    margin-right: 10px;
 }
 
 .actions i {
@@ -100,12 +208,55 @@ footer p {
     display: none;
 }
 
+.exp-text {
+    width: 100%;
+    min-height: 30px;
+    resize: vertical;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+    overflow: hidden;
+    border-radius: var(--bs-border-radius);
+
+    text-align: center;
+    /* centraliza texto e placeholder */
+    color: #f0f0f0;
+    /* cor do texto digitado */
+}
+
+.form-control::placeholder {
+    color: #A0A3C0;
+    opacity: 0.8;
+    text-align: center;
+}
+
+/* estiliza apenas o placeholder */
+.exp-text::placeholder {
+    color: #A0A3C0;
+    /* cinza azulado suave */
+    opacity: 0.8;
+    /* deixa um pouco mais discreto */
+    text-align: center;
+    /* garante centralização também */
+}
+
+#ficha-subclass:disabled {
+    background-color: #2D2E46;
+    /* cor de fundo */
+    color: #aaa;
+    /* cor do texto */
+    opacity: 1;
+    /* impede que o Bootstrap deixe opaco */
+    cursor: not-allowed;
+    /* cursor de bloqueio */
+}
+
+
 /* === Ficha Section === */
 .ficha-section {
     padding: 20px;
     border-radius: 8px;
-    background-color: #2D2E46;
-    border: 1px solid #3c3c3c;
+    background: linear-gradient(135deg, #211E41 0%, #211E41 70%, #2F205A 100%);
+    border: 1px solid #5a58a5;
 }
 
 .ficha-section label {
@@ -124,12 +275,21 @@ footer p {
 
 /* === Tabs === */
 .nav-tabs .nav-link {
-    color: #bbb;
+    color: hsl(0, 0%, 100%);
 }
 
 .nav-tabs .nav-link.active {
-    background-color: #3c3d5a;
-    color: #5c82c4;
+    background-color: #ffffff;
+    color: #211E41;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-radius: var(--bs-nav-tabs-border-radius);
+}
+
+.nav-tabs {
+    border-bottom: none;
 }
 
 .tab-content {
@@ -205,7 +365,7 @@ footer p {
 
 .btn-secondary {
     background-color: #3c3d5a;
-    border: 1px solid #5c82c4;
+    border: none;
     color: #5c82c4;
     font-weight: bold;
     transition: 0.2s;
@@ -221,7 +381,11 @@ footer p {
     gap: 20px;
     /* Espaçamento entre os campos */
     margin-top: 10px;
+    width: 32.582%;
+    /* Ocupa 1/3 da linha */
 }
+
+
 
 .evasao-armadura-item {
     flex: 1;
@@ -423,4 +587,214 @@ input[type=number] {
 .actions i.delete-icon:hover {
     color: red;
     transform: scale(1.2);
+}
+
+
+
+#toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.toast-msg {
+    background: #333;
+    color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    font-size: 0.9rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+/* Mobile: notificação ocupa largura total */
+@media (max-width: 768px) {
+    #toast-container {
+        right: 0;
+        left: 0;
+        align-items: center;
+    }
+
+    .toast-msg {
+        width: 90%;
+        max-width: 500px;
+    }
+}
+
+
+
+
+
+/* wrapper da imagem: ocupa 60% da altura do card (pai precisa ter altura fixa, que medimos) */
+.card-img-wrap {
+    flex: 0 0 60%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f6f6f6;
+}
+
+/* imagem cobre todo o wrapper */
+.card-img-custom {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+}
+
+/* quando não há imagem, mostra texto discreto */
+.card-img-wrap.no-image {
+    background-color: #211E41 !important;
+    color: #777;
+}
+
+.card-no-image {
+    font-size: 0.95rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* corpo do card: ocupa 40% */
+.card-body-custom {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0.6rem;
+}
+
+/* hr enxuto */
+.card-hr {
+    border-color: #5c82c4;
+    margin: 6px 0;
+    opacity: 0.9;
+}
+
+/* footer */
+.card-footer-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    gap: 0.5rem;
+}
+
+/* botões: hitbox maior */
+.action-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.45rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .12s, color .12s;
+    min-width: 36px;
+    min-height: 36px;
+}
+
+/* cores no hover (apenas visual) */
+.action-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.edit-btn:hover {
+    color: #ffc107;
+}
+
+.delete-btn:hover {
+    color: #dc3545;
+}
+
+/* garante que ícones não disparem o click do card quando o handler não chamar stopPropagation */
+.action-btn i {
+    pointer-events: none;
+}
+
+/* comportamento mobile: mantém proporcionalidade */
+@media (max-width: 768px) {
+    .card-img-wrap {
+        flex: 0 0 60%;
+    }
+
+    .card-body-custom {
+        flex: 0 0 40%;
+        padding: 0.5rem;
+    }
+}
+
+
+.card-img-wrap.no-image {
+    background: #2D2E46;
+    color: #fff;
+}
+
+.card-no-image {
+    font-size: 0.95rem;
+    padding: 0.25rem 0.5rem;
+}
+
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    /* centraliza horizontalmente */
+    margin-top: 1.5rem;
+    /* distância do topo */
+}
+
+.btn-container .btn {
+    padding: 0.5rem 2rem;
+    /* deixa maior e mais confortável */
+    font-size: 1.1rem;
+    border-radius: 12px;
+    /* cantos arredondados */
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-container .btn:hover {
+    background-color: #ffc107;
+    /* cor ao passar o mouse */
+    color: #000;
+    transform: scale(1.05);
+    /* leve zoom */
+}
+
+
+.btn-back {
+    padding: 0.5rem 2rem;
+    /* mesmo tamanho confortável */
+    font-size: 1.1rem;
+    border-radius: 12px;
+    /* cantos arredondados */
+    transition: background-color 0.2s;
+    /* só muda cor no hover */
+}
+
+.btn-back:hover {
+    background-color: #ffc107;
+    /* mesma cor do hover do salvar */
+    color: #000;
 }

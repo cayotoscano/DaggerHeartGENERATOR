@@ -1,7 +1,3 @@
-
-
-
-
 const container = document.getElementById('cards-container');
 const cardsSection = document.getElementById('cards-section');
 const fichaSection = document.getElementById('ficha-section');
@@ -25,68 +21,59 @@ const subclasses = {
     Wizard: ["School of Knowledge", "School of War"]
 };
 
+// instancia os modais UMA vez
+const modalFichaEl = document.getElementById('modalFicha');
+const modalFicha = modalFichaEl ? new bootstrap.Modal(modalFichaEl) : null;
 
-// Função chamada quando o usuário pede para deletar (antes de abrir o modal)
-function askDeleteFicha(index) {
-    deleteIndex = index;
-    const modal = new bootstrap.Modal(document.getElementById('modalDelete'));
-    modal.show();
-}
+const modalDeleteEl = document.getElementById('modalDelete');
+const modalDelete = modalDeleteEl ? new bootstrap.Modal(modalDeleteEl) : null;
 
-// Função que realmente deleta quando clica em "Confirmar"
-function confirmDeleteFicha() {
-    let cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
-    if (deleteIndex !== null && cards[deleteIndex]) {
-        cards.splice(deleteIndex, 1); // remove do array
-        localStorage.setItem('rpgCards', JSON.stringify(cards));
-    }
-
-    // reset
-    deleteIndex = null;
-
-    // fecha modal
-    const modalEl = document.getElementById('modalDelete');
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    if (modal) modal.hide();
-
-    // se estava dentro da ficha, volta para a lista
-    backToCards();
-    loadCards();
-
-    // limpa hash da URL
-    window.location.hash = '';
-}
-
-
-const modalFicha = new bootstrap.Modal(document.getElementById('modalFicha'));
-const modalDelete = new bootstrap.Modal(document.getElementById('modalDelete'));
-
+// listas estáticas
 const races = ["Aetheris", "Clank", "Drakona", "Dwarf", "Earthkin", "Elf", "Emberkin", "Faerie", "Faun", "Firbolg", "Fungril", "Galapa", "Giant", "Gnome", "Goblin", "Halfling", "Human", "Infernis", "Katari", "Orc", "Ribbet", "Simiah", "Skykin", "Tidekin"];
 const classes = ["Assassin", "Bard", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Warlock", "Warrior", "Witch", "Wizard"];
 const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Highborne", "Loreborne", "Orderborne", "Reborne", "Ridgeborne", "Seaborne", "Slyborne", "Underborne", "Wanderborne", "Warborne", "Wildborne"];
 
+// ---------- UI / Dropdowns ----------
 function populateDropdowns() {
     const raceSelect = document.getElementById('ficha-race');
     const classSelect = document.getElementById('ficha-class');
     const communitySelect = document.getElementById('ficha-community');
 
-    raceSelect.innerHTML = '<option value="">Selecione</option>';
-    races.forEach(r => raceSelect.appendChild(new Option(r, r)));
+    if (raceSelect) {
+        raceSelect.innerHTML = '<option value="">Selecione</option>';
+        races.forEach(r => raceSelect.appendChild(new Option(r, r)));
+        raceSelect.onchange = generateResourcesText;
+    }
 
-    classSelect.innerHTML = '<option value="">Selecione</option>';
-    classes.forEach(c => classSelect.appendChild(new Option(c, c)));
+    if (classSelect) {
+        classSelect.innerHTML = '<option value="">Selecione</option>';
+        classes.forEach(c => classSelect.appendChild(new Option(c, c)));
+        classSelect.onchange = () => { updateSubclasses(); generateResourcesText(); };
+    }
 
-    communitySelect.innerHTML = '<option value="">Selecione</option>';
-    communities.forEach(c => communitySelect.appendChild(new Option(c, c)));
+    if (communitySelect) {
+        communitySelect.innerHTML = '<option value="">Selecione</option>';
+        communities.forEach(c => communitySelect.appendChild(new Option(c, c)));
+        communitySelect.onchange = generateResourcesText;
+    }
 
-    raceSelect.onchange = generateResourcesText;
-    classSelect.onchange = () => { updateSubclasses(); generateResourcesText(); };
-    communitySelect.onchange = generateResourcesText;
+    // inicializa subclasse conforme classe atual (se houver)
+    updateSubclasses();
 }
 
+function updateFichaCount() {
+    const cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
+    const countEl = document.getElementById('ficha-count');
+    if (countEl) {
+        countEl.textContent = `• ${cards.length} Personagens`;
+    }
+}
+
+
 function updateSubclasses() {
-    const cls = document.getElementById('ficha-class').value;
+    const cls = document.getElementById('ficha-class')?.value;
     const subclass = document.getElementById('ficha-subclass');
+    if (!subclass) return;
     subclass.innerHTML = '';
     if (cls && subclasses[cls]) {
         subclasses[cls].forEach(sc => subclass.appendChild(new Option(sc, sc)));
@@ -97,40 +84,95 @@ function updateSubclasses() {
     }
 }
 
+// ---------- Cartões (Lista) ----------
+function getDefaultCardHeight() {
+    // tenta ler um card existente (se houver), senão cria um temporário escondido para medir
+    try {
+        const existing = container.querySelector('.card:not(.new-card)');
+        if (existing) {
+            const h = existing.getBoundingClientRect().height;
+            if (h > 10) return h;
+        }
+
+        const tmp = document.createElement('div');
+        tmp.className = 'card shadow-sm';
+        tmp.style.visibility = 'hidden';
+        tmp.style.position = 'absolute';
+        tmp.style.left = '-9999px';
+        tmp.style.top = '-9999px';
+        // adiciona conteúdo mínimo para aproximar altura real
+        tmp.innerHTML = `<div style="padding:12px"><h5 style="margin:0">T</h5><p style="margin:0">x</p></div>`;
+        document.body.appendChild(tmp);
+        const h = tmp.getBoundingClientRect().height || 250;
+        document.body.removeChild(tmp);
+        return h;
+    } catch (e) {
+        return 250;
+    }
+}
+
 function loadCards() {
+    if (!container) return;
     container.innerHTML = '';
     const cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
 
+    // mede altura "padrão" do card (respeita o CSS atual)
+    const defaultHeight = getDefaultCardHeight();
+
+    // botão "novo card"
     const newCard = document.createElement('div');
     newCard.className = 'card new-card shadow-sm';
-    newCard.innerHTML = '<span>+</span>';
-    newCard.onclick = () => openModalFicha(null, true);
+    newCard.style.height = `${defaultHeight}px`;
+    newCard.style.display = 'flex';
+    newCard.style.flexDirection = 'column';
+    newCard.style.overflow = 'hidden';
+    newCard.innerHTML = '<span style="font-size:2rem;display:flex;align-items:center;justify-content:center;height:100%;">+</span>';
+    newCard.onclick = (e) => { e.stopPropagation(); openModalFicha(null, true); };
     container.appendChild(newCard);
 
     cards.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card shadow-sm';
+        // Mantém exatamente a altura do card original
+        cardEl.style.height = `${defaultHeight}px`;
+        cardEl.style.display = 'flex';
+        cardEl.style.flexDirection = 'column';
+        cardEl.style.overflow = 'hidden';
+
+        const hasImage = !!card.image;
+        const imageHtml = hasImage
+            ? `<div class="card-img-wrap"><img src="${card.image}" class="card-img-custom" alt=""></div>`
+            : `<div class="card-img-wrap no-image"></div>`;
+
         cardEl.innerHTML = `
-            ${card.image ? `<img src="${card.image}" style="height:120px; object-fit:cover; object-position:top;">` : ''}
-            <div class="card-body d-flex flex-column p-3">
-                <h5 class="card-title">${card.title}</h5>
-                <hr style="border-color:#5c82c4">
-                <div class="card-footer-custom">
-                    <div><i class="bi bi-calendar-event"></i> ${card.date}</div>
-<div class="actions">
-    <i class="bi bi-pencil-square edit-icon" title="Editar" onclick="editCard(event, ${index})"></i>
-    <i class="bi bi-trash delete-icon" title="Deletar" onclick="deleteCard(event, ${index})"></i>
-</div>
-                </div>
-            </div>
-        `;
+      ${imageHtml}
+      <div class="card-body-custom">
+        <h5 class="card-title">${card.title ?? ''}</h5>
+        <hr class="card-hr">
+        <div class="card-footer-custom">
+          <div class="card-date"><i class="bi bi-calendar-event"></i> ${card.date ?? ''}</div>
+          <div class="actions">
+            <button class="action-btn edit-btn" onclick="editCard(event, ${index})" title="Editar">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="action-btn delete-btn" onclick="deleteCard(event, ${index})" title="Deletar">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+        // abre ficha ao clicar no card
         cardEl.onclick = () => openFicha(index);
+
         container.appendChild(cardEl);
     });
+    updateFichaCount();
 }
 
 
-
+// ---------- Hash / Navegação ----------
 function handleHashChange() {
     if (window.location.hash && window.location.hash.startsWith('#ficha')) {
         const idx = parseInt(window.location.hash.replace('#ficha', ''), 10);
@@ -141,25 +183,37 @@ function handleHashChange() {
     }
 }
 
+// ---------- Modal de edição (mini-card) ----------
 function openModalFicha(index, isNew = false) {
     currentFichaIndex = index;
-    document.getElementById('modalTitle').innerText = isNew ? 'Nova Ficha' : 'Editar Ficha';
+    const titleEl = document.getElementById('modalTitle');
+    if (titleEl) titleEl.innerText = isNew ? 'Nova Ficha' : 'Editar Ficha';
+
     if (isNew) {
-        document.getElementById('modal-name').value = '';
-        document.getElementById('modal-url').value = '';
+        const nameEl = document.getElementById('modal-name');
+        const urlEl = document.getElementById('modal-url');
+        if (nameEl) nameEl.value = '';
+        if (urlEl) urlEl.value = '';
     } else {
         const cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
         const card = cards[index];
-        document.getElementById('modal-name').value = card.title;
-        document.getElementById('modal-url').value = card.image || '';
+        if (card) {
+            const nameEl = document.getElementById('modal-name');
+            const urlEl = document.getElementById('modal-url');
+            if (nameEl) nameEl.value = card.title ?? '';
+            if (urlEl) urlEl.value = card.image ?? '';
+        }
     }
-    modalFicha.show();
+
+    if (modalFicha) modalFicha.show();
 }
 
 function saveModalFicha() {
-    const name = document.getElementById('modal-name').value.trim();
-    const urlInput = document.getElementById('modal-url').value.trim();
-    const fileInput = document.getElementById('modal-file').files[0]; // novo input
+    const name = document.getElementById('modal-name')?.value.trim() || '';
+    const urlInput = document.getElementById('modal-url')?.value.trim() || '';
+    const fileEl = document.getElementById('modal-file');
+    const fileInput = fileEl?.files ? fileEl.files[0] : null;
+
     if (!name) return alert('Nome é obrigatório');
 
     let cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
@@ -172,11 +226,18 @@ function saveModalFicha() {
             cards[currentFichaIndex] = { ...cards[currentFichaIndex], ...fichaData };
         } else {
             cards.push(fichaData);
+            currentFichaIndex = cards.length - 1;
         }
 
         localStorage.setItem('rpgCards', JSON.stringify(cards));
-        modalFicha.hide();
+        // esconde modal via getInstance (seguro)
+        const modalInst = bootstrap.Modal.getInstance(modalFichaEl);
+        if (modalInst) modalInst.hide();
+
         loadCards();
+
+        // atualiza hash para o card salvo (mantém referência)
+        window.location.hash = `ficha${currentFichaIndex}`;
     };
 
     if (fileInput) {
@@ -186,41 +247,40 @@ function saveModalFicha() {
         };
         reader.readAsDataURL(fileInput);
     } else {
-        saveFichaData(urlInput); // usa a URL digitada
+        saveFichaData(urlInput);
     }
 }
 
-
-
+// ---------- Salvar / Editar ficha completa ----------
 function saveFicha() {
     let cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
 
     // coleta campos (valores numéricos convertidos)
     const fichaData = {
-        title: document.getElementById('ficha-name').value.trim(),
-        level: parseInt(document.getElementById('ficha-level').value, 10) || 1,
-        race: document.getElementById('ficha-race').value || '',
-        classchar: document.getElementById('ficha-class').value || '',
-        subclass: document.getElementById('ficha-subclass').value || '',
-        community: document.getElementById('ficha-community').value || '',
+        title: document.getElementById('ficha-name')?.value.trim() || '',
+        level: parseInt(document.getElementById('ficha-level')?.value, 10) || 1,
+        race: document.getElementById('ficha-race')?.value || '',
+        classchar: document.getElementById('ficha-class')?.value || '',
+        subclass: document.getElementById('ficha-subclass')?.value || '',
+        community: document.getElementById('ficha-community')?.value || '',
 
         // atributos
         attributes: {
-            agi: parseInt(document.getElementById('attr-agi').value, 10) || 0,
-            forca: parseInt(document.getElementById('attr-for').value, 10) || 0,
-            fin: parseInt(document.getElementById('attr-fin').value, 10) || 0,
-            inst: parseInt(document.getElementById('attr-inst').value, 10) || 0,
-            pre: parseInt(document.getElementById('attr-pre').value, 10) || 0,
-            con: parseInt(document.getElementById('attr-con').value, 10) || 0,
-            evasao: parseInt(document.getElementById('evasao').value, 10) || 0
+            agi: parseInt(document.getElementById('attr-agi')?.value, 10) || 0,
+            forca: parseInt(document.getElementById('attr-for')?.value, 10) || 0,
+            fin: parseInt(document.getElementById('attr-fin')?.value, 10) || 0,
+            inst: parseInt(document.getElementById('attr-inst')?.value, 10) || 0,
+            pre: parseInt(document.getElementById('attr-pre')?.value, 10) || 0,
+            con: parseInt(document.getElementById('attr-con')?.value, 10) || 0,
+            evasao: parseInt(document.getElementById('evasao')?.value, 10) || 0
         },
 
         // recursos / quantidades
         resources: {
-            hp: parseInt(document.getElementById('hpQtd').value, 10) || 6,
-            armadura: parseInt(document.getElementById('armaduraQtd').value, 10) || 6,
-            estresse: parseInt(document.getElementById('estresseQtd').value, 10) || 6,
-            esperanca: parseInt(document.getElementById('esperancaQtd').value, 10) || 6
+            hp: parseInt(document.getElementById('hpQtd')?.value, 10) || 6,
+            armadura: parseInt(document.getElementById('armaduraQtd')?.value, 10) || 6,
+            estresse: parseInt(document.getElementById('estresseQtd')?.value, 10) || 6,
+            esperanca: parseInt(document.getElementById('esperancaQtd')?.value, 10) || 6
         },
 
         // dano (captura por name, sem exigir id)
@@ -231,52 +291,69 @@ function saveFicha() {
 
         // --- Experiências ---
         experiencias: [
-            document.getElementById('experiencia1').value.trim(),
-            document.getElementById('experiencia2').value.trim(),
-            document.getElementById('experiencia3').value.trim(),
-            document.getElementById('experiencia4').value.trim(),
-            document.getElementById('experiencia5').value.trim()
+            document.getElementById('experiencia1')?.value.trim() || '',
+            document.getElementById('experiencia2')?.value.trim() || '',
+            document.getElementById('experiencia3')?.value.trim() || '',
+            document.getElementById('experiencia4')?.value.trim() || '',
+            document.getElementById('experiencia5')?.value.trim() || ''
         ]
-
-
-        // opcional: se quiser manter thumbnail/image/date no card da lista,
-        // preserva campos já existentes (caso exista ficha anterior)
     };
 
-    // Se já existe a ficha (edição), preserva metadados existentes (imagem/date)
     if (currentFichaIndex !== null && cards[currentFichaIndex]) {
-        // preserva imagens/data do card anterior se existirem
         const old = cards[currentFichaIndex];
         fichaData.image = old.image || old.thumbnail || '';
         fichaData.date = old.date || (new Date().toLocaleDateString('pt-BR'));
-        // substitui
         cards[currentFichaIndex] = { ...old, ...fichaData };
+        showToast("Ficha atualizada com sucesso ✅");
     } else {
-        // cria nova ficha e seta date
         fichaData.date = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
         cards.push(fichaData);
         currentFichaIndex = cards.length - 1;
+        showToast("Ficha salva com sucesso ✅");
     }
 
     localStorage.setItem('rpgCards', JSON.stringify(cards));
-
-    // Mantém o hash referente à ficha salva
     window.location.hash = `ficha${currentFichaIndex}`;
-
-    // atualiza UI
     loadCards();
-    // opcional: manter na ficha (não voltar automaticamente)
-    // backToCards();
+    updateFichaCount();
 }
 
+// ---------- Deletar ----------
+function askDeleteFicha(index) {
+    deleteIndex = index;
+    if (modalDelete) modalDelete.show();
+}
 
+// ---------- Deletar ----------
+function confirmDeleteFicha() {
+    let cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
+    if (deleteIndex !== null && cards[deleteIndex]) {
+        cards.splice(deleteIndex, 1);
+        localStorage.setItem('rpgCards', JSON.stringify(cards));
+        showToast("Ficha deletada 🗑️");
+    }
+    deleteIndex = null;
+    if (modalDeleteEl) {
+        const modalInst = bootstrap.Modal.getInstance(modalDeleteEl);
+        if (modalInst) modalInst.hide();
+    }
+    backToCards();
+    loadCards();
+    if (window.location.hash && window.location.hash.startsWith('#ficha')) window.location.hash = '';
+    updateFichaCount();
+}
 
-
+// ---------- Finalizar edição ----------
+function finishEditingFicha() {
+    saveFicha();
+    backToCards();
+    showToast("Edição finalizada ✨");
+}
 
 function deleteCard(event, index) {
     event.stopPropagation();
     deleteIndex = index;
-    new bootstrap.Modal(document.getElementById('modalDelete')).show();
+    if (modalDelete) modalDelete.show();
 }
 
 function editCard(event, index) {
@@ -284,6 +361,25 @@ function editCard(event, index) {
     openModalFicha(index, false);
 }
 
+// ---------- Toast ----------
+function showToast(message) {
+    const container = document.getElementById("toast-container");
+    if (!container) return;
+
+    const toast = document.createElement("div");
+    toast.className = "toast-msg";
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    // remove após a animação
+    setTimeout(() => {
+        toast.remove();
+    }, 3000); // 3 segundos
+}
+
+
+// ---------- Abrir ficha detalhada ----------
 function openFicha(index) {
     const cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
     const ficha = cards[index];
@@ -293,32 +389,32 @@ function openFicha(index) {
     window.location.hash = `ficha${index}`;
 
     // Mostra a seção da ficha
-    cardsSection.classList.add('hidden');
-    fichaSection.classList.remove('hidden');
+    if (cardsSection) cardsSection.classList.add('hidden');
+    if (fichaSection) fichaSection.classList.remove('hidden');
 
     currentFichaIndex = index;
 
     // Campos básicos
-    document.getElementById('ficha-name').value = ficha.title || '';
-    document.getElementById('ficha-level').value = ficha.level || 1;
-    document.getElementById('ficha-race').value = ficha.race || '';
-    document.getElementById('ficha-community').value = ficha.community || '';
-    document.getElementById('ficha-class').value = ficha.classchar || '';
+    if (document.getElementById('ficha-name')) document.getElementById('ficha-name').value = ficha.title || '';
+    if (document.getElementById('ficha-level')) document.getElementById('ficha-level').value = ficha.level || 1;
+    if (document.getElementById('ficha-race')) document.getElementById('ficha-race').value = ficha.race || '';
+    if (document.getElementById('ficha-community')) document.getElementById('ficha-community').value = ficha.community || '';
+    if (document.getElementById('ficha-class')) document.getElementById('ficha-class').value = ficha.classchar || '';
+
     updateSubclasses(); // popula subclasse
-    document.getElementById('ficha-subclass').value = ficha.subclass || '';
+    if (document.getElementById('ficha-subclass')) document.getElementById('ficha-subclass').value = ficha.subclass || '';
 
     // --- Atributos & Defesa ---
     const attrs = ficha.attributes || {};
-    document.getElementById('attr-agi').value = attrs.agi ?? '';
-    document.getElementById('attr-for').value = attrs.forca ?? '';
-    document.getElementById('attr-fin').value = attrs.fin ?? '';
-    document.getElementById('attr-inst').value = attrs.inst ?? '';
-    document.getElementById('attr-pre').value = attrs.pre ?? '';
-    document.getElementById('attr-con').value = attrs.con ?? '';
-    document.getElementById('evasao').value = attrs.evasao ?? '';
+    if (document.getElementById('attr-agi')) document.getElementById('attr-agi').value = attrs.agi ?? '';
+    if (document.getElementById('attr-for')) document.getElementById('attr-for').value = attrs.forca ?? '';
+    if (document.getElementById('attr-fin')) document.getElementById('attr-fin').value = attrs.fin ?? '';
+    if (document.getElementById('attr-inst')) document.getElementById('attr-inst').value = attrs.inst ?? '';
+    if (document.getElementById('attr-pre')) document.getElementById('attr-pre').value = attrs.pre ?? '';
+    if (document.getElementById('attr-con')) document.getElementById('attr-con').value = attrs.con ?? '';
+    if (document.getElementById('evasao')) document.getElementById('evasao').value = attrs.evasao ?? '';
 
     // --- Dano & Vida ---
-    // seus inputs de dano no HTML usam name="danoMenor" e name="danoMaior"
     const danoMenorInput = document.querySelector('input[name="danoMenor"]');
     const danoMaiorInput = document.querySelector('input[name="danoMaior"]');
     const dmg = ficha.damage || {};
@@ -327,10 +423,10 @@ function openFicha(index) {
 
     // --- Recursos (HP / Armadura / Estresse / Esperança) ---
     const res = ficha.resources || {};
-    document.getElementById('hpQtd').value = res.hp ?? 6;
-    document.getElementById('armaduraQtd').value = res.armadura ?? 6;
-    document.getElementById('estresseQtd').value = res.estresse ?? 6;
-    document.getElementById('esperancaQtd').value = res.esperanca ?? 6;
+    if (document.getElementById('hpQtd')) document.getElementById('hpQtd').value = res.hp ?? 6;
+    if (document.getElementById('armaduraQtd')) document.getElementById('armaduraQtd').value = res.armadura ?? 6;
+    if (document.getElementById('estresseQtd')) document.getElementById('estresseQtd').value = res.estresse ?? 6;
+    if (document.getElementById('esperancaQtd')) document.getElementById('esperancaQtd').value = res.esperanca ?? 6;
 
     // agora sim gera os quadradinhos
     generateChecks('hpChecks', res.hp ?? 6);
@@ -340,37 +436,70 @@ function openFicha(index) {
 
     const experiencias = ficha.experiencias || [];
     for (let i = 1; i <= 5; i++) {
-        document.getElementById(`experiencia${i}`).value = experiencias[i - 1] || '';
+        const expEl = document.getElementById(`experiencia${i}`);
+        if (expEl) expEl.value = experiencias[i - 1] || '';
     }
 
     // atualiza texto de recursos (usa selects atuais)
     generateResourcesText();
 }
 
-
+// ---------- Voltar para lista ----------
 function backToCards() {
-    cardsSection.classList.remove('hidden');
-    fichaSection.classList.add('hidden');
+    if (cardsSection) cardsSection.classList.remove('hidden');
+    if (fichaSection) fichaSection.classList.add('hidden');
 
     // limpa hash (não faz reload)
-    if (window.location.hash.startsWith('#ficha')) window.location.hash = '';
+    if (window.location.hash && window.location.hash.startsWith('#ficha')) window.location.hash = '';
     currentFichaIndex = null;
 }
 
-
-populateDropdowns();
-loadCards();
-
+// ---------- Helpers ----------
 function generateChecks(id, qtd) {
     const container = document.getElementById(id);
+    if (!container) return;
     container.innerHTML = '';
-    qtd = parseInt(qtd) || 0;
+    qtd = parseInt(qtd, 10) || 0;
     for (let i = 0; i < qtd; i++) {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
         container.appendChild(cb);
     }
 }
+
+// Fallback leve: se você já tem uma função mais completa para gerar texto de recursos,
+// ela poderá sobrescrever esta. Aqui apenas evitamos erros caso não exista.
+function generateResourcesText() {
+    // exemplo: atualiza um span com id 'resources-text' (se existir)
+    const el = document.getElementById('resources-text');
+    if (!el) return;
+    const race = document.getElementById('ficha-race')?.value || '-';
+    const cls = document.getElementById('ficha-class')?.value || '-';
+    const comm = document.getElementById('ficha-community')?.value || '-';
+    el.innerText = `Raça: ${race} · Classe: ${cls} · Comunidade: ${comm}`;
+}
+
+// ---------- Inicialização ----------
+populateDropdowns();
+loadCards();
+
+// sincroniza hash quando usuário navega
+window.addEventListener('hashchange', handleHashChange);
+// checa hash atual na carga (caso o link venha com #fichaX)
+handleHashChange();
+
+// exporta funções para serem chamadas por atributos onclick inline (se necessário)
+window.askDeleteFicha = askDeleteFicha;
+window.confirmDeleteFicha = confirmDeleteFicha;
+window.saveModalFicha = saveModalFicha;
+window.saveFicha = saveFicha;
+window.deleteCard = deleteCard;
+window.editCard = editCard;
+window.openModalFicha = openModalFicha;
+window.openFicha = openFicha;
+window.backToCards = backToCards;
+
+
 
 function generateResourcesText() {
     const race = document.getElementById('ficha-race').value;
@@ -943,3 +1072,49 @@ At any point, when you’ve discovered the community you were once a part of, or
 
     document.getElementById('recursosText').innerHTML = text;
 }
+
+// sempre atualizar quando mudar qualquer select
+document.getElementById('ficha-race').addEventListener('change', generateResourcesText);
+document.getElementById('ficha-class').addEventListener('change', generateResourcesText);
+document.getElementById('ficha-subclass').addEventListener('change', generateResourcesText);
+document.getElementById('ficha-community').addEventListener('change', generateResourcesText);
+
+// também atualizar na carga inicial
+window.addEventListener('DOMContentLoaded', generateResourcesText);
+
+document.addEventListener('DOMContentLoaded', () => {
+    // lista dos recursos e ids correspondentes dos check-groups
+    const recursos = [
+        { inputId: 'hpQtd', checkId: 'hpChecks' },
+        { inputId: 'armaduraQtd', checkId: 'armaduraChecks' },
+        { inputId: 'estresseQtd', checkId: 'estresseChecks' },
+        { inputId: 'esperancaQtd', checkId: 'esperancaChecks' }
+    ];
+
+    recursos.forEach(({ inputId, checkId }) => {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        input.addEventListener('input', () => {
+            // limite mínimo e máximo
+            if (input.value > 30) input.value = 30;
+            if (input.value < 0) input.value = 0;
+
+            // atualiza os checkboxes instantaneamente
+            generateChecks(checkId, input.value);
+        });
+
+        // inicializa os checks na carga da página
+        generateChecks(checkId, input.value);
+    });
+
+    document.querySelectorAll(".exp-text").forEach((textarea) => {
+        textarea.addEventListener("input", function () {
+            this.style.height = "auto"; // reseta antes de medir
+            this.style.height = this.scrollHeight + "px"; // ajusta ao conteúdo
+        });
+
+        // ajusta altura inicial (caso já tenha texto salvo)
+        textarea.style.height = textarea.scrollHeight + "px";
+    });
+});
