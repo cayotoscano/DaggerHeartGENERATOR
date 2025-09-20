@@ -69,7 +69,6 @@ function updateFichaCount() {
     }
 }
 
-
 function updateSubclasses() {
     const cls = document.getElementById('ficha-class')?.value;
     const subclass = document.getElementById('ficha-subclass');
@@ -296,7 +295,26 @@ function saveFicha() {
             document.getElementById('experiencia3')?.value.trim() || '',
             document.getElementById('experiencia4')?.value.trim() || '',
             document.getElementById('experiencia5')?.value.trim() || ''
-        ]
+        ],
+        experienciasNum: [
+            document.getElementById('experiencia1-num')?.value.trim() || '',
+            document.getElementById('experiencia2-num')?.value.trim() || '',
+            document.getElementById('experiencia3-num')?.value.trim() || '',
+            document.getElementById('experiencia4-num')?.value.trim() || '',
+            document.getElementById('experiencia5-num')?.value.trim() || ''
+        ],
+
+        itens: {
+            armadura: document.getElementById("armadura").value,
+            armaPrincipal: document.getElementById("armaPrincipal").value,
+            armaSecundaria: document.getElementById("armaSecundaria").value,
+            outrosItens: document.getElementById("outrosItens").value
+        }
+
+
+        // --- itens ---
+
+        // --- dominio ---
     };
 
     if (currentFichaIndex !== null && cards[currentFichaIndex]) {
@@ -421,24 +439,38 @@ function openFicha(index) {
     if (danoMenorInput) danoMenorInput.value = dmg.menor ?? '';
     if (danoMaiorInput) danoMaiorInput.value = dmg.maior ?? '';
 
-    // --- Recursos (HP / Armadura / Estresse / Esperança) ---
+    // --- (HP / Armadura / Estresse / Esperança) ---
     const res = ficha.resources || {};
     if (document.getElementById('hpQtd')) document.getElementById('hpQtd').value = res.hp ?? 6;
     if (document.getElementById('armaduraQtd')) document.getElementById('armaduraQtd').value = res.armadura ?? 6;
     if (document.getElementById('estresseQtd')) document.getElementById('estresseQtd').value = res.estresse ?? 6;
     if (document.getElementById('esperancaQtd')) document.getElementById('esperancaQtd').value = res.esperanca ?? 6;
-
-    // agora sim gera os quadradinhos
+    // quadradinhos
     generateChecks('hpChecks', res.hp ?? 6);
     generateChecks('armaduraChecks', res.armadura ?? 6);
     generateChecks('estresseChecks', res.estresse ?? 6);
     generateChecks('esperancaChecks', res.esperanca ?? 6);
 
+    // recursos (experiencias)
     const experiencias = ficha.experiencias || [];
+    const experienciasNum = ficha.experienciasNum || []; // <- novo array pros números
     for (let i = 1; i <= 5; i++) {
         const expEl = document.getElementById(`experiencia${i}`);
         if (expEl) expEl.value = experiencias[i - 1] || '';
+
+        const expNumEl = document.getElementById(`experiencia${i}-num`);
+        if (expNumEl) expNumEl.value = experienciasNum[i - 1] || '';
     }
+
+    // Itens
+    const itens = ficha.itens || {};
+    document.getElementById("armadura").value = itens.armadura || "";
+    document.getElementById("armaPrincipal").value = itens.armaPrincipal || "";
+    document.getElementById("armaSecundaria").value = itens.armaSecundaria || "";
+    document.getElementById("outrosItens").value = itens.outrosItens || "";
+
+    // Dominio
+
 
     // atualiza texto de recursos (usa selects atuais)
     generateResourcesText();
@@ -466,6 +498,18 @@ function generateChecks(id, qtd) {
         container.appendChild(cb);
     }
 }
+
+function autoResize(el) {
+    el.style.height = "auto";               // reseta altura
+    el.style.height = (el.scrollHeight) + "px"; // ajusta para caber o conteúdo
+}
+
+// aplica em todos os campos de item
+document.querySelectorAll('.item-text').forEach(textarea => {
+    textarea.addEventListener('input', () => autoResize(textarea));
+    autoResize(textarea); // chama ao carregar para já ajustar se tiver valor salvo
+});
+
 
 // Fallback leve: se você já tem uma função mais completa para gerar texto de recursos,
 // ela poderá sobrescrever esta. Aqui apenas evitamos erros caso não exista.
@@ -513,107 +557,213 @@ function generateResourcesText() {
         text += `<span style="color:#ff9359">Raça:</span> <span style="color:hsl(54, 100%, 83%)">${race}</span><br>`;
         switch (race) {
             case "Aetheris":
-                text += `Hallowed Aura: Once per rest, when an ally within Close range rolls with Fear, you can make it a roll with Hope instead.
-Divine Countenance: You have advantage on rolls to command or persuade.<br><br>`;
+                text += `<strong>Hallowed Aura:</strong> Once per rest, when an ally within Close range rolls with Fear, you can make it a roll with Hope instead.
+<br><strong>Divine Countenance:</strong> You have advantage on rolls to command or persuade.<br><br>`;
                 break;
             case "Clank":
-                text += `Purposeful Design: Decide who made you and for what purpose. At character creation, choose one of your Experiences that best aligns with this purpose and gain a permanent +1 bonus to it.
-Efficient: When you take a short rest, you can choose a long rest move instead of a short rest move.<br><br>`;
+                text += `<strong>Purposeful Design:</strong> Decide who made you and for what purpose. At character creation, choose one of your Experiences that best aligns with this purpose and gain a permanent +1 bonus to it.
+<br><strong>Efficient:</strong> When you take a short rest, you can choose a long rest move instead of a short rest move.<br><br>`;
                 break;
             case "Drakona":
-                text += `Scales: Your scales act as natural protection. When you would take Severe damage, you can mark a Stress to mark 1 fewer Hit Points.
-Elemental Breath: Choose an element for your breath (such as electricity, fire, or ice). You can use this breath against a target or group of targets within Very Close range, treating it as an Instinctweapon that deals d8 magic damage using your Proficiency.<br><br>`;
+                text += `<strong>Scales:</strong> Your scales act as natural protection. When you would take Severe damage, you can mark a Stress to mark 1 fewer Hit Poin</strong>ts.
+<br><strong>Elemental Breath:</strong> Choose an element for your breath (such as electricity, fire, or ice). You can use this breath against a target or group of targets within Very Close range, treating it as an Instinctweapon that deals d8 magic damage using your Proficiency.<br><br>`;
                 break;
             case "Dwarf":
-                text += `Thick Skin: When you take Minor damage, you can mark 2 Stress instead of marking a Hit Point.
-Increased Fortitude: Spend 3 Hope to halve incoming physical damage.<br><br>`;
+                text += `<strong>Thick Skin:</strong> When you take Minor damage, you can mark 2 Stress instead of marking a Hit Point.
+<br><strong>Increased Fortitude:</strong> Spend 3 Hope to halve incoming physical damage.<br><br>`;
                 break;
             case "Earthkin":
-                text += `Stonekin: Gain a +1 bonus to your Armor Score and Damage Thresholds.
-Immoveable: While your feet are touching the ground, you cannot be lifted or moved against your will.<br><br>`;
+                text += `<strong>Stonekin:</strong> Gain a +1 bonus to your Armor Score and Damage Thresholds.
+<br><strong>Immoveable:</strong> While your feet are touching the ground, you cannot be lifted or moved against your will.<br><br>`;
                 break;
             case "Elf":
-                text += `Quick Reactions: Mark a Stress to gain advantage on a reaction roll.
-Celestial Trance: During a rest, you can drop into a trance to choose an additional downtime move.<br><br>`;
+                text += `<strong>Quick Reactions:</strong> Mark a Stress to gain advantage on a reaction roll.
+<br><strong>Celestial Trance:</strong> During a rest, you can drop into a trance to choose an additional downtime move.<br><br>`;
                 break;
             case "Emberkin":
-                text += `Fireproof: You are immune to damage from magical or mundane flame.
-Ignition: Mark a Stress to wreathe your primary weapon in flame until the end of the scene. While ablaze, it gives off a bright light and grants a 1d6 bonus to damage rolls against targets within Melee range.<br><br>`;
+                text += `<strong>Fireproof:</strong> You are immune to damage from magical or mundane flame.
+<br><strong>Ignition:</strong> Mark a Stress to wreathe your primary weapon in flame until the end of the scene. While ablaze, it gives off a bright light and grants a 1d6 bonus to damage rolls against targets within Melee range.<br><br>`;
                 break;
             case "Faerie":
-                text += `Luckbender: Once per session, after you or a willing ally within Close range makes an action roll, you can spend 3 Hope to reroll the Duality Dice.
-Wings: You can fly. While flying, you can mark a Stress after an adversary makes an attack against you to gain a +2 bonus to your Evasion against that attack.<br><br>`;
+                text += `<strong>Luckbender:</strong> Once per session, after you or a willing ally within Close range makes an action roll, you can spend 3 Hope to reroll the Duality Dice.
+<br><strong>Wings:</strong> You can fly. While flying, you can mark a Stress after an adversary makes an attack against you to gain a +2 bonus to your Evasion against that attack.<br><br>`;
                 break;
             case "Faun":
-                text += `Caprine Leap: You can leap anywhere within Close range as though you were using normal movement, allowing you to vault obstacles, jump across gaps, or scale barriers with ease.
-Kick: When you succeed on an attack against a target within Melee range, you can mark a Stress to kick yourself off them, dealing an extra 2d6 damage and knocking back either yourself or the target to Very Close range.<br><br>`;
+                text += `<strong>Caprine Leap:</strong> You can leap anywhere within Close range as though you were using normal movement, allowing you to vault obstacles, jump across gaps, or scale barriers with ease.
+<br><strong>Kick:</strong> When you succeed on an attack against a target within Melee range, you can mark a Stress to kick yourself off them, dealing an extra 2d6 damage and knocking back either yourself or the target to Very Close range.<br><br>`;
                 break;
             case "Firbolg":
-                text += `Charge: When you succeed on an Agility Roll to move from Faror Very Far range into Melee range with one or more targets, you can mark a Stress to deal 1d12 physical damage to all targets within Melee range.
-Unshakable: When you would mark a Stress, roll a d6. On a result of 6, don’t mark it.<br><br>`;
+                text += `<strong>Charge:</strong> When you succeed on an Agility Roll to move from Faror Very Far range into Melee range with one or more targets, you can mark a Stress to deal 1d12 physical damage to all targets within Melee range.
+<br><strong>Unshakable:</strong> When you would mark a Stress, roll a d6. On a result of 6, don’t mark it.<br><br>`;
                 break;
             case "Fungril":
-                text += `Fungril Network: Make an Instinct Roll ( 12) to use your mycelial array to speak with others of your ancestry. On a success, you can communicate across any distance.
-Death Connection: While touching a corpse that died recently, you can mark a Stress to extract one memory from the corpse related to a specific emotion or sensation of your choice.<br><br>`;
+                text += `<strong>Fungril Network:</strong> Make an Instinct Roll ( 12) to use your mycelial array to speak with others of your ancestry. On a success, you can communicate across any distance.
+<br><strong>Death Connection:</strong> While touching a corpse that died recently, you can mark a Stress to extract one memory from the corpse related to a specific emotion or sensation of your choice.<br><br>`;
                 break;
             case "Galapa":
-                text += `Shell: Gain a bonus to your damage thresholds equal to your Proficiency.
-Retract: Mark a Stress to retract into your shell. While in your shell, you have resistance to physical damage, you have disadvantage on action rolls, and you can’t move.<br><br>`;
+                text += `<strong>Shell:</strong> Gain a bonus to your damage thresholds equal to your Proficiency.
+<br><strong>Retract:</strong> Mark a Stress to retract into your shell. While in your shell, you have resistance to physical damage, you have disadvantage on action rolls, and you can’t move.<br><br>`;
                 break;
             case "Giant":
-                text += `Endurance: Gain an additional Hit Point slot at character creation.
-Reach: Treat any weapon, ability, spell, or other feature that has a Melee range as though it has a Very Close range instead.<br><br>`;
+                text += `<strong>Endurance:</strong> Gain an additional Hit Point slot at character creation.
+<br><strong>Reach:</strong> Treat any weapon, ability, spell, or other feature that has a Melee range as though it has a Very Close range instead.<br><br>`;
                 break;
             case "Gnome":
-                text += `Nimble Fingers: When you make a Finesse Roll, you can spend 2 Hope to reroll your Hope Die.
-True Sight: You have advantage on rolls to see through illusions.<br><br>`;
+                text += `<strong>Nimble Fingers:</strong> When you make a Finesse Roll, you can spend 2 Hope to reroll your Hope Die.
+<br><strong>True Sight:</strong> You have advantage on rolls to see through illusions.<br><br>`;
                 break;
             case "Goblin":
-                text += `Surefooted: You ignore disadvantage on Agility Rolls.
-Danger Sense: Once per rest, mark a Stress to force an adversary to reroll an attack against you or an ally within Very Close range.<br><br>`;
+                text += `<strong>Surefooted:</strong> You ignore disadvantage on Agility Rolls.
+<br><strong>Danger Sense:</strong> Once per rest, mark a Stress to force an adversary to reroll an attack against you or an ally within Very Close range.<br><br>`;
                 break;
             case "Halfling":
-                text += `Luckbringer: At the start of each session, everyone in your party gains a Hope.
-Internal Compass: When you roll a 1 on your Hope Die, you can reroll it.<br><br>`;
+                text += `<strong>Luckbringer:</strong> At the start of each session, everyone in your party gains a Hope.
+<br><strong>Internal Compass:</strong> When you roll a 1 on your Hope Die, you can reroll it.<br><br>`;
                 break;
             case "Human":
-                text += `High Stamina: Gain an additional Stress slot at character creation.
-Adaptability: When you fail a roll that utilized one of your Experiences, you can mark a Stress to reroll.<br><br>`;
+                text += `<strong>High Stamina:</strong> Gain an additional Stress slot at character creation.
+<br><strong>Adaptability:</strong> When you fail a roll that utilized one of your Experiences, you can mark a Stress to reroll.<br><br>`;
                 break;
             case "Infernis":
-                text += `Fear: When you roll with Fear, you can mark 2 Stress to change it into a roll with Hope instead.
-Dread Visage: You have advantage on rolls to intimidate hostile creatures.<br><br>`;
+                text += `<strong>Fear:</strong> When you roll with Fear, you can mark 2 Stress to change it into a roll with Hope instead.
+<br><strong>Dread Visage:</strong> You have advantage on rolls to intimidate hostile creatures.<br><br>`;
                 break;
             case "Katari":
-                text += `Feline Instincts: When you make an Agility Roll, you can spend 2 Hope to reroll your Hope Die.
-Retracting Claws: Make an Agility Roll to scratch a target within Melee range. On a success, they become temporarily Vulnerable.<br><br>`;
+                text += `<strong>Feline Instincts:</strong> When you make an Agility Roll, you can spend 2 Hope to reroll your Hope Die.
+<br><strong>Retracting Claws:</strong> Make an Agility Roll to scratch a target within Melee range. On a success, they become temporarily Vulnerable.<br><br>`;
                 break;
             case "Orc":
-                text += `Sturdy: When you have 1 Hit Point remaining, attacks against you have disadvantage.
-Tusks: When you succeed on an attack against a target within Melee range, you can spend a Hope to gore the target with your tusks, dealing an extra 1d6 damage.<br><br>`;
+                text += `<strong>Sturdy:</strong> When you have 1 Hit Point remaining, attacks against you have disadvantage.
+<br><strong>Tusks:</strong> When you succeed on an attack against a target within Melee range, you can spend a Hope to gore the target with your tusks, dealing an extra 1d6 damage.<br><br>`;
                 break;
             case "Ribbet":
-                text += `Amphibious: You can breathe and move naturally underwater.
-Long Tongue: You can use your long tongue to grab onto things within Close range. Mark a Stress to use your tongue as a Finesse Close weapon that deals d12 physical damage using your Proficiency.<br><br>`;
+                text += `<strong>Amphibious:</strong> You can breathe and move naturally underwater.
+<br><strong>Long Tongue:</strong> You can use your long tongue to grab onto things within Close range. Mark a Stress to use your tongue as a Finesse Close weapon that deals d12 physical damage using your Proficiency.<br><br>`;
                 break;
             case "Simiah":
-                text += `Natural Climber: You have advantage on Agility Rolls that involve balancing and climbing.
-Nimble: Gain a permanent +1 bonus to your Evasion at character creation.<br><br>`;
+                text += `<strong>Natural Climber:</strong> You have advantage on Agility Rolls that involve balancing and climbing.
+<br><strong>Nimble:</strong> Gain a permanent +1 bonus to your Evasion at character creation.<br><br>`;
                 break;
             case "Skykin":
-                text += `Gale Force: Mark a Stress to conjure a gust of wind that carries you or an ally up to Very Far range. Additionally, you can always control the speed at which you fall.
-Eye of the Storm: Spend 2 Hope to grant a +1 bonus to either your or an ally’s Evasion until you next take Severe damage or you use Eye of the Storm again.<br><br>`;
+                text += `<strong>Gale Force:</strong> Mark a Stress to conjure a gust of wind that carries you or an ally up to Very Far range. Additionally, you can always control the speed at which you fall.
+<br><strong>Eye of the Storm:</strong> Spend 2 Hope to grant a +1 bonus to either your or an ally’s Evasion until you next take Severe damage or you use Eye of the Storm again.<br><br>`;
                 break;
             case "Tidekin":
-                text += `Amphibious: You can breathe and move naturally underwater.
-Lifespring: Once per rest, when you have access to a small amount of water, you can mark 2 Stress to heal a Hit Point on yourself or an ally.<br><br>`;
+                text += `<strong>Amphibious:</strong> You can breathe and move naturally underwater.
+<br><strong>Lifespring:</strong> Once per rest, when you have access to a small amount of water, you can mark 2 Stress to heal a Hit Point on yourself or an ally.<br><br>`;
                 break;
         }
     }
 
+    if (classchar) {
+        text += `<span style="color:#ff9359">Classe:</span> <span style="color:hsl(54, 100%, 83%)">${classchar}</span><br>`;
+
+        switch (classchar) {
+            case "Assassin":
+                text += `<strong>Grim Resolve:</strong> Spend 3 Hope to clear 2 Stress.<br>
+                <strong>Marked for Death:</strong> On a successful weapon attack, you can mark a Stress to make the target Marked for Death. Attacks you make against a target that’s Marked for Death gain a bonus to damage equal to +1d4 per tier.
+You can only have one adversary Marked for Death at a time, and can’t transfer or remove the condition except by defeating the target. The GM can spend a number of Fear equal to your Proficiency to remove the Marked for Death condition. Otherwise, it ends automatically when you take a rest.<br>
+<strong>Get in & Get out:</strong> Spend a Hope to ask the GM for either a quick or inconspicuous way into or out of a building or structure you can see. The next roll you make that capitalizes on this information has advantage.<br><br>`;
+                break;
+
+            case "Bard":
+                text += `<strong>Make a Scene:</strong> Spend 3 Hope to temporarily Distract a target within Close range, giving them a -2 penalty to their Difficulty.<br>
+    <strong>Rally:</strong> Once per session, describe how you rally the party and give yourself and each of your allies a Rally Die. At level 1, your Rally Die is a d6. A PC can spend their Rally Die to roll it, adding the result to their action roll, reaction roll, damage roll, or to clear a number of Stress equal to the result. At the end of each session, clear all unspent Rally Dice.
+At level 5, your Rally Die increases to a d8.<br><br>`;
+                break;
+
+            case "Brawler":
+                text += `<strong>Staggering Strike:</strong> Spend 3 Hope when you succeed on an attack to temporarily Stagger your target and force them to mark a Stress. While Staggered, they have disadvantage on attack rolls.<br>
+    <strong>I am the Weapon:</strong> While you don’t have any equipped weapons:<br>
+    • You gain +1 bonus to Evasion.<br>
+    • Your unarmed strikes are considered a Melee weapon, use the trait of your choice, and deal d8+d6 phy damage using your Proficiency.<br>
+    <strong>Combo Strikes:</strong> After making a damage roll with a Melee weapon but before dealing that damage to the target, mark a Stress to start a combo strike. When you do, roll a Combo Die and note its value. Then, roll another Combo Die again. If the value of the second die is equal to or greater than your first Combo Die, continue rolling until the latest Combo Die’s roll is less than the roll that preceeded it. Total all rolled values and add that amount to your weapon’s damage. These values cannot be adjusted by features that affect damage dice.<br>
+    Your Combo Die starts as a d4. When you level up, once per tier you may use one of your advancement options to increase your Combo Die instead.<br><br>`;
+                break;
+
+            case "Druid":
+                text += `<strong>Evolution:</strong> Spend 3 Hope to transform into a Beastform without marking a Stress. When you do, choose one trait to raise by +1 until you drop out of that Beastform.<br>
+    <strong>Beastform:</strong> Mark a Stress to magically transform into a creature of your tier or lower from the Beastform list. You can drop out of this form at any time. While transformed, you can’t use weapons or cast spells from domain cards, but you can still use other features or abilities you have access to. Spells you cast before you transform stay active and last for their normal duration, and you can talk and communicate as normal. Additionally, you gain the Beastform’s features, add their Evasion bonus to your Evasion, and use the trait specified in their statistics for your attack. While you’re in a Beastform, your armor becomes part of your body and you mark Armor Slots as usual; when you drop out of a Beastform, those marked Armor Slots remain marked. If you mark your last Hit Point, you automatically drop out of this form.<br>
+    <strong>Wildtouch:</strong> You can perform harmless, subtle effects that involve nature—such as causing a flower to rapidly grow, summoning a slight gust of wind, or starting a campfire—at will.<br><br>`;
+                break;
+
+            case "Guardian":
+                text += `<strong>Frontline Tank:</strong> Spend 3 Hope to clear 2 Armor Slots.<br>
+    <strong>Unstoppable:</strong> Once per long rest, you can become Unstoppable. You gain an Unstoppable Die. At level 1, your Unstoppable Die is a d4. Place it on your character sheet in the space provided, starting with the 1 value facing up. After you make a damage roll that deals 1 or more Hit Points to a target, increase the Unstoppable Die value by one. When the die’s value would exceed its maximum value or when the scene ends, remove the die and drop out of Unstoppable. At level 5, your Unstoppable Die increases to a d6.<br>
+    While Unstoppable, you gain the following benefits:<br>
+    • You reduce the severity of physical damage by one threshold (Severe to Major, Major to Minor, Minor to None).<br>
+    • You add the current value of the Unstoppable Die to your damage roll.<br>
+    • You can’t be Restrained or Vulnerable.<br><br>`;
+                break;
+
+            case "Ranger":
+                text += `<strong>Hold Them Off:</strong> Spend 3 Hope when you succeed on an attack with a weapon to use that same roll against two additional adversaries within range of the attack.<br>
+    <strong>Ranger’s Focus:</strong> Spend a Hope and make an attack against a target. On a success, deal your attack’s normal damage and temporarily make the attack’s target your Focus. Until this feature ends or you make a different creature your Focus, you gain the following benefits against your Focus:<br>
+    • You know precisely what direction they are in.<br>
+    • When you deal damage to them, they must mark a Stress.<br>
+    • When you fail an attack against them, you can end your Ranger’s Focus feature to reroll your Duality Dice.<br><br>`;
+                break;
+
+            case "Rogue":
+                text += `<strong>Rogue’s Dodge:</strong> Spend 3 Hope to gain a +2 bonus to your Evasion until the next time an attack succeeds against you. Otherwise, this bonus lasts until your next rest.<br>
+    <strong>Cloaked:</strong> Any time you would be Hidden, you are instead Cloaked. In addition to the benefits of the Hidden condition, while Cloaked you remain unseen if you are stationary when an adversary moves to where they would normally see you. After you make an attack or end a move within line of sight of an adversary, you are no longer Cloaked.<br>
+    <strong>Sneak Attack:</strong> When you succeed on an attack while Cloaked or while an ally is within Melee range of your target, add a number of d6s equal to your tier to your damage roll.<br>
+    • Level 1 → Tier 1
+    • Levels 2–4 → Tier 2
+    • Levels 5–7 → Tier 3
+    • Levels 8–10 → Tier 4<br><br>`;
+                break;
+
+            case "Seraph":
+                text += `<strong>Life Support:</strong> Spend 3 Hope to clear a Hit Point on an ally within Close range.<br>
+    <strong>Prayer Dice:</strong> At the beginning of each session, roll a number of d4s equal to your subclass’s Spellcast trait and place them on your character sheet in the space provided. These are your Prayer Dice. You can spend any number of Prayer Dice to aid yourself or an ally within Far range. You can use a spent die’s value to reduce incoming damage, add to a roll’s result after the roll is made, or gain Hope equal to the result. At the end of each session, clear all unspent Prayer Dice.<br><br>`;
+                break;
+
+            case "Sorcerer":
+                text += `<strong>Volatile Magic:</strong> Spend 3 Hope to reroll any number of your damage dice on an attack that deals magic damage.<br>
+    <strong>Arcane Sense:</strong> You can sense the presence of magical people and objects within Close range.<br>
+    <strong>Minor Illusion:</strong> Make a Spellcast Roll (10). On a success, you create a minor visual illusion no larger than yourself within Close range. This illusion is convincing to anyone at Close range or farther.<br>
+    <strong>Channel Raw Power:</strong> Once per long rest, you can place a domain card from your loadout into your vault and choose to either:
+• Gain Hope equal to the level of the card.
+• Enhance a spell that deals damage, gaining a bonus to your damage roll equal to twice the level of the card.<br><br>`;
+                break;
+
+            case "Warlock":
+                text += `<strong>Patron’s Boon:</strong> Spend 3 Hope to call out to your patron for help, gaining 1d4 Favor.<br>
+    <strong>Warlock Patron:</strong> You have committed yourself to a patron (god, demon, fae, or other supernatural entity) in exchange for power. Write their name above. Then, choose their spheres of influence, at GM discretion (Nature & Mischief, Love & War, Knowledge & Shadow, etc.), record them below and set their value to +2. Anytime you increase your tier, these spheres of influence also gain a permanent +1 bonus. Before making an action roll that relates to one of your patron’s spheres of influence, you can spend a Favor to call on them and add its value to the roll.<br>
+    <strong>Favor:</strong> Start with 3 Favor. During a rest, take one of your downtime actions to tithe to your patron. When you do, gain Favor equal to your Presence. If you choose to forgo this offering, the GM instead gains a Fear.<br><br>`;
+                break;
+
+            case "Warrior":
+                text += `<strong>No Mercy:</strong> Spend 3 Hope to gain a +1 bonus to your attack rolls until your next rest.<br>
+    <strong>Attack of Opportunity:</strong> If an adversary within Melee range attempts to leave that range, make a reaction roll using a trait of your choice against their Difficulty. Choose one effect on a success, or two if you critically succeed:
+• They can’t move from where they are.
+• You deal damage to them equal to your primary weapon’s damage.
+• You move with them.<br>
+    <strong>Combat Training:</strong> You ignore burden when equipping weapons. When you deal physical damage, you gain a bonus to your damage roll equal to your level.<br><br>`;
+                break;
+
+            case "Witch":
+                text += `<strong>Witch's Charm:</strong> When you or an ally within Far range rolls a failure on an action roll, you can spend 3 Hope to change it into a success with Fear instead.<br>
+    <strong>Hex:</strong> When a creature causes you or an ally within Close range to mark any number of Hit Points, you can mark a Stress to Hex them. Action and damage rolls against a Hexed creature gain a bonus equal to your tier.
+This condition lasts until the GM spends a number of Fear equal to your Spellcast trait to remove it or you Hex another creature. Otherwise, remove it when the scene ends.<br>
+    <strong>Commune:</strong> Once per long rest, during a moment of calm, you can commune with an ancestor, deity, nature spirit, or otherworldly being. Ask them a question, then roll a number of d6s equal to your Spellcast trait. Choose one value from the rolled results and reference the chart below for the effect:
+• 1-3: You taste a flavor, smell a scent, or feel a sensation relevant to the answer.
+• 4-5: You hear sounds or see a vision relevant to the answer.
+• 6: You psychically experience a scene relevant to the answer as if you were there.<br><br>`;
+                break;
+
+            case "Wizard":
+                text += `<strong>Not This Time:</strong> Spend 3 Hope to force an adversary within Far range to reroll an attack or damage roll.<br>
+    <strong>Prestidigitation:</strong> You can perform harmless, subtle magical effects at will. For example, you can change an object’s color, create a smell, light a candle, cause a tiny object to float, illuminate a room, or repair a small object.<br>
+    <strong>Strange Patterns:</strong> Choose a number between 1 and 12. When you roll that number on a Duality Die, gain a Hope or clear a Stress. You can change this number when you take a long rest.<br><br>`;
+                break;
+
+        }
+    }
 
     if (subclass) {
-        text += `<span style="color:#ff9359">Classe/Subclasse:</span> <span style="color:hsl(54, 100%, 83%)">${classchar}/${subclass}</span><br>`;
+        text += `<span style="color:#ff9359">Subclasse:</span> <span style="color:hsl(54, 100%, 83%)">${subclass}</span><br>`;
 
         switch (subclass) {
             // Assassin
@@ -1000,58 +1150,56 @@ Have No Fear: The extra magic damage from your “Face Your Fear” feature incr
         }
     }
 
-
-
     if (community) {
         text += `<span style="color:#ff9359">Comunidade:</span> <span style="color:hsl(54, 100%, 83%)">${community}</span>\n`;
 
         switch (community) {
             case "Duneborne":
                 text +=
-                    `Oasis: During a short rest, you or an ally can reroll a die used for a downtime action.\n\n`;
+                    `<strong>Oasis:</strong> During a short rest, you or an ally can reroll a die used for a downtime action.\n\n`;
                 break;
             case "Freeborne":
-                text += `Unbound: Once per session, when you make an action roll with Fear, you can instead change it to a roll with Hope instead.\n\n`;
+                text += `<strong>Unbound:</strong> Once per session, when you make an action roll with Fear, you can instead change it to a roll with Hope instead.\n\n`;
                 break;
             case "Frostborne":
-                text += `Hardy: Once per rest, you can Help an Ally traverse difficult terrain without spending a Hope.\n\n`;
+                text += `<strong>Hardy:</strong> Once per rest, you can Help an Ally traverse difficult terrain without spending a Hope.\n\n`;
                 break;
             case "Hearthborne":
-                text += `Close-Knit: Once per long rest, you can spend any number of Hope to give an ally the same number of Hope.\n\n`;
+                text += `<strong>Close-Knit:</strong> Once per long rest, you can spend any number of Hope to give an ally the same number of Hope.\n\n`;
                 break;
             case "Highborne":
-                text += `Privilege: You have advantage on rolls to consort with nobles, negotiate prices, or leverage your reputation to get what you want.\n\n`;
+                text += `<strong>Privilege:</strong> You have advantage on rolls to consort with nobles, negotiate prices, or leverage your reputation to get what you want.\n\n`;
                 break;
             case "Loreborne":
-                text += `Well-Read: You have advantage on rolls that involve the history, culture, or politics of a prominent person or place.\n\n`;
+                text += `<strong>Well-Read:</strong> You have advantage on rolls that involve the history, culture, or politics of a prominent person or place.\n\n`;
                 break;
             case "Orderborne":
-                text += `Dedicated: Record three sayings or values your upbringing instilled in you. Once per rest, when you describe how you’re embodying one of these principles through your current action, you can roll a d20 as your Hope Die.\n\n`;
+                text += `<strong>Dedicated:</strong> Record three sayings or values your upbringing instilled in you. Once per rest, when you describe how you’re embodying one of these principles through your current action, you can roll a d20 as your Hope Die.\n\n`;
                 break;
             case "Reborne":
-                text += `Found Family: Once per session, you can spend a Hope to use an ally’s community ability. When you do, your ally gains a Hope.
+                text += `<strong>Found Family:</strong> Once per session, you can spend a Hope to use an ally’s community ability. When you do, your ally gains a Hope.
 At any point, when you’ve discovered the community you were once a part of, or have joined a new community, you can permanently trade this community card for that one instead.\n\n`;
                 break;
             case "Ridgeborne":
-                text += `Steady: You have advantage on rolls to traverse dangerous cliffs and ledges, navigate harsh environments, and use your survival knowledge.\n\n`;
+                text += `<strong>Steady:</strong> You have advantage on rolls to traverse dangerous cliffs and ledges, navigate harsh environments, and use your survival knowledge.\n\n`;
                 break;
             case "Seaborne":
-                text += `Know the Tide: You can sense the ebb and flow of life. When you roll with Fear, place a token on this card. You can hold a number of tokens equal to your level. Before you make an action roll, you can spend any number of these tokens to gain a +1 bonus to the roll for each token spent. At the end of each session, clear all unspent tokens.\n\n`;
+                text += `<strong>Know the Tide:</strong> You can sense the ebb and flow of life. When you roll with Fear, place a token on this card. You can hold a number of tokens equal to your level. Before you make an action roll, you can spend any number of these tokens to gain a +1 bonus to the roll for each token spent. At the end of each session, clear all unspent tokens.\n\n`;
                 break;
             case "Slyborne":
-                text += `Scoundrel: You have advantage on rolls to negotiate with criminals, detect lies, or find a safe place to hide.\n\n`;
+                text += `<strong>Scoundrel:</strong> You have advantage on rolls to negotiate with criminals, detect lies, or find a safe place to hide.\n\n`;
                 break;
             case "Underborne":
-                text += `Low-Light Living: When you’re in an area with low light or heavy shadow, you have advantage on rolls to hide, investigate, or perceive details within that area.\n\n`;
+                text += `<strong>Low-Light Living:</strong> When you’re in an area with low light or heavy shadow, you have advantage on rolls to hide, investigate, or perceive details within that area.\n\n`;
                 break;
             case "Wanderborne":
-                text += `Nomadic Pack: Add a Nomadic Pack to your inventory. Once per session, you can spend a Hope to reach into this pack and pull out a mundane item that’s useful to your situation. Work with the GM to figure out what item you take out.\n\n`;
+                text += `<strong>Nomadic Pack:</strong> Add a Nomadic Pack to your inventory. Once per session, you can spend a Hope to reach into this pack and pull out a mundane item that’s useful to your situation. Work with the GM to figure out what item you take out.\n\n`;
                 break;
             case "Warborne":
-                text += `Brave Face: Once per session, when an attack would cause you to mark a Stress, you can spend a Hope instead.\n\n`;
+                text += `<strong>Brave Face:</strong> Once per session, when an attack would cause you to mark a Stress, you can spend a Hope instead.\n\n`;
                 break;
             case "Wildborne":
-                text += `Lightfoot: Your movement is naturally silent. You have advantage on rolls to move without being heard.\n\n`;
+                text += `<strong>Lightfoot:</strong> Your movement is naturally silent. You have advantage on rolls to move without being heard.\n\n`;
                 break;
         }
     }

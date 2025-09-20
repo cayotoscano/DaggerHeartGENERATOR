@@ -33,7 +33,7 @@
     <main class="container">
         <!-- Seção principal: Cards -->
         <div id="cards-section">
-            <h2 class="mb-4">Minhas Fichas</h2>
+            <h2 class="mb-4" style="color: #fff;">Minhas Fichas</h2>
             <div class="card-grid" id="cards-container"></div>
         </div>
 
@@ -59,12 +59,12 @@
                             type="button" role="tab">Recursos</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#itens"
+                        <button class="nav-link" id="itens-tab" data-bs-toggle="tab" data-bs-target="#itens"
                             type="button" role="tab">Itens</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#cartas"
-                            type="button" role="tab">Cartas</button>
+                        <button class="nav-link" id="dominios-tab" data-bs-toggle="tab" data-bs-target="#dominios"
+                            type="button" role="tab">Dominios</button>
                     </li>
                 </ul>
                 <div class="tab-content">
@@ -129,7 +129,7 @@
                         <div class="evasao-armadura-container">
                             <div class="evasao-armadura-item">
                                 <h5>Evasão</h5>
-                                <input type="number" id="evasao" class="form-control" placeholder="Evasão" value="">
+                                <input type="number" id="evasao" class="form-control" value="">
                             </div>
 
                         </div>
@@ -184,14 +184,28 @@
                     </div>
                     <!-- Recursos -->
                     <div class="tab-pane fade" id="recursos" role="tabpanel">
-
                         <div class="grupo recursos">
                             <h5>Experiências</h5>
-                            <textarea id="experiencia1" placeholder="Experiência 1" class="exp-text"></textarea>
-                            <textarea id="experiencia2" placeholder="Experiência 2" class="exp-text"></textarea>
-                            <textarea id="experiencia3" placeholder="Experiência 3" class="exp-text"></textarea>
-                            <textarea id="experiencia4" placeholder="Experiência 4" class="exp-text"></textarea>
-                            <textarea id="experiencia5" placeholder="Experiência 5" class="exp-text"></textarea>
+                            <div class="exp-item">
+                                <textarea id="experiencia1" placeholder="Experiência 1" class="exp-text"></textarea>
+                                <input id="experiencia1-num" type="number" class="exp-num" min="0" max="10">
+                            </div>
+                            <div class="exp-item">
+                                <textarea id="experiencia2" placeholder="Experiência 2" class="exp-text"></textarea>
+                                <input id="experiencia2-num" type="number" class="exp-num" min="0" max="10">
+                            </div>
+                            <div class="exp-item">
+                                <textarea id="experiencia3" placeholder="Experiência 3" class="exp-text"></textarea>
+                                <input id="experiencia3-num" type="number" class="exp-num" min="0" max="10">
+                            </div>
+                            <div class="exp-item">
+                                <textarea id="experiencia4" placeholder="Experiência 4" class="exp-text"></textarea>
+                                <input id="experiencia4-num" type="number" class="exp-num" min="0" max="10">
+                            </div>
+                            <div class="exp-item">
+                                <textarea id="experiencia5" placeholder="Experiência 5" class="exp-text"></textarea>
+                                <input id="experiencia5-num" type="number" class="exp-num" min="0" max="10">
+                            </div>
                         </div>
 
                         <hr class="atributos-separador">
@@ -200,6 +214,71 @@
                             <h5>Recursos</h5>
                             <div id="recursosText" class="mb-2" style="white-space: pre-line;"></div>
                         </div>
+                    </div>
+                    <!-- Itens -->
+                    <div class="tab-pane fade" id="itens" role="tabpanel">
+                        <div class="grupo itens">
+                            <h5>Itens</h5>
+                            <div class="item-field">
+                                <label for="armadura">Armadura</label>
+                                <textarea id="armadura" class="item-text"></textarea>
+                            </div>
+                            <div class="item-field">
+                                <label for="armaPrincipal">Arma Principal</label>
+                                <textarea id="armaPrincipal" class="item-text"></textarea>
+                            </div>
+                            <div class="item-field">
+                                <label for="armaSecundaria">Arma Secundária</label>
+                                <textarea id="armaSecundaria" class="item-text"></textarea>
+                            </div>
+                            <div class="item-field">
+                                <label for="outrosItens">Outros Itens</label>
+                                <textarea id="outrosItens" class="item-text" style="min-height: 120px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- dominios -->
+                    <div class="tab-pane fade" id="dominios" role="tabpanel">
+
+                        <!-- Filtros -->
+                        <div class="filtros-dominio mb-3">
+                            <select id="filtro-lvl" class="form-select">
+                                <option value="">Todos os Níveis</option>
+                                <option value="1">Nível 1</option>
+                                <option value="2">Nível 2</option>
+                                <option value="3">Nível 3</option>
+                                <option value="4">Nível 4</option>
+                                <option value="5">Nível 5</option>
+                                <option value="6">Nível 6</option>
+                                <option value="7">Nível 7</option>
+                                <option value="8">Nível 8</option>
+                                <option value="9">Nível 9</option>
+                                <option value="10">Nível 10</option>
+                            </select>
+
+                            <select id="filtro-dominio" class="form-select mt-2">
+                                <option value="">Todos os Domínios</option>
+                                <option value="Arcano">Arcano</option>
+                                <option value="Blade">Blade</option>
+                                <option value="Bone">Bone</option>
+                                <option value="Codex">Codex</option>
+                                <option value="Dread">Dread</option>
+                                <option value="Grace">Grace</option>
+                                <option value="Midnight">Midnight</option>
+                                <option value="Sage">Sage</option>
+                                <option value="Splendor">Splendor</option>
+                                <option value="Valor">Valor</option>
+                            </select>
+                        </div>
+
+                        <!-- Cartas disponíveis -->
+                        <div id="cartas-disponiveis" class="card-grid mb-4"></div>
+
+                        <hr>
+
+                        <!-- Cartas selecionadas -->
+                        <h5>Cartas Selecionadas</h5>
+                        <div id="cartas-selecionadas" class="card-grid"></div>
                     </div>
                 </div>
                 <div class="btn-container">

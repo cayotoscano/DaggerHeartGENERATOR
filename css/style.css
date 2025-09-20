@@ -223,15 +223,35 @@ footer p {
     /* cor do texto digitado */
 }
 
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #ff9359;
+}
+
+#modal-url::placeholder {
+    color: hsl(0, 0%, 0%);
+    opacity: 0.8;
+}
+
 .form-control::placeholder {
-    color: #A0A3C0;
+    color: hsl(0, 0%, 100%);
     opacity: 0.8;
     text-align: center;
 }
 
 /* estiliza apenas o placeholder */
 .exp-text::placeholder {
-    color: #A0A3C0;
+    color: hsl(0, 0%, 100%);
     /* cinza azulado suave */
     opacity: 0.8;
     /* deixa um pouco mais discreto */
@@ -262,6 +282,8 @@ footer p {
 .ficha-section label {
     font-weight: 500;
     margin-bottom: 0.2rem;
+    color: #ff9359;
+
 }
 
 .ficha-section input,
@@ -797,4 +819,55 @@ input[type=number] {
     background-color: #ffc107;
     /* mesma cor do hover do salvar */
     color: #000;
+}
+
+.exp-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* espaço entre textarea e número */
+    margin-bottom: 8px;
+}
+
+.exp-text {
+    flex: 1;
+    /* textarea ocupa todo o espaço disponível */
+    min-height: 50px;
+}
+
+.exp-num {
+    width: 60px;
+    padding: 5px;
+    background-color: #211E41;
+    border: 1px solid #5a58a5;
+    color: #fff;
+    border-radius: 6px;
+    text-align: center;
+    /* centraliza o texto */
+}
+
+
+
+.item-text {
+    width: 100%;
+    min-height: 40px;
+    /* altura inicial mínima */
+    resize: none;
+    /* usuário não pode redimensionar manualmente */
+    overflow: hidden;
+    /* oculta scrollbar */
+    background-color: #211E41;
+    color: #f0f0f0;
+    border: 1px solid #5a58a5;
+    border-radius: 6px;
+    padding: 6px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+
+.item-field label {
+    display: block;
+    margin-bottom: 4px;
+    color: #ccc;
 }
