@@ -427,16 +427,6 @@ input[type=number]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-/* Remove spinner do Firefox */
-input[type=number] {
-    -moz-appearance: textfield;
-}
-
-
-
-
-
-
 .limiares-dano {
     display: flex;
     justify-content: center;
@@ -870,4 +860,74 @@ input[type=number] {
     display: block;
     margin-bottom: 4px;
     color: #ccc;
+}
+
+
+
+.card-dominio {
+    width: 208px;
+    height: 312px;
+    border-radius: 12px;
+    overflow: hidden;
+    /* garante que a imagem não vaze */
+    display: flex;
+    flex-direction: column;
+    margin: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.card-dominio:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card-img-wrapper {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    /* garante que a imagem não vaze do wrapper */
+}
+
+.card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    transform: scale(1.05);
+    /* aumenta a imagem 110% */
+    transition: transform 0.3s;
+}
+
+/* efeito hover opcional para zoom leve */
+.card-dominio:hover .card-img-wrapper img {
+    transform: scale(1.15);
+}
+
+.select-btn {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.select-btn:hover {
+    background-color: #FECB73;
+}
+
+.select-btn.selected {
+    background-color: #FECB73;
+    color: #fff;
+}
+
+#dominios .card-grid {
+    justify-items: center;
+    /* centraliza os itens no grid */
 }

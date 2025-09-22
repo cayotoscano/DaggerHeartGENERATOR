@@ -303,18 +303,19 @@ function saveFicha() {
             document.getElementById('experiencia4-num')?.value.trim() || '',
             document.getElementById('experiencia5-num')?.value.trim() || ''
         ],
-
+        // --- itens ---
         itens: {
             armadura: document.getElementById("armadura").value,
             armaPrincipal: document.getElementById("armaPrincipal").value,
             armaSecundaria: document.getElementById("armaSecundaria").value,
             outrosItens: document.getElementById("outrosItens").value
-        }
-
-
-        // --- itens ---
+        },
 
         // --- dominio ---
+        dominios: cartasDominio.map(carta => ({
+            id: carta.id,
+            selecionada: carta.selecionada
+        }))
     };
 
     if (currentFichaIndex !== null && cards[currentFichaIndex]) {
@@ -470,6 +471,19 @@ function openFicha(index) {
     document.getElementById("outrosItens").value = itens.outrosItens || "";
 
     // Dominio
+    document.getElementById('filtro-lvl').value = '';
+    document.getElementById('filtro-dominio').value = '';
+
+    cartasDominio.forEach(c => c.selecionada = false);
+
+    if (ficha.dominios && Array.isArray(ficha.dominios)) {
+        ficha.dominios.forEach(d => {
+            const carta = cartasDominio.find(c => c.id === d.id);
+            if (carta) carta.selecionada = d.selecionada === true;
+        });
+    }
+
+    gerarCartasDominios();
 
 
     // atualiza texto de recursos (usa selects atuais)
@@ -1220,6 +1234,88 @@ At any point, when you’ve discovered the community you were once a part of, or
 
     document.getElementById('recursosText').innerHTML = text;
 }
+
+const cartasDominio = [
+    { id: 1, dominio: "Arcano", lvl: 1, img: "img/arcano1.png", selecionada: false },
+    { id: 2, dominio: "Blade", lvl: 2, img: "img/blade2.png", selecionada: false },
+    { id: 3, dominio: "Bone", lvl: 1, img: "img/bone1.png", selecionada: false },
+    { id: 4, dominio: "Arcano", lvl: 2, img: "img/arcano2.png", selecionada: false }
+];
+
+function gerarCartasDominios() {
+    const lvl = parseInt(document.getElementById("filtro-lvl").value) || "";
+    const dominio = document.getElementById("filtro-dominio").value;
+
+    const container = document.getElementById("cartas-disponiveis");
+    container.innerHTML = "";
+
+    const filtradas = cartasDominio.filter(carta => {
+        return (lvl === "" || carta.lvl === lvl) &&
+            (dominio === "" || carta.dominio === dominio);
+    });
+
+    filtradas.forEach(carta => {
+        const cardEl = document.createElement("div");
+        cardEl.className = "card-dominio";
+
+        cardEl.innerHTML = `
+            <div class="card-img-wrapper">
+                <img src="${carta.img}" alt="${carta.dominio}">
+            </div>
+            <button class="select-btn ${carta.selecionada ? 'selected' : ''}" data-id="${carta.id}">
+                ${carta.selecionada ? 'Selecionada' : 'Selecionar'}
+            </button>
+        `;
+
+        container.appendChild(cardEl);
+    });
+
+    atualizarSelecionadas();
+}
+
+function atualizarSelecionadas() {
+    const selecionadasContainer = document.getElementById("cartas-selecionadas");
+    selecionadasContainer.innerHTML = "";
+
+    const selecionadas = cartasDominio.filter(carta => carta.selecionada);
+
+    selecionadas.forEach(carta => {
+        const cardEl = document.createElement("div");
+        cardEl.className = "card-dominio";
+
+        cardEl.innerHTML = `
+            <div class="card-img-wrapper">
+                <img src="${carta.img}" alt="${carta.dominio}">
+            </div>
+            <button class="select-btn selected" data-id="${carta.id}" onclick="removerSelecionada(${carta.id})">
+                Remover
+            </button>
+        `;
+
+        selecionadasContainer.appendChild(cardEl);
+    });
+}
+
+function removerSelecionada(id) {
+    const carta = cartasDominio.find(c => c.id === id);
+    if (carta) carta.selecionada = false;
+    gerarCartasDominios();
+}
+
+// Eventos
+document.getElementById("filtro-lvl").addEventListener("change", gerarCartasDominios);
+document.getElementById("filtro-dominio").addEventListener("change", gerarCartasDominios);
+
+document.addEventListener("click", e => {
+    if (e.target.classList.contains("select-btn") && !e.target.classList.contains("selected")) {
+        const id = parseInt(e.target.dataset.id);
+        const carta = cartasDominio.find(c => c.id === id);
+        if (carta) carta.selecionada = true;
+        gerarCartasDominios();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", gerarCartasDominios);
 
 // sempre atualizar quando mudar qualquer select
 document.getElementById('ficha-race').addEventListener('change', generateResourcesText);
