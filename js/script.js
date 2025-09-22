@@ -314,7 +314,8 @@ function saveFicha() {
         // --- dominio ---
         dominios: cartasDominio.map(carta => ({
             id: carta.id,
-            selecionada: carta.selecionada
+            selecionada: carta.selecionada,
+            naMao: carta.naMao || false
         }))
     };
 
@@ -474,16 +475,27 @@ function openFicha(index) {
     document.getElementById('filtro-lvl').value = '';
     document.getElementById('filtro-dominio').value = '';
 
-    cartasDominio.forEach(c => c.selecionada = false);
+    cartasDominio.forEach(c => {
+        c.selecionada = false;
+        c.naMao = false;
+    });
+
 
     if (ficha.dominios && Array.isArray(ficha.dominios)) {
         ficha.dominios.forEach(d => {
             const carta = cartasDominio.find(c => c.id === d.id);
-            if (carta) carta.selecionada = d.selecionada === true;
+            if (carta) {
+                carta.selecionada = d.selecionada === true;
+                carta.naMao = d.naMao === true;
+            }
         });
     }
 
-    gerarCartasDominios();
+
+    gerarCartasDominios(); // todas as cartas
+    atualizarSelecionadas(); // aba Selecionadas
+    atualizarMao(); // aba Mão
+
 
 
     // atualiza texto de recursos (usa selects atuais)
@@ -1236,11 +1248,12 @@ At any point, when you’ve discovered the community you were once a part of, or
 }
 
 const cartasDominio = [
-    { id: 1, dominio: "Arcano", lvl: 1, img: "img/arcano1.png", selecionada: false },
-    { id: 2, dominio: "Blade", lvl: 2, img: "img/blade2.png", selecionada: false },
-    { id: 3, dominio: "Bone", lvl: 1, img: "img/bone1.png", selecionada: false },
-    { id: 4, dominio: "Arcano", lvl: 2, img: "img/arcano2.png", selecionada: false }
+    { id: 1, dominio: "Arcano", lvl: 1, img: "img/arcano1.png", selecionada: false, clicked: false },
+    { id: 2, dominio: "Blade", lvl: 2, img: "img/blade2.png", selecionada: false, clicked: false },
+    { id: 3, dominio: "Bone", lvl: 1, img: "img/bone1.png", selecionada: false, clicked: false },
+    { id: 4, dominio: "Arcano", lvl: 2, img: "img/arcano2.png", selecionada: false, clicked: false }
 ];
+
 
 function gerarCartasDominios() {
     const lvl = parseInt(document.getElementById("filtro-lvl").value) || "";
@@ -1275,11 +1288,32 @@ function gerarCartasDominios() {
 
 function atualizarSelecionadas() {
     const selecionadasContainer = document.getElementById("cartas-selecionadas");
+    const maoContainer = document.getElementById("cartas-mao");
     selecionadasContainer.innerHTML = "";
+    maoContainer.innerHTML = "";
 
-    const selecionadas = cartasDominio.filter(carta => carta.selecionada);
+    const selecionadas = cartasDominio.filter(carta => carta.selecionada && !carta.naMao);
+    const cartasMao = cartasDominio.filter(carta => carta.naMao);
 
+    // --- Cartas Selecionadas ---
     selecionadas.forEach(carta => {
+        const cardEl = document.createElement("div");
+        cardEl.className = "card-dominio";
+
+        cardEl.innerHTML = `
+    <div class="card-img-wrapper">
+        <img src="${carta.img}" alt="${carta.dominio}">
+    </div>
+    <div class="card-actions">
+        <button class="select-btn remove-btn" onclick="removerSelecionada(${carta.id})">Remover</button>
+        <button class="select-btn mao-btn" onclick="mandarParaMao(${carta.id})">Para Mão</button>
+    </div>
+`;
+        selecionadasContainer.appendChild(cardEl);
+    });
+
+    // --- Cartas na Mão ---
+    cartasMao.forEach(carta => {
         const cardEl = document.createElement("div");
         cardEl.className = "card-dominio";
 
@@ -1287,14 +1321,46 @@ function atualizarSelecionadas() {
             <div class="card-img-wrapper">
                 <img src="${carta.img}" alt="${carta.dominio}">
             </div>
-            <button class="select-btn selected" data-id="${carta.id}" onclick="removerSelecionada(${carta.id})">
-                Remover
-            </button>
+            <div class="card-actions">
+                <button class="select-btn" disabled>Remover</button>
+                <button class="select-btn" onclick="tirarDaMao(${carta.id})">Voltar</button>
+            </div>
         `;
-
-        selecionadasContainer.appendChild(cardEl);
+        maoContainer.appendChild(cardEl);
     });
 }
+
+
+function mandarParaMao(id) {
+    const carta = cartasDominio.find(c => c.id === id);
+    if (!carta) return;
+
+    const cartasNaMao = cartasDominio.filter(c => c.naMao).length;
+    if (cartasNaMao >= 5) {
+        alert("Você só pode ter até 5 cartas na mão.");
+        return;
+    }
+
+    carta.naMao = true;
+    atualizarSelecionadas();
+}
+
+function tirarDaMao(id) {
+    const carta = cartasDominio.find(c => c.id === id);
+    if (!carta) return;
+
+    carta.naMao = false;
+    atualizarSelecionadas();
+}
+
+function removerSelecionada(id) {
+    const carta = cartasDominio.find(c => c.id === id);
+    if (!carta || carta.naMao) return; // não remove cartas que estão na mão
+
+    carta.selecionada = false;
+    atualizarSelecionadas();
+}
+
 
 function removerSelecionada(id) {
     const carta = cartasDominio.find(c => c.id === id);

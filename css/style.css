@@ -931,3 +931,19 @@ input[type=number]::-webkit-outer-spin-button {
     justify-items: center;
     /* centraliza os itens no grid */
 }
+
+
+.card-actions {
+    display: flex;
+    /* espaçamento entre os botões */
+    justify-content: center;
+}
+
+.select-btn:hover {
+    background-color: #FECB73;
+}
+
+.select-btn.selected {
+    background-color: #FECB73;
+    color: #fff;
+}
