@@ -898,14 +898,14 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 0;
     margin: 0;
     padding: 0;
-    transform: scale(1.05);
+    transform: scale(1);
     /* aumenta a imagem 110% */
     transition: transform 0.3s;
 }
 
 /* efeito hover opcional para zoom leve */
 .card-dominio:hover .card-img-wrapper img {
-    transform: scale(1.15);
+    transform: scale(1.05);
 }
 
 .select-btn {
