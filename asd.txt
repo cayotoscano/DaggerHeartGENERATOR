@@ -142,8 +142,9 @@
                             </div>
                             <div class="evasao-armadura-item">
                                 <h5>Dano</h5>
-                                <input type="text" id="dano_at" class="form-control" value="" autocomplete="off">
+                                <input type="text" id="dano" class="form-control" value="" autocomplete="off">
                             </div>
+
                         </div>
                     </div>
                     <!-- Dano & Vida -->

@@ -271,7 +271,9 @@ function saveFicha() {
             inst: parseInt(document.getElementById('attr-inst')?.value, 10) || 0,
             pre: parseInt(document.getElementById('attr-pre')?.value, 10) || 0,
             con: parseInt(document.getElementById('attr-con')?.value, 10) || 0,
-            evasao: parseInt(document.getElementById('evasao')?.value, 10) || 0
+            evasao: parseInt(document.getElementById('evasao')?.value, 10) || 0,
+            proficiencia: parseInt(document.getElementById('proficiencia')?.value, 10) || 0,
+            dano_at: document.getElementById('dano_at')?.value || '',
         },
 
         // recursos / quantidades
@@ -433,6 +435,8 @@ function openFicha(index) {
     if (document.getElementById('attr-pre')) document.getElementById('attr-pre').value = attrs.pre ?? '';
     if (document.getElementById('attr-con')) document.getElementById('attr-con').value = attrs.con ?? '';
     if (document.getElementById('evasao')) document.getElementById('evasao').value = attrs.evasao ?? '';
+    if (document.getElementById('proficiencia')) document.getElementById('proficiencia').value = attrs.proficiencia ?? '';
+    if (document.getElementById('dano_at')) document.getElementById('dano_at').value = attrs.dano_at ?? '';
 
     // --- Dano & Vida ---
     const danoMenorInput = document.querySelector('input[name="danoMenor"]');
