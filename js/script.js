@@ -690,6 +690,8 @@ function generateResourcesText() {
 
         switch (classchar) {
             case "Assassin":
+                text += `<strong>Domain:</strong> Midnight & Blade<br><br>`
+
                 text += `<strong>Grim Resolve:</strong> Spend 3 Hope to clear 2 Stress.<br>
                 <strong>Marked for Death:</strong> On a successful weapon attack, you can mark a Stress to make the target Marked for Death. Attacks you make against a target that’s Marked for Death gain a bonus to damage equal to +1d4 per tier.
 You can only have one adversary Marked for Death at a time, and can’t transfer or remove the condition except by defeating the target. The GM can spend a number of Fear equal to your Proficiency to remove the Marked for Death condition. Otherwise, it ends automatically when you take a rest.<br>
@@ -697,12 +699,16 @@ You can only have one adversary Marked for Death at a time, and can’t transfer
                 break;
 
             case "Bard":
+                text += `<strong>Domain:</strong> Grace & Codex<br><br>`
+
                 text += `<strong>Make a Scene:</strong> Spend 3 Hope to temporarily Distract a target within Close range, giving them a -2 penalty to their Difficulty.<br>
     <strong>Rally:</strong> Once per session, describe how you rally the party and give yourself and each of your allies a Rally Die. At level 1, your Rally Die is a d6. A PC can spend their Rally Die to roll it, adding the result to their action roll, reaction roll, damage roll, or to clear a number of Stress equal to the result. At the end of each session, clear all unspent Rally Dice.
 At level 5, your Rally Die increases to a d8.<br><br>`;
                 break;
 
             case "Brawler":
+                text += `<strong>Domain:</strong> Bone & Valor<br><br>`
+
                 text += `<strong>Staggering Strike:</strong> Spend 3 Hope when you succeed on an attack to temporarily Stagger your target and force them to mark a Stress. While Staggered, they have disadvantage on attack rolls.<br>
     <strong>I am the Weapon:</strong> While you don’t have any equipped weapons:<br>
     • You gain +1 bonus to Evasion.<br>
@@ -712,12 +718,16 @@ At level 5, your Rally Die increases to a d8.<br><br>`;
                 break;
 
             case "Druid":
+                text += `<strong>Domain:</strong> Sage & Arcana<br><br>`
+
                 text += `<strong>Evolution:</strong> Spend 3 Hope to transform into a Beastform without marking a Stress. When you do, choose one trait to raise by +1 until you drop out of that Beastform.<br>
     <strong>Beastform:</strong> Mark a Stress to magically transform into a creature of your tier or lower from the Beastform list. You can drop out of this form at any time. While transformed, you can’t use weapons or cast spells from domain cards, but you can still use other features or abilities you have access to. Spells you cast before you transform stay active and last for their normal duration, and you can talk and communicate as normal. Additionally, you gain the Beastform’s features, add their Evasion bonus to your Evasion, and use the trait specified in their statistics for your attack. While you’re in a Beastform, your armor becomes part of your body and you mark Armor Slots as usual; when you drop out of a Beastform, those marked Armor Slots remain marked. If you mark your last Hit Point, you automatically drop out of this form.<br>
     <strong>Wildtouch:</strong> You can perform harmless, subtle effects that involve nature—such as causing a flower to rapidly grow, summoning a slight gust of wind, or starting a campfire—at will.<br><br>`;
                 break;
 
             case "Guardian":
+                text += `<strong>Domain:</strong> Valor & Blade<br><br>`
+
                 text += `<strong>Frontline Tank:</strong> Spend 3 Hope to clear 2 Armor Slots.<br>
     <strong>Unstoppable:</strong> Once per long rest, you can become Unstoppable. You gain an Unstoppable Die. At level 1, your Unstoppable Die is a d4. Place it on your character sheet in the space provided, starting with the 1 value facing up. After you make a damage roll that deals 1 or more Hit Points to a target, increase the Unstoppable Die value by one. When the die’s value would exceed its maximum value or when the scene ends, remove the die and drop out of Unstoppable. At level 5, your Unstoppable Die increases to a d6.<br>
     While Unstoppable, you gain the following benefits:<br>
@@ -727,6 +737,8 @@ At level 5, your Rally Die increases to a d8.<br><br>`;
                 break;
 
             case "Ranger":
+                text += `<strong>Domain:</strong> Bone & Sage<br><br>`
+
                 text += `<strong>Hold Them Off:</strong> Spend 3 Hope when you succeed on an attack with a weapon to use that same roll against two additional adversaries within range of the attack.<br>
     <strong>Ranger’s Focus:</strong> Spend a Hope and make an attack against a target. On a success, deal your attack’s normal damage and temporarily make the attack’s target your Focus. Until this feature ends or you make a different creature your Focus, you gain the following benefits against your Focus:<br>
     • You know precisely what direction they are in.<br>
@@ -735,6 +747,8 @@ At level 5, your Rally Die increases to a d8.<br><br>`;
                 break;
 
             case "Rogue":
+                text += `<strong>Domain:</strong> Midnight & Grace<br><br>`
+
                 text += `<strong>Rogue’s Dodge:</strong> Spend 3 Hope to gain a +2 bonus to your Evasion until the next time an attack succeeds against you. Otherwise, this bonus lasts until your next rest.<br>
     <strong>Cloaked:</strong> Any time you would be Hidden, you are instead Cloaked. In addition to the benefits of the Hidden condition, while Cloaked you remain unseen if you are stationary when an adversary moves to where they would normally see you. After you make an attack or end a move within line of sight of an adversary, you are no longer Cloaked.<br>
     <strong>Sneak Attack:</strong> When you succeed on an attack while Cloaked or while an ally is within Melee range of your target, add a number of d6s equal to your tier to your damage roll.<br>
@@ -745,11 +759,15 @@ At level 5, your Rally Die increases to a d8.<br><br>`;
                 break;
 
             case "Seraph":
+                text += `<strong>Domain:</strong> Splendor & Valor<br><br>`
+
                 text += `<strong>Life Support:</strong> Spend 3 Hope to clear a Hit Point on an ally within Close range.<br>
     <strong>Prayer Dice:</strong> At the beginning of each session, roll a number of d4s equal to your subclass’s Spellcast trait and place them on your character sheet in the space provided. These are your Prayer Dice. You can spend any number of Prayer Dice to aid yourself or an ally within Far range. You can use a spent die’s value to reduce incoming damage, add to a roll’s result after the roll is made, or gain Hope equal to the result. At the end of each session, clear all unspent Prayer Dice.<br><br>`;
                 break;
 
             case "Sorcerer":
+                text += `<strong>Domain:</strong> Arcana & Midnight<br><br>`
+
                 text += `<strong>Volatile Magic:</strong> Spend 3 Hope to reroll any number of your damage dice on an attack that deals magic damage.<br>
     <strong>Arcane Sense:</strong> You can sense the presence of magical people and objects within Close range.<br>
     <strong>Minor Illusion:</strong> Make a Spellcast Roll (10). On a success, you create a minor visual illusion no larger than yourself within Close range. This illusion is convincing to anyone at Close range or farther.<br>
@@ -759,12 +777,16 @@ At level 5, your Rally Die increases to a d8.<br><br>`;
                 break;
 
             case "Warlock":
+                text += `<strong>Domain:</strong> Dread & Grace<br><br>`
+
                 text += `<strong>Patron’s Boon:</strong> Spend 3 Hope to call out to your patron for help, gaining 1d4 Favor.<br>
     <strong>Warlock Patron:</strong> You have committed yourself to a patron (god, demon, fae, or other supernatural entity) in exchange for power. Write their name above. Then, choose their spheres of influence, at GM discretion (Nature & Mischief, Love & War, Knowledge & Shadow, etc.), record them below and set their value to +2. Anytime you increase your tier, these spheres of influence also gain a permanent +1 bonus. Before making an action roll that relates to one of your patron’s spheres of influence, you can spend a Favor to call on them and add its value to the roll.<br>
     <strong>Favor:</strong> Start with 3 Favor. During a rest, take one of your downtime actions to tithe to your patron. When you do, gain Favor equal to your Presence. If you choose to forgo this offering, the GM instead gains a Fear.<br><br>`;
                 break;
 
             case "Warrior":
+                text += `<strong>Domain:</strong> Blade & Bone<br><br>`
+
                 text += `<strong>No Mercy:</strong> Spend 3 Hope to gain a +1 bonus to your attack rolls until your next rest.<br>
     <strong>Attack of Opportunity:</strong> If an adversary within Melee range attempts to leave that range, make a reaction roll using a trait of your choice against their Difficulty. Choose one effect on a success, or two if you critically succeed:
 • They can’t move from where they are.
@@ -774,6 +796,8 @@ At level 5, your Rally Die increases to a d8.<br><br>`;
                 break;
 
             case "Witch":
+                text += `<strong>Domain:</strong> Dread & Sage<br><br>`
+
                 text += `<strong>Witch's Charm:</strong> When you or an ally within Far range rolls a failure on an action roll, you can spend 3 Hope to change it into a success with Fear instead.<br>
     <strong>Hex:</strong> When a creature causes you or an ally within Close range to mark any number of Hit Points, you can mark a Stress to Hex them. Action and damage rolls against a Hexed creature gain a bonus equal to your tier.
 This condition lasts until the GM spends a number of Fear equal to your Spellcast trait to remove it or you Hex another creature. Otherwise, remove it when the scene ends.<br>
@@ -784,6 +808,8 @@ This condition lasts until the GM spends a number of Fear equal to your Spellcas
                 break;
 
             case "Wizard":
+                text += `<strong>Domain:</strong> Codex & Splendor<br><br>`
+
                 text += `<strong>Not This Time:</strong> Spend 3 Hope to force an adversary within Far range to reroll an attack or damage roll.<br>
     <strong>Prestidigitation:</strong> You can perform harmless, subtle magical effects at will. For example, you can change an object’s color, create a smell, light a candle, cause a tiny object to float, illuminate a room, or repair a small object.<br>
     <strong>Strange Patterns:</strong> Choose a number between 1 and 12. When you roll that number on a Duality Die, gain a Hope or clear a Stress. You can change this number when you take a long rest.<br><br>`;

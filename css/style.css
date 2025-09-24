@@ -871,8 +871,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 .card-dominio {
-    width: 208px;
-    height: 312px;
+    width: 270px;
+    height: 406px;
     border-radius: 12px;
     overflow: hidden;
     /* garante que a imagem não vaze */
