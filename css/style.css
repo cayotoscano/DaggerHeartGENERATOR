@@ -143,6 +143,11 @@ footer p {
 
 .card-date {
     color: #c3c3e6;
+    width: 130px;
+    /* ou o tamanho do container */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Botões de ação dentro do card */

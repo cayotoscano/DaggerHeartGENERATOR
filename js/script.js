@@ -281,7 +281,13 @@ function saveFicha() {
             hp: parseInt(document.getElementById('hpQtd')?.value, 10) || 6,
             armadura: parseInt(document.getElementById('armaduraQtd')?.value, 10) || 6,
             estresse: parseInt(document.getElementById('estresseQtd')?.value, 10) || 6,
-            esperanca: parseInt(document.getElementById('esperancaQtd')?.value, 10) || 6
+            esperanca: parseInt(document.getElementById('esperancaQtd')?.value, 10) || 6,
+            checks: {
+                hp: Array.from(document.querySelectorAll('#hpChecks input[type="checkbox"]')).map(chk => chk.checked),
+                armadura: Array.from(document.querySelectorAll('#armaduraChecks input[type="checkbox"]')).map(chk => chk.checked),
+                estresse: Array.from(document.querySelectorAll('#estresseChecks input[type="checkbox"]')).map(chk => chk.checked),
+                esperanca: Array.from(document.querySelectorAll('#esperancaChecks input[type="checkbox"]')).map(chk => chk.checked)
+            }
         },
 
         // dano (captura por name, sem exigir id)
@@ -318,8 +324,17 @@ function saveFicha() {
             id: carta.id,
             selecionada: carta.selecionada,
             naMao: carta.naMao || false
-        }))
+        })),
+
+        levelUp: {
+            tier2: getTierCheckboxes('tier2'),
+            tier3: getTierCheckboxes('tier3'),
+            tier4: getTierCheckboxes('tier4')
+        }
+
     };
+
+
 
     if (currentFichaIndex !== null && cards[currentFichaIndex]) {
         const old = cards[currentFichaIndex];
@@ -338,6 +353,12 @@ function saveFicha() {
     window.location.hash = `ficha${currentFichaIndex}`;
     loadCards();
     updateFichaCount();
+}
+
+function getTierCheckboxes(tierId) {
+    const tier = document.getElementById(tierId);
+    if (!tier) return [];
+    return Array.from(tier.querySelectorAll('input[type="checkbox"]')).map(chk => chk.checked);
 }
 
 // ---------- Deletar ----------
@@ -425,6 +446,7 @@ function openFicha(index) {
 
     updateSubclasses(); // popula subclasse
     if (document.getElementById('ficha-subclass')) document.getElementById('ficha-subclass').value = ficha.subclass || '';
+    setTimeout(generateResourcesText, 0);
 
     // --- Atributos & Defesa ---
     const attrs = ficha.attributes || {};
@@ -456,6 +478,17 @@ function openFicha(index) {
     generateChecks('armaduraChecks', res.armadura ?? 6);
     generateChecks('estresseChecks', res.estresse ?? 6);
     generateChecks('esperancaChecks', res.esperanca ?? 6);
+
+    if (res.checks) {
+        const grupos = ['hp', 'armadura', 'estresse', 'esperanca'];
+        grupos.forEach(grupo => {
+            const estados = res.checks[grupo];
+            if (Array.isArray(estados)) {
+                const checkboxes = document.querySelectorAll(`#${grupo}Checks input[type="checkbox"]`);
+                checkboxes.forEach((chk, i) => chk.checked = !!estados[i]);
+            }
+        });
+    }
 
     // recursos (experiencias)
     const experiencias = ficha.experiencias || [];
@@ -494,6 +527,15 @@ function openFicha(index) {
             }
         });
     }
+
+    const levelUp = ficha.levelUp || {};
+    ['tier2', 'tier3', 'tier4'].forEach(tierId => {
+        const estados = levelUp[tierId] || [];
+        const checkboxes = document.querySelectorAll(`#${tierId} input[type="checkbox"]`);
+        checkboxes.forEach((chk, i) => {
+            chk.checked = !!estados[i]; // marca/desmarca conforme salvo
+        });
+    });
 
 
     gerarCartasDominios(); // todas as cartas
@@ -543,15 +585,7 @@ document.querySelectorAll('.item-text').forEach(textarea => {
 
 // Fallback leve: se você já tem uma função mais completa para gerar texto de recursos,
 // ela poderá sobrescrever esta. Aqui apenas evitamos erros caso não exista.
-function generateResourcesText() {
-    // exemplo: atualiza um span com id 'resources-text' (se existir)
-    const el = document.getElementById('resources-text');
-    if (!el) return;
-    const race = document.getElementById('ficha-race')?.value || '-';
-    const cls = document.getElementById('ficha-class')?.value || '-';
-    const comm = document.getElementById('ficha-community')?.value || '-';
-    el.innerText = `Raça: ${race} · Classe: ${cls} · Comunidade: ${comm}`;
-}
+
 
 // ---------- Inicialização ----------
 populateDropdowns();
@@ -582,6 +616,11 @@ function generateResourcesText() {
     const community = document.getElementById('ficha-community').value;
 
     let text = '';
+    let text2 = '';
+    let text3 = '';
+
+    text3 += `<span style="color:hsl(54, 100%, 83%)">PEGUE:</span> uma tocha, 15 metros de corda, suprimentos básicos e um punhado de ouro<br><span style="color:hsl(54, 100%, 83%)">DEPOIS ESCOLHA ENTRE:</span> uma Poção de Vida Menor OU uma Poção de Energia Menor<br>`;
+
 
     if (race) {
         text += `<span style="color:#ff9359">Raça:</span> <span style="color:hsl(54, 100%, 83%)">${race}</span><br>`;
@@ -690,6 +729,12 @@ function generateResourcesText() {
 
         switch (classchar) {
             case "Assassin":
+                text2 += `<span style="color:hsl(54, 100%, 83%)">Agilidade</span> +2<br><span style="color:hsl(54, 100%, 83%)">Força</span> -1<br><span style="color:hsl(54, 100%, 83%)">Destreza</span> -1<br><span style="color:hsl(54, 100%, 83%)">Instinto</span> +0<br><span style="color:hsl(54, 100%, 83%)">Presença</span> +0<br><span style="color:hsl(54, 100%, 83%)">Conhecimento</span> +1`;
+                text3 += `<span style="color:hsl(54, 100%, 83%)">E ESCOLHA TAMBÉM ENTRE:</span> uma lista de nomes com vários riscados OU um almofariz e pistilo gravado com um insígnia misteriosa`;
+                text3 += `<br><br><span style="color:hsl(54, 100%, 83%)">ARMA PRINCIPAL SUGERIDA:</span> Espada Longa - Agilidade, Corpo a Corpo, d8 físico, Uma Mão; Confiável: +1 em testes de ataque
+<span style="color:hsl(54, 100%, 83%)">ARMA SECUNDÁRIA SUGERIDA:</span> Espada Curta - Agilidade, Corpo a Corpo, d8 físico, Uma Mão; Emparelhada: +2 no dano da arma principal contra alvos em alcance Corpo a Corpo
+<span style="color:hsl(54, 100%, 83%)">ARMADURA SUGERIDA:</span> Armadura de Couro - Limites 6/13 - Pontuação 3<br>`;
+
                 text += `<strong>Domain:</strong> Midnight & Blade<br><br>`
 
                 text += `<strong>Grim Resolve:</strong> Spend 3 Hope to clear 2 Stress.<br>
@@ -699,6 +744,8 @@ You can only have one adversary Marked for Death at a time, and can’t transfer
                 break;
 
             case "Bard":
+                text2 += `<span style="color:hsl(54, 100%, 83%)">Agility</span> +0<br><span style="color:hsl(54, 100%, 83%)">Strength</span> -1<br><span style="color:hsl(54, 100%, 83%)">Finesse</span> +1<br><span style="color:hsl(54, 100%, 83%)">Instinct</span> +0<br><span style="color:hsl(54, 100%, 83%)">Presence</span> +2<br><span style="color:hsl(54, 100%, 83%)">Knowledge</span> +1`;
+
                 text += `<strong>Domain:</strong> Grace & Codex<br><br>`
 
                 text += `<strong>Make a Scene:</strong> Spend 3 Hope to temporarily Distract a target within Close range, giving them a -2 penalty to their Difficulty.<br>
@@ -1275,6 +1322,8 @@ At any point, when you’ve discovered the community you were once a part of, or
 
 
     document.getElementById('recursosText').innerHTML = text;
+    document.getElementById('atributosText').innerHTML = text2;
+    document.getElementById('itensText').innerHTML = text3;
 }
 
 const cartasDominio = [
@@ -1663,7 +1712,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         input.addEventListener('input', () => {
             // limite mínimo e máximo
-            if (input.value > 30) input.value = 30;
+            if (input.value > 15) input.value = 15;
             if (input.value < 0) input.value = 0;
 
             // atualiza os checkboxes instantaneamente
