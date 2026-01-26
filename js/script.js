@@ -148,16 +148,19 @@ function loadCards() {
       <div class="card-body-custom">
         <h5 class="card-title">${card.title ?? ''}</h5>
         <hr class="card-hr">
-        <div class="card-footer-custom">
-          <div class="card-date"><i class="bi bi-calendar-event"></i> ${card.date ?? ''}</div>
-          <div class="actions">
-            <button class="action-btn edit-btn" onclick="editCard(event, ${index})" title="Editar">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="action-btn delete-btn" onclick="deleteCard(event, ${index})" title="Deletar">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
+        <div class="card-footer-custom d-flex justify-content-between align-items-center">
+            <div class="card-date me-2">
+                <i class="bi bi-calendar-event"></i> ${card.date ?? ''}
+            </div>
+            
+            <div class="actions d-flex">
+                <button class="action-btn edit-btn me-2" onclick="editCard(event, ${index})" title="Editar">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button class="action-btn delete-btn" onclick="deleteCard(event, ${index})" title="Deletar">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
         </div>
       </div>
     `;
@@ -553,8 +556,13 @@ function backToCards() {
     if (cardsSection) cardsSection.classList.remove('hidden');
     if (fichaSection) fichaSection.classList.add('hidden');
 
-    // limpa hash (não faz reload)
-    if (window.location.hash && window.location.hash.startsWith('#ficha')) window.location.hash = '';
+    // limpa hash COMPLETAMENTE (não faz reload)
+    if (window.location.hash && window.location.hash.startsWith('#ficha')) {
+        // Usa history.replaceState para remover o # da URL
+        // O primeiro e segundo argumentos podem ser null ou objetos vazios.
+        // O terceiro argumento é o caminho da URL (sem o #).
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
     currentFichaIndex = null;
 }
 
@@ -729,12 +737,6 @@ function generateResourcesText() {
 
         switch (classchar) {
             case "Assassin":
-                text2 += `<span style="color:hsl(54, 100%, 83%)">Agilidade</span> +2<br><span style="color:hsl(54, 100%, 83%)">Força</span> -1<br><span style="color:hsl(54, 100%, 83%)">Destreza</span> -1<br><span style="color:hsl(54, 100%, 83%)">Instinto</span> +0<br><span style="color:hsl(54, 100%, 83%)">Presença</span> +0<br><span style="color:hsl(54, 100%, 83%)">Conhecimento</span> +1`;
-                text3 += `<span style="color:hsl(54, 100%, 83%)">E ESCOLHA TAMBÉM ENTRE:</span> uma lista de nomes com vários riscados OU um almofariz e pistilo gravado com um insígnia misteriosa`;
-                text3 += `<br><br><span style="color:hsl(54, 100%, 83%)">ARMA PRINCIPAL SUGERIDA:</span> Espada Longa - Agilidade, Corpo a Corpo, d8 físico, Uma Mão; Confiável: +1 em testes de ataque
-<span style="color:hsl(54, 100%, 83%)">ARMA SECUNDÁRIA SUGERIDA:</span> Espada Curta - Agilidade, Corpo a Corpo, d8 físico, Uma Mão; Emparelhada: +2 no dano da arma principal contra alvos em alcance Corpo a Corpo
-<span style="color:hsl(54, 100%, 83%)">ARMADURA SUGERIDA:</span> Armadura de Couro - Limites 6/13 - Pontuação 3<br>`;
-
                 text += `<strong>Domain:</strong> Midnight & Blade<br><br>`
 
                 text += `<strong>Grim Resolve:</strong> Spend 3 Hope to clear 2 Stress.<br>
@@ -744,8 +746,6 @@ You can only have one adversary Marked for Death at a time, and can’t transfer
                 break;
 
             case "Bard":
-                text2 += `<span style="color:hsl(54, 100%, 83%)">Agility</span> +0<br><span style="color:hsl(54, 100%, 83%)">Strength</span> -1<br><span style="color:hsl(54, 100%, 83%)">Finesse</span> +1<br><span style="color:hsl(54, 100%, 83%)">Instinct</span> +0<br><span style="color:hsl(54, 100%, 83%)">Presence</span> +2<br><span style="color:hsl(54, 100%, 83%)">Knowledge</span> +1`;
-
                 text += `<strong>Domain:</strong> Grace & Codex<br><br>`
 
                 text += `<strong>Make a Scene:</strong> Spend 3 Hope to temporarily Distract a target within Close range, giving them a -2 penalty to their Difficulty.<br>
@@ -1322,8 +1322,6 @@ At any point, when you’ve discovered the community you were once a part of, or
 
 
     document.getElementById('recursosText').innerHTML = text;
-    document.getElementById('atributosText').innerHTML = text2;
-    document.getElementById('itensText').innerHTML = text3;
 }
 
 const cartasDominio = [

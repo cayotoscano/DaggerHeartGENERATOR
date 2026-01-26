@@ -22,7 +22,7 @@
             <div class="d-flex align-items-center">
                 <!-- Icone à esquerda -->
                 <img src="img/dh-icon-logo.png" alt="Logo" class="navbar-icon me-2">
-                <a class="navbar-brand fw-bold" href="#">DH GENERATOR</a>
+                <a class="navbar-brand fw-bold" href="">DH GENERATOR</a>
             </div>
             <div id="ficha-count" class="text-white">
                 • 0 Personagens
@@ -49,23 +49,19 @@
                 <ul class="nav nav-tabs" id="fichaTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info"
-                            type="button" role="tab">Informações</button>
+                            type="button" role="tab">Resumo</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="atributos-tab" data-bs-toggle="tab" data-bs-target="#atributos"
-                            type="button" role="tab">Atributos & Evasão</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="dano-tab" data-bs-toggle="tab" data-bs-target="#dano" type="button"
-                            role="tab">Dano & Vida</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#recursos"
-                            type="button" role="tab">Recursos</button>
+                            type="button" role="tab">Geral</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="itens-tab" data-bs-toggle="tab" data-bs-target="#itens"
                             type="button" role="tab">Itens</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#recursos"
+                            type="button" role="tab">Recursos</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="dominios-tab" data-bs-toggle="tab" data-bs-target="#dominios"
@@ -116,7 +112,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Atributos & Evasão -->
+                    <!-- Geral -->
                     <div class="tab-pane fade" id="atributos" role="tabpanel">
                         <div class="atributos-grid">
                             <div class="atributo"><label>Agilidade</label><input type="number" id="attr-agi"
@@ -135,43 +131,34 @@
 
                         <hr class="atributos-separador">
 
-                        <div class="evasao-armadura-container">
-                            <div class="evasao-armadura-item">
-                                <h5>Evasão</h5>
-                                <input type="number" id="evasao" class="form-control" value="">
+                        <div class="lado-lado">
+
+                            <div class="evasao-armadura-container">
+                                <div class="evasao-armadura-item">
+                                    <h5>Evasão</h5>
+                                    <input type="number" id="evasao" class="form-control">
+                                </div>
                             </div>
-                            <div class="evasao-armadura-item">
-                                <h5>Proficiência</h5>
-                                <input type="number" id="proficiencia" class="form-control" value="">
+
+                            <div class="grupo-vida">
+                                <h5>Danos & Vida</h5>
+                                <div class="limiares-dano">
+                                    <span class="limiar">Menor <small>1 HP</small></span>
+                                    <input name="danoMenor" type="number" class="limiar-input">
+
+                                    <span class="limiar">Maior <small>2 HP</small></span>
+                                    <input name="danoMaior" type="number" class="limiar-input">
+
+                                    <span class="limiar">Severo <small>3 HP</small></span>
+                                </div>
                             </div>
-                            <div class="evasao-armadura-item">
-                                <h5>Dano-Arma</h5>
-                                <input type="text" id="dano_at" class="form-control" value="" autocomplete="off">
-                            </div>
+
                         </div>
+
 
                         <hr class="atributos-separador">
 
-                        <div class="grupo recursos">
-                            <h5>Atributos Sugeridos</h5>
-                            <div id="atributosText" class="mb-2" style="white-space: pre-line;"></div>
-                        </div>
-                    </div>
-                    <!-- Dano & Vida -->
-                    <div class="tab-pane fade" id="dano" role="tabpanel">
                         <div class="grupo vida">
-                            <h5>Danos & Vida</h5>
-                            <div class="limiares-dano">
-                                <span class="limiar">Menor <small>1 HP</small></span>
-                                <input name="danoMenor" type="number" class="limiar-input">
-
-                                <span class="limiar">Maior <small>2 HP</small></span>
-                                <input name="danoMaior" type="number" class="limiar-input">
-
-                                <span class="limiar">Severo <small>3 HP</small></span>
-                            </div>
-
-                            <hr class="atributos-separador">
 
                             <div class="recursos-container">
                                 <div class="grupo">
@@ -202,11 +189,10 @@
                                     <div class="check-group" id="esperancaChecks"></div>
                                 </div>
                             </div>
-
                         </div>
-                    </div>
-                    <!-- Recursos -->
-                    <div class="tab-pane fade" id="recursos" role="tabpanel">
+
+                        <hr class="atributos-separador">
+
                         <div class="grupo recursos">
                             <h5>Experiências</h5>
                             <div class="exp-item">
@@ -231,13 +217,16 @@
                             </div>
                         </div>
 
-                        <hr class="atributos-separador">
+                    </div>
 
+                    <!-- Recursos -->
+                    <div class="tab-pane fade" id="recursos" role="tabpanel">
                         <div class="grupo recursos">
                             <h5>Recursos</h5>
                             <div id="recursosText" class="mb-2" style="white-space: pre-line;"></div>
                         </div>
                     </div>
+
                     <!-- Itens -->
                     <div class="tab-pane fade" id="itens" role="tabpanel">
                         <div class="grupo itens">
@@ -259,14 +248,8 @@
                                 <textarea id="outrosItens" class="item-text" style="min-height: 120px;"></textarea>
                             </div>
                         </div>
-
-                        <hr class="atributos-separador">
-
-                        <div class="grupo recursos">
-                            <h5>Itens Sugeridos</h5>
-                            <div id="itensText" class="mb-2" style="white-space: pre-line;"></div>
-                        </div>
                     </div>
+
                     <!-- dominios -->
                     <div class="tab-pane fade" id="dominios" role="tabpanel">
 
@@ -318,6 +301,7 @@
 
 
                     </div>
+
                     <!-- LvL Up -->
                     <div class="tab-pane fade" id="level" role="tabpanel">
                         <!-- Tier 2: Níveis 2–4 -->
@@ -366,7 +350,8 @@
                                 </li>
                             </ul>
                             <p>
-                                Atualize seu nível e ajuste seus limites de dano de acordo. Pegue uma carta de domínio
+                                Atualize seu nível e ajuste seus limites de dano de acordo. Pegue uma carta de
+                                domínio
                                 adicional do seu nível ou inferior de um domínio ao qual você tenha acesso.
                             </p>
                         </div>
@@ -378,17 +363,20 @@
                                 No nível 5, ganhe uma Experiência adicional com +2 e limpe todas as marcações nos
                                 atributos do personagem. Em seguida, obtenha um bônus de +1 na sua Proficiência.
                             </p>
-                            <p>Escolha duas opções da lista abaixo ou qualquer opção do Tier anterior e marque-as:</p>
+                            <p>Escolha duas opções da lista abaixo ou qualquer opção do Tier anterior e marque-as:
+                            </p>
                             <ul>
                                 <li>
                                     <input type="checkbox" />
                                     <input type="checkbox" />
-                                    <input type="checkbox" /> Ganhe +1 em dois atributos do personagem não marcados e
+                                    <input type="checkbox" /> Ganhe +1 em dois atributos do personagem não marcados
+                                    e
                                     marque-os.
                                 </li>
                                 <li>
                                     <input type="checkbox" />
-                                    <input type="checkbox" /> Ganhe permanentemente um slot adicional de Pontos de Vida.
+                                    <input type="checkbox" /> Ganhe permanentemente um slot adicional de Pontos de
+                                    Vida.
                                 </li>
                                 <li>
                                     <input type="checkbox" />
@@ -405,7 +393,8 @@
                                     <input type="checkbox" /> Ganhe permanentemente +1 na sua Evasão.
                                 </li>
                                 <li>
-                                    <input type="checkbox" /> Pegue uma carta de subclasse melhorada. Em seguida, risque
+                                    <input type="checkbox" /> Pegue uma carta de subclasse melhorada. Em seguida,
+                                    risque
                                     a opção de multiclass deste Tier.
                                 </li>
                                 <li>
@@ -420,7 +409,8 @@
                                 </li>
                             </ul>
                             <p>
-                                Atualize seu nível e ajuste seus limites de dano de acordo. Pegue uma carta de domínio
+                                Atualize seu nível e ajuste seus limites de dano de acordo. Pegue uma carta de
+                                domínio
                                 adicional do seu nível ou inferior de um domínio ao qual você tenha acesso.
                             </p>
                         </div>
@@ -432,17 +422,20 @@
                                 No nível 8, ganhe uma Experiência adicional com +2 e limpe todas as marcações nos
                                 atributos do personagem. Em seguida, obtenha um bônus de +1 na sua Proficiência.
                             </p>
-                            <p>Escolha duas opções da lista abaixo ou qualquer opção do Tier anterior e marque-as:</p>
+                            <p>Escolha duas opções da lista abaixo ou qualquer opção do Tier anterior e marque-as:
+                            </p>
                             <ul>
                                 <li>
                                     <input type="checkbox" />
                                     <input type="checkbox" />
-                                    <input type="checkbox" /> Ganhe +1 em dois atributos do personagem não marcados e
+                                    <input type="checkbox" /> Ganhe +1 em dois atributos do personagem não marcados
+                                    e
                                     marque-os.
                                 </li>
                                 <li>
                                     <input type="checkbox" />
-                                    <input type="checkbox" /> Ganhe permanentemente um slot adicional de Pontos de Vida.
+                                    <input type="checkbox" /> Ganhe permanentemente um slot adicional de Pontos de
+                                    Vida.
                                 </li>
                                 <li>
                                     <input type="checkbox" />
@@ -459,7 +452,8 @@
                                     <input type="checkbox" /> Ganhe permanentemente +1 na sua Evasão.
                                 </li>
                                 <li>
-                                    <input type="checkbox" /> Pegue uma carta de subclasse melhorada. Em seguida, risque
+                                    <input type="checkbox" /> Pegue uma carta de subclasse melhorada. Em seguida,
+                                    risque
                                     a opção de multiclass deste Tier.
                                 </li>
                                 <li>
@@ -474,7 +468,8 @@
                                 </li>
                             </ul>
                             <p>
-                                Atualize seu nível e ajuste seus limites de dano de acordo. Pegue uma carta de domínio
+                                Atualize seu nível e ajuste seus limites de dano de acordo. Pegue uma carta de
+                                domínio
                                 adicional do seu nível ou inferior de um domínio ao qual você tenha acesso.
                             </p>
                         </div>
