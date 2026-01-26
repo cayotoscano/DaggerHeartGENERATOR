@@ -316,10 +316,32 @@ function saveFicha() {
         ],
         // --- itens ---
         itens: {
-            armadura: document.getElementById("armadura").value,
-            armaPrincipal: document.getElementById("armaPrincipal").value,
-            armaSecundaria: document.getElementById("armaSecundaria").value,
-            outrosItens: document.getElementById("outrosItens").value
+            primaria: {
+                nome: document.getElementById("primariaNome")?.value || "",
+                traco: document.getElementById("primariaTraco")?.value || "",
+                alcance: document.getElementById("primariaAlcance")?.value || "",
+                tipo: document.getElementById("primariaTipo")?.value || "",
+                dano: document.getElementById("primariaDano")?.value || "",
+                caracteristica: document.getElementById("primariaCaracteristica")?.value || ""
+            },
+
+            secundaria: {
+                nome: document.getElementById("secNome")?.value || "",
+                traco: document.getElementById("secTraco")?.value || "",
+                alcance: document.getElementById("secAlcance")?.value || "",
+                tipo: document.getElementById("secTipo")?.value || "",
+                dano: document.getElementById("secDano")?.value || "",
+                caracteristica: document.getElementById("secCaracteristica")?.value || ""
+            },
+
+            armadura: {
+                nome: document.getElementById("armNome")?.value || "",
+                limiares: document.getElementById("armLimiares")?.value || "",
+                valor: document.getElementById("armValor")?.value || "",
+                caracteristicas: document.getElementById("armCaracteristicas")?.value || ""
+            },
+
+            inventario: document.getElementById("inventario")?.value || ""
         },
 
         // --- dominio ---
@@ -506,10 +528,31 @@ function openFicha(index) {
 
     // Itens
     const itens = ficha.itens || {};
-    document.getElementById("armadura").value = itens.armadura || "";
-    document.getElementById("armaPrincipal").value = itens.armaPrincipal || "";
-    document.getElementById("armaSecundaria").value = itens.armaSecundaria || "";
-    document.getElementById("outrosItens").value = itens.outrosItens || "";
+
+    const p = itens.primaria || {};
+    const s = itens.secundaria || {};
+    const a = itens.armadura || {};
+
+    document.getElementById("primariaNome").value = p.nome || "";
+    document.getElementById("primariaTraco").value = p.traco || "";
+    document.getElementById("primariaAlcance").value = p.alcance || "";
+    document.getElementById("primariaTipo").value = p.tipo || "";
+    document.getElementById("primariaDano").value = p.dano || "";
+    document.getElementById("primariaCaracteristica").value = p.caracteristica || "";
+
+    document.getElementById("secNome").value = s.nome || "";
+    document.getElementById("secTraco").value = s.traco || "";
+    document.getElementById("secAlcance").value = s.alcance || "";
+    document.getElementById("secTipo").value = s.tipo || "";
+    document.getElementById("secDano").value = s.dano || "";
+    document.getElementById("secCaracteristica").value = s.caracteristica || "";
+
+    document.getElementById("armNome").value = a.nome || "";
+    document.getElementById("armLimiares").value = a.limiares || "";
+    document.getElementById("armValor").value = a.valor || "";
+    document.getElementById("armCaracteristicas").value = a.caracteristicas || "";
+
+    document.getElementById("inventario").value = itens.inventario || "";
 
     // Dominio
     document.getElementById('filtro-lvl').value = '';

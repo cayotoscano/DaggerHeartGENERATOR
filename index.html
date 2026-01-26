@@ -229,24 +229,128 @@
 
                     <!-- Itens -->
                     <div class="tab-pane fade" id="itens" role="tabpanel">
-                        <div class="grupo itens">
-                            <h5>Itens</h5>
-                            <div class="item-field">
-                                <label for="armadura">Armadura</label>
-                                <textarea id="armadura" class="item-text"></textarea>
+                        <div class="grupo itens container-fluid p-0">
+
+
+                            <h5>Primária</h5>
+
+                            <!-- Nome -->
+                            <div class="mb-2">
+                                <label for="primariaNome" class="form-label">Nome</label>
+                                <input id="primariaNome" class="form-control item-text" type="text">
                             </div>
-                            <div class="item-field">
-                                <label for="armaPrincipal">Arma Principal</label>
-                                <textarea id="armaPrincipal" class="item-text"></textarea>
+
+                            <!-- 4 campos na mesma linha -->
+                            <div class="row g-2 mb-2">
+                                <div class="col-6 col-md-3">
+                                    <label for="primariaTraco" class="form-label">Traço</label>
+                                    <input id="primariaTraco" class="form-control item-text">
+                                </div>
+
+                                <div class="col-6 col-md-3">
+                                    <label for="primariaAlcance" class="form-label">Alcance</label>
+                                    <input id="primariaAlcance" class="form-control item-text">
+                                </div>
+
+                                <div class="col-6 col-md-3">
+                                    <label for="primariaTipo" class="form-label">Tipo</label>
+                                    <input id="primariaTipo" class="form-control item-text">
+                                </div>
+
+                                <div class="col-6 col-md-3">
+                                    <label for="primariaDano" class="form-label">Dado de Dano</label>
+                                    <input id="primariaDano" class="form-control item-text">
+                                </div>
                             </div>
-                            <div class="item-field">
-                                <label for="armaSecundaria">Arma Secundária</label>
-                                <textarea id="armaSecundaria" class="item-text"></textarea>
+
+                            <!-- Características -->
+                            <div class="mb-3">
+                                <label for="primariaCaracteristica" class="form-label">Características</label>
+                                <textarea id="primariaCaracteristica" class="form-control item-text"></textarea>
                             </div>
-                            <div class="item-field">
-                                <label for="outrosItens">Outros Itens</label>
-                                <textarea id="outrosItens" class="item-text" style="min-height: 120px;"></textarea>
+
+
+                            <hr class="atributos-separador">
+
+
+                            <h5 class="mt-4">Secundária</h5>
+
+                            <!-- Nome -->
+                            <div class="mb-2">
+                                <label for="secNome" class="form-label">Nome</label>
+                                <input id="secNome" class="form-control item-text">
                             </div>
+
+                            <!-- 4 campos na mesma linha -->
+                            <div class="row g-2 mb-2">
+                                <div class="col-6 col-md-3">
+                                    <label for="secTraco" class="form-label">Traço</label>
+                                    <input id="secTraco" class="form-control item-text">
+                                </div>
+
+                                <div class="col-6 col-md-3">
+                                    <label for="secAlcance" class="form-label">Alcance</label>
+                                    <input id="secAlcance" class="form-control item-text">
+                                </div>
+
+                                <div class="col-6 col-md-3">
+                                    <label for="secTipo" class="form-label">Tipo</label>
+                                    <input id="secTipo" class="form-control item-text">
+                                </div>
+
+                                <div class="col-6 col-md-3">
+                                    <label for="secDano" class="form-label">Dado de Dano</label>
+                                    <input id="secDano" class="form-control item-text">
+                                </div>
+                            </div>
+
+                            <!-- Características -->
+                            <div class="mb-3">
+                                <label for="secCaracteristica" class="form-label">Características</label>
+                                <textarea id="secCaracteristica" class="form-control item-text"></textarea>
+                            </div>
+
+
+                            <hr class="atributos-separador">
+
+
+                            <h5 class="mt-4">Armadura</h5>
+
+                            <!-- Nome -->
+                            <div class="mb-2">
+                                <label for="armNome" class="form-label">Nome</label>
+                                <input id="armNome" class="form-control item-text">
+                            </div>
+
+                            <!-- 2 campos na mesma linha -->
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label for="armLimiares" class="form-label">Limiares Base</label>
+                                    <input id="armLimiares" class="form-control item-text">
+                                </div>
+
+                                <div class="col-6">
+                                    <label for="armValor" class="form-label">Valor Base</label>
+                                    <input id="armValor" class="form-control item-text">
+                                </div>
+                            </div>
+
+                            <!-- Características -->
+                            <div class="mb-3">
+                                <label for="armCaracteristicas" class="form-label">Características</label>
+                                <textarea id="armCaracteristicas" class="form-control item-text"></textarea>
+                            </div>
+
+
+                            <hr class="atributos-separador">
+
+                            <h5 class="mt-4">Inventário</h5>
+
+                            <div>
+                                <textarea id="inventario" class="form-control item-text"
+                                    style="min-height:120px;"></textarea>
+                            </div>
+
                         </div>
                     </div>
 
