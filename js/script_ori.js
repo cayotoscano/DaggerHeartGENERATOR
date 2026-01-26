@@ -590,6 +590,33 @@ document.querySelectorAll('.item-text').forEach(textarea => {
     autoResize(textarea); // chama ao carregar para já ajustar se tiver valor salvo
 });
 
+
+// Fallback leve: se você já tem uma função mais completa para gerar texto de recursos,
+// ela poderá sobrescrever esta. Aqui apenas evitamos erros caso não exista.
+
+
+// ---------- Inicialização ----------
+populateDropdowns();
+loadCards();
+
+// sincroniza hash quando usuário navega
+window.addEventListener('hashchange', handleHashChange);
+// checa hash atual na carga (caso o link venha com #fichaX)
+handleHashChange();
+
+// exporta funções para serem chamadas por atributos onclick inline (se necessário)
+window.askDeleteFicha = askDeleteFicha;
+window.confirmDeleteFicha = confirmDeleteFicha;
+window.saveModalFicha = saveModalFicha;
+window.saveFicha = saveFicha;
+window.deleteCard = deleteCard;
+window.editCard = editCard;
+window.openModalFicha = openModalFicha;
+window.openFicha = openFicha;
+window.backToCards = backToCards;
+
+
+
 function generateResourcesText() {
     const race = document.getElementById('ficha-race').value;
     const classchar = document.getElementById('ficha-class').value;
@@ -1644,51 +1671,32 @@ function removerSelecionada(id) {
     gerarCartasDominios();
 }
 
-// =======================
-// INIT ÚNICO (FORMA CERTA)
-// =======================
+// Eventos
+document.getElementById("filtro-lvl").addEventListener("change", gerarCartasDominios);
+document.getElementById("filtro-dominio").addEventListener("change", gerarCartasDominios);
 
-function init() {
+document.addEventListener("click", e => {
+    if (e.target.classList.contains("select-btn") && !e.target.classList.contains("selected")) {
+        const id = parseInt(e.target.dataset.id);
+        const carta = cartasDominio.find(c => c.id === id);
+        if (carta) carta.selecionada = true;
+        gerarCartasDominios();
+    }
+});
 
-    // ---------- Inicialização principal ----------
-    populateDropdowns();
-    loadCards();
-    handleHashChange();
-    gerarCartasDominios();
-    generateResourcesText();
+document.addEventListener("DOMContentLoaded", gerarCartasDominios);
 
+// sempre atualizar quando mudar qualquer select
+document.getElementById('ficha-race').addEventListener('change', generateResourcesText);
+document.getElementById('ficha-class').addEventListener('change', generateResourcesText);
+document.getElementById('ficha-subclass').addEventListener('change', generateResourcesText);
+document.getElementById('ficha-community').addEventListener('change', generateResourcesText);
 
-    // ---------- auto resize item-text ----------
-    document.querySelectorAll('.item-text').forEach(textarea => {
-        textarea.addEventListener('input', () => autoResize(textarea));
-        autoResize(textarea);
-    });
+// também atualizar na carga inicial
+window.addEventListener('DOMContentLoaded', generateResourcesText);
 
-
-    // ---------- filtros domínio ----------
-    document.getElementById("filtro-lvl")?.addEventListener("change", gerarCartasDominios);
-    document.getElementById("filtro-dominio")?.addEventListener("change", gerarCartasDominios);
-
-
-    // ---------- clique selecionar carta ----------
-    document.addEventListener("click", e => {
-        if (e.target.classList.contains("select-btn") && !e.target.classList.contains("selected")) {
-            const id = parseInt(e.target.dataset.id);
-            const carta = cartasDominio.find(c => c.id === id);
-            if (carta) carta.selecionada = true;
-            gerarCartasDominios();
-        }
-    });
-
-
-    // ---------- selects ficha ----------
-    document.getElementById('ficha-race')?.addEventListener('change', generateResourcesText);
-    document.getElementById('ficha-class')?.addEventListener('change', generateResourcesText);
-    document.getElementById('ficha-subclass')?.addEventListener('change', generateResourcesText);
-    document.getElementById('ficha-community')?.addEventListener('change', generateResourcesText);
-
-
-    // ---------- recursos (HP/Armadura/etc) ----------
+document.addEventListener('DOMContentLoaded', () => {
+    // lista dos recursos e ids correspondentes dos check-groups
     const recursos = [
         { inputId: 'hpQtd', checkId: 'hpChecks' },
         { inputId: 'armaduraQtd', checkId: 'armaduraChecks' },
@@ -1701,51 +1709,25 @@ function init() {
         if (!input) return;
 
         input.addEventListener('input', () => {
+            // limite mínimo e máximo
             if (input.value > 15) input.value = 15;
             if (input.value < 0) input.value = 0;
+
+            // atualiza os checkboxes instantaneamente
             generateChecks(checkId, input.value);
         });
 
+        // inicializa os checks na carga da página
         generateChecks(checkId, input.value);
     });
 
-
-    // ---------- exp-text auto height ----------
     document.querySelectorAll(".exp-text").forEach((textarea) => {
         textarea.addEventListener("input", function () {
-            this.style.height = "auto";
-            this.style.height = this.scrollHeight + "px";
+            this.style.height = "auto"; // reseta antes de medir
+            this.style.height = this.scrollHeight + "px"; // ajusta ao conteúdo
         });
 
+        // ajusta altura inicial (caso já tenha texto salvo)
         textarea.style.height = textarea.scrollHeight + "px";
     });
-
-
-    // ---------- hash ----------
-    window.addEventListener('hashchange', handleHashChange);
-
-
-    // ---------- export global (onclick inline) ----------
-    window.askDeleteFicha = askDeleteFicha;
-    window.confirmDeleteFicha = confirmDeleteFicha;
-    window.saveModalFicha = saveModalFicha;
-    window.saveFicha = saveFicha;
-    window.deleteCard = deleteCard;
-    window.editCard = editCard;
-    window.openModalFicha = openModalFicha;
-    window.openFicha = openFicha;
-    window.backToCards = backToCards;
-}
-
-
-// =======================
-// EVENTOS CORRETOS
-// =======================
-
-// primeira carga
-document.addEventListener('DOMContentLoaded', init);
-
-// CORREÇÃO CRÍTICA MOBILE (bfcache)
-window.addEventListener('pageshow', (e) => {
-    if (e.persisted) init();
 });
