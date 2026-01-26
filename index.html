@@ -162,17 +162,17 @@
 
                             <div class="recursos-container">
                                 <div class="grupo">
-                                    <label>Quantidade de HP</label>
-                                    <input type="number" id="hpQtd" min="0" max="30" value="6"
-                                        oninput="generateChecks('hpChecks', this.value)">
-                                    <div class="check-group" id="hpChecks"></div>
-                                </div>
-
-                                <div class="grupo">
                                     <label>Quantidade de Armadura</label>
                                     <input type="number" id="armaduraQtd" min="0" max="30" value="6"
                                         oninput="generateChecks('armaduraChecks', this.value)">
                                     <div class="check-group" id="armaduraChecks"></div>
+                                </div>
+
+                                <div class="grupo">
+                                    <label>Quantidade de HP</label>
+                                    <input type="number" id="hpQtd" min="0" max="30" value="6"
+                                        oninput="generateChecks('hpChecks', this.value)">
+                                    <div class="check-group" id="hpChecks"></div>
                                 </div>
 
                                 <div class="grupo">
@@ -236,36 +236,39 @@
 
                             <!-- Nome -->
                             <div class="mb-2">
-                                <label for="primariaNome" class="form-label">Nome</label>
+                                <label style="color: #FFF6A8;" for="primariaNome" class="form-label">Nome</label>
                                 <input id="primariaNome" class="form-control item-text" type="text">
                             </div>
 
                             <!-- 4 campos na mesma linha -->
                             <div class="row g-2 mb-2">
                                 <div class="col-6 col-md-3">
-                                    <label for="primariaTraco" class="form-label">Traço</label>
+                                    <label style="color: #FECB73;" for="primariaTraco" class="form-label">Traço</label>
                                     <input id="primariaTraco" class="form-control item-text">
                                 </div>
 
                                 <div class="col-6 col-md-3">
-                                    <label for="primariaAlcance" class="form-label">Alcance</label>
+                                    <label style="color: #FECB73;" for="primariaAlcance"
+                                        class="form-label">Alcance</label>
                                     <input id="primariaAlcance" class="form-control item-text">
                                 </div>
 
                                 <div class="col-6 col-md-3">
-                                    <label for="primariaTipo" class="form-label">Tipo</label>
+                                    <label style="color: #FECB73;" for="primariaTipo" class="form-label">Tipo</label>
                                     <input id="primariaTipo" class="form-control item-text">
                                 </div>
 
                                 <div class="col-6 col-md-3">
-                                    <label for="primariaDano" class="form-label">Dado de Dano</label>
+                                    <label style="color: #FECB73;" for="primariaDano" class="form-label">Dado de
+                                        Dano</label>
                                     <input id="primariaDano" class="form-control item-text">
                                 </div>
                             </div>
 
                             <!-- Características -->
                             <div class="mb-3">
-                                <label for="primariaCaracteristica" class="form-label">Características</label>
+                                <label style="color: #FECB73;" for="primariaCaracteristica"
+                                    class="form-label">Características</label>
                                 <textarea id="primariaCaracteristica" class="form-control item-text"></textarea>
                             </div>
 
@@ -277,36 +280,37 @@
 
                             <!-- Nome -->
                             <div class="mb-2">
-                                <label for="secNome" class="form-label">Nome</label>
+                                <label style="color: #FECB73;" for="secNome" class="form-label">Nome</label>
                                 <input id="secNome" class="form-control item-text">
                             </div>
 
                             <!-- 4 campos na mesma linha -->
                             <div class="row g-2 mb-2">
                                 <div class="col-6 col-md-3">
-                                    <label for="secTraco" class="form-label">Traço</label>
+                                    <label style="color: #FECB73;" for="secTraco" class="form-label">Traço</label>
                                     <input id="secTraco" class="form-control item-text">
                                 </div>
 
                                 <div class="col-6 col-md-3">
-                                    <label for="secAlcance" class="form-label">Alcance</label>
+                                    <label style="color: #FECB73;" for="secAlcance" class="form-label">Alcance</label>
                                     <input id="secAlcance" class="form-control item-text">
                                 </div>
 
                                 <div class="col-6 col-md-3">
-                                    <label for="secTipo" class="form-label">Tipo</label>
+                                    <label style="color: #FECB73;" for="secTipo" class="form-label">Tipo</label>
                                     <input id="secTipo" class="form-control item-text">
                                 </div>
 
                                 <div class="col-6 col-md-3">
-                                    <label for="secDano" class="form-label">Dado de Dano</label>
+                                    <label style="color: #FECB73;" for="secDano" class="form-label">Dado de Dano</label>
                                     <input id="secDano" class="form-control item-text">
                                 </div>
                             </div>
 
                             <!-- Características -->
                             <div class="mb-3">
-                                <label for="secCaracteristica" class="form-label">Características</label>
+                                <label style="color: #FECB73;" for="secCaracteristica"
+                                    class="form-label">Características</label>
                                 <textarea id="secCaracteristica" class="form-control item-text"></textarea>
                             </div>
 
@@ -318,26 +322,28 @@
 
                             <!-- Nome -->
                             <div class="mb-2">
-                                <label for="armNome" class="form-label">Nome</label>
+                                <label style="color: #FECB73;" for="armNome" class="form-label">Nome</label>
                                 <input id="armNome" class="form-control item-text">
                             </div>
 
                             <!-- 2 campos na mesma linha -->
                             <div class="row g-2 mb-2">
                                 <div class="col-6">
-                                    <label for="armLimiares" class="form-label">Limiares Base</label>
+                                    <label style="color: #FECB73;" for="armLimiares" class="form-label">Limiares
+                                        Base</label>
                                     <input id="armLimiares" class="form-control item-text">
                                 </div>
 
                                 <div class="col-6">
-                                    <label for="armValor" class="form-label">Valor Base</label>
+                                    <label style="color: #FECB73;" for="armValor" class="form-label">Valor Base</label>
                                     <input id="armValor" class="form-control item-text">
                                 </div>
                             </div>
 
                             <!-- Características -->
                             <div class="mb-3">
-                                <label for="armCaracteristicas" class="form-label">Características</label>
+                                <label style="color: #FECB73;" for="armCaracteristicas"
+                                    class="form-label">Características</label>
                                 <textarea id="armCaracteristicas" class="form-control item-text"></textarea>
                             </div>
 
