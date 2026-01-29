@@ -67,7 +67,13 @@ function getElementValue(id, defaultValue = '') {
  */
 function setElementValue(id, value) {
     const el = document.getElementById(id);
-    if (el) el.value = value;
+    if (el) {
+        if (el.type === 'checkbox') {
+            el.checked = !!value;
+        } else {
+            el.value = value;
+        }
+    }
 }
 
 /**
@@ -409,6 +415,13 @@ function saveFicha() {
         ],
 
         itens: {
+            proficiencias: {
+                prof2: document.getElementById('prof2')?.checked || false,
+                prof3: document.getElementById('prof3')?.checked || false,
+                prof4: document.getElementById('prof4')?.checked || false,
+                prof5: document.getElementById('prof5')?.checked || false,
+                prof6: document.getElementById('prof6')?.checked || false
+            },
             primaria: {
                 nome: getElementValue("primariaNome"),
                 traco: getElementValue("primariaTraco"),
@@ -598,6 +611,13 @@ function openFicha(index) {
     const p = itens.primaria || {};
     const s = itens.secundaria || {};
     const a = itens.armadura || {};
+    const prof = itens.proficiencias || {};
+
+    setElementValue("prof2", prof.prof2 || false);
+    setElementValue("prof3", prof.prof3 || false);
+    setElementValue("prof4", prof.prof4 || false);
+    setElementValue("prof5", prof.prof5 || false);
+    setElementValue("prof6", prof.prof6 || false);
 
     setElementValue("primariaNome", p.nome || "");
     setElementValue("primariaTraco", p.traco || "");
