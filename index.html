@@ -60,10 +60,6 @@
                             type="button" role="tab">Itens</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#recursos"
-                            type="button" role="tab">Recursos</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
                         <button class="nav-link" id="dominios-tab" data-bs-toggle="tab" data-bs-target="#dominios"
                             type="button" role="tab">Dominios</button>
                     </li>
@@ -110,6 +106,25 @@
                                 <label>Subclasse</label>
                                 <select id="ficha-subclass" class="form-select" disabled></select>
                             </div>
+                        </div>
+
+                        <hr class="atributos-separador">
+
+                        <div class="grupo recursos">
+                            <h5>Recursos</h5>
+                            <div class="mb-2">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="check-especializacao"
+                                        onchange="updateSubclassVisibility('especializacao')">
+                                    <label class="form-check-label" for="check-especializacao">Especialização</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="check-maestria"
+                                        onchange="updateSubclassVisibility('maestria')">
+                                    <label class="form-check-label" for="check-maestria">Maestria</label>
+                                </div>
+                            </div>
+                            <div id="recursosText" class="mb-2" style="white-space: pre-line;"></div>
                         </div>
                     </div>
                     <!-- Geral -->
@@ -217,26 +232,6 @@
                             </div>
                         </div>
 
-                    </div>
-
-                    <!-- Recursos -->
-                    <div class="tab-pane fade" id="recursos" role="tabpanel">
-                        <div class="grupo recursos">
-                            <h5>Recursos</h5>
-                            <div class="mb-2">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="check-especializacao"
-                                        onchange="updateSubclassVisibility('especializacao')">
-                                    <label class="form-check-label" for="check-especializacao">Especialização</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="check-maestria"
-                                        onchange="updateSubclassVisibility('maestria')">
-                                    <label class="form-check-label" for="check-maestria">Maestria</label>
-                                </div>
-                            </div>
-                            <div id="recursosText" class="mb-2" style="white-space: pre-line;"></div>
-                        </div>
                     </div>
 
                     <!-- Itens -->
