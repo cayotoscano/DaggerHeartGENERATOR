@@ -1,10 +1,30 @@
-const container = document.getElementById('cards-container');
+/**
+ * DaggerHeart Generator - Script Corrigido
+ * Correções aplicadas:
+ * 1. Função removerSelecionada duplicada removida
+ * 2. Event listeners movidos para fora de generateResourcesText
+ * 3. Variáveis renomeadas para evitar conflitos de escopo
+ * 4. Verificações de null adicionadas
+ * 5. Constantes para magic numbers
+ * 6. Padrão consistente de verificação de elementos
+ */
+
+// ========== CONSTANTES ==========
+const MAX_CARTAS_MAO = 5;
+const MAX_RESOURCE_VALUE = 15;
+const MIN_RESOURCE_VALUE = 0;
+const DEFAULT_RESOURCE_VALUE = 6;
+
+// ========== ELEMENTOS DOM (cache) ==========
+const cardsContainer = document.getElementById('cards-container');
 const cardsSection = document.getElementById('cards-section');
 const fichaSection = document.getElementById('ficha-section');
 
+// ========== ESTADO ==========
 let currentFichaIndex = null;
 let deleteIndex = null;
 
+// ========== DADOS ESTÁTICOS ==========
 const subclasses = {
     Assassin: ["Poisoners Guild", "Executioners Guild"],
     Bard: ["Troubadour", "Wordsmith"],
@@ -21,19 +41,106 @@ const subclasses = {
     Wizard: ["School of Knowledge", "School of War"]
 };
 
-// instancia os modais UMA vez
+const races = ["Aetheris", "Clank", "Drakona", "Dwarf", "Earthkin", "Elf", "Emberkin", "Faerie", "Faun", "Firbolg", "Fungril", "Galapa", "Giant", "Gnome", "Goblin", "Halfling", "Human", "Infernis", "Katari", "Orc", "Ribbet", "Simiah", "Skykin", "Tidekin"];
+const classes = ["Assassin", "Bard", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Warlock", "Warrior", "Witch", "Wizard"];
+const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Highborne", "Loreborne", "Orderborne", "Reborne", "Ridgeborne", "Seaborne", "Slyborne", "Underborne", "Wanderborne", "Warborne", "Wildborne"];
+
+// ========== MODAIS (instância única) ==========
 const modalFichaEl = document.getElementById('modalFicha');
 const modalFicha = modalFichaEl ? new bootstrap.Modal(modalFichaEl) : null;
 
 const modalDeleteEl = document.getElementById('modalDelete');
 const modalDelete = modalDeleteEl ? new bootstrap.Modal(modalDeleteEl) : null;
 
-// listas estáticas
-const races = ["Aetheris", "Clank", "Drakona", "Dwarf", "Earthkin", "Elf", "Emberkin", "Faerie", "Faun", "Firbolg", "Fungril", "Galapa", "Giant", "Gnome", "Goblin", "Halfling", "Human", "Infernis", "Katari", "Orc", "Ribbet", "Simiah", "Skykin", "Tidekin"];
-const classes = ["Assassin", "Bard", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Warlock", "Warrior", "Witch", "Wizard"];
-const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Highborne", "Loreborne", "Orderborne", "Reborne", "Ridgeborne", "Seaborne", "Slyborne", "Underborne", "Wanderborne", "Warborne", "Wildborne"];
+// ========== HELPERS ==========
 
-// ---------- UI / Dropdowns ----------
+/**
+ * Obtém valor de elemento de forma segura
+ */
+function getElementValue(id, defaultValue = '') {
+    const el = document.getElementById(id);
+    return el ? el.value : defaultValue;
+}
+
+/**
+ * Define valor de elemento de forma segura
+ */
+function setElementValue(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
+}
+
+/**
+ * Obtém dados do localStorage com tratamento de erro
+ */
+function getStoredCards() {
+    try {
+        const data = localStorage.getItem('rpgCards');
+        return data ? JSON.parse(data) : [];
+    } catch (e) {
+        console.error('Erro ao ler localStorage:', e);
+        return [];
+    }
+}
+
+/**
+ * Salva dados no localStorage com tratamento de erro
+ */
+function saveCards(cards) {
+    try {
+        localStorage.setItem('rpgCards', JSON.stringify(cards));
+        return true;
+    } catch (e) {
+        console.error('Erro ao salvar localStorage:', e);
+        alert('Erro ao salvar dados. Verifique o armazenamento do navegador.');
+        return false;
+    }
+}
+
+/**
+ * Auto resize para textareas
+ */
+function autoResize(el) {
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = (el.scrollHeight) + "px";
+}
+
+/**
+ * Gera checkboxes para recursos
+ */
+function generateChecks(id, qtd) {
+    const checksContainer = document.getElementById(id);
+    if (!checksContainer) return;
+    checksContainer.innerHTML = '';
+    qtd = parseInt(qtd, 10) || 0;
+    for (let i = 0; i < qtd; i++) {
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        checksContainer.appendChild(cb);
+    }
+}
+
+/**
+ * Exibe toast de notificação
+ */
+function showToast(message) {
+    const toastContainer = document.getElementById("toast-container");
+    if (!toastContainer) return;
+
+    const toast = document.createElement("div");
+    toast.className = "toast-msg";
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// ========== UI / Dropdowns ==========
+
 function populateDropdowns() {
     const raceSelect = document.getElementById('ficha-race');
     const classSelect = document.getElementById('ficha-class');
@@ -42,27 +149,23 @@ function populateDropdowns() {
     if (raceSelect) {
         raceSelect.innerHTML = '<option value="">Selecione</option>';
         races.forEach(r => raceSelect.appendChild(new Option(r, r)));
-        raceSelect.onchange = generateResourcesText;
     }
 
     if (classSelect) {
         classSelect.innerHTML = '<option value="">Selecione</option>';
         classes.forEach(c => classSelect.appendChild(new Option(c, c)));
-        classSelect.onchange = () => { updateSubclasses(); generateResourcesText(); };
     }
 
     if (communitySelect) {
         communitySelect.innerHTML = '<option value="">Selecione</option>';
         communities.forEach(c => communitySelect.appendChild(new Option(c, c)));
-        communitySelect.onchange = generateResourcesText;
     }
 
-    // inicializa subclasse conforme classe atual (se houver)
     updateSubclasses();
 }
 
 function updateFichaCount() {
-    const cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
+    const cards = getStoredCards();
     const countEl = document.getElementById('ficha-count');
     if (countEl) {
         countEl.textContent = `• ${cards.length} Personagens`;
@@ -70,24 +173,25 @@ function updateFichaCount() {
 }
 
 function updateSubclasses() {
-    const cls = document.getElementById('ficha-class')?.value;
-    const subclass = document.getElementById('ficha-subclass');
-    if (!subclass) return;
-    subclass.innerHTML = '';
+    const cls = getElementValue('ficha-class');
+    const subclassSelect = document.getElementById('ficha-subclass');
+    if (!subclassSelect) return;
+
+    subclassSelect.innerHTML = '';
     if (cls && subclasses[cls]) {
-        subclasses[cls].forEach(sc => subclass.appendChild(new Option(sc, sc)));
-        subclass.disabled = false;
+        subclasses[cls].forEach(sc => subclassSelect.appendChild(new Option(sc, sc)));
+        subclassSelect.disabled = false;
     } else {
-        subclass.appendChild(new Option('Selecione uma classe primeiro', ''));
-        subclass.disabled = true;
+        subclassSelect.appendChild(new Option('Selecione uma classe primeiro', ''));
+        subclassSelect.disabled = true;
     }
 }
 
-// ---------- Cartões (Lista) ----------
+// ========== Cartões (Lista) ==========
+
 function getDefaultCardHeight() {
-    // tenta ler um card existente (se houver), senão cria um temporário escondido para medir
     try {
-        const existing = container.querySelector('.card:not(.new-card)');
+        const existing = cardsContainer?.querySelector('.card:not(.new-card)');
         if (existing) {
             const h = existing.getBoundingClientRect().height;
             if (h > 10) return h;
@@ -95,11 +199,7 @@ function getDefaultCardHeight() {
 
         const tmp = document.createElement('div');
         tmp.className = 'card shadow-sm';
-        tmp.style.visibility = 'hidden';
-        tmp.style.position = 'absolute';
-        tmp.style.left = '-9999px';
-        tmp.style.top = '-9999px';
-        // adiciona conteúdo mínimo para aproximar altura real
+        tmp.style.cssText = 'visibility:hidden;position:absolute;left:-9999px;top:-9999px';
         tmp.innerHTML = `<div style="padding:12px"><h5 style="margin:0">T</h5><p style="margin:0">x</p></div>`;
         document.body.appendChild(tmp);
         const h = tmp.getBoundingClientRect().height || 250;
@@ -111,32 +211,23 @@ function getDefaultCardHeight() {
 }
 
 function loadCards() {
-    if (!container) return;
-    container.innerHTML = '';
-    const cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
-
-    // mede altura "padrão" do card (respeita o CSS atual)
+    if (!cardsContainer) return;
+    cardsContainer.innerHTML = '';
+    const cards = getStoredCards();
     const defaultHeight = getDefaultCardHeight();
 
-    // botão "novo card"
+    // Botão "novo card"
     const newCard = document.createElement('div');
     newCard.className = 'card new-card shadow-sm';
-    newCard.style.height = `${defaultHeight}px`;
-    newCard.style.display = 'flex';
-    newCard.style.flexDirection = 'column';
-    newCard.style.overflow = 'hidden';
+    newCard.style.cssText = `height:${defaultHeight}px;display:flex;flex-direction:column;overflow:hidden`;
     newCard.innerHTML = '<span style="font-size:2rem;display:flex;align-items:center;justify-content:center;height:100%;">+</span>';
     newCard.onclick = (e) => { e.stopPropagation(); openModalFicha(null, true); };
-    container.appendChild(newCard);
+    cardsContainer.appendChild(newCard);
 
     cards.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'card shadow-sm';
-        // Mantém exatamente a altura do card original
-        cardEl.style.height = `${defaultHeight}px`;
-        cardEl.style.display = 'flex';
-        cardEl.style.flexDirection = 'column';
-        cardEl.style.overflow = 'hidden';
+        cardEl.style.cssText = `height:${defaultHeight}px;display:flex;flex-direction:column;overflow:hidden`;
 
         const hasImage = !!card.image;
         const imageHtml = hasImage
@@ -144,66 +235,64 @@ function loadCards() {
             : `<div class="card-img-wrap no-image"></div>`;
 
         cardEl.innerHTML = `
-      ${imageHtml}
-      <div class="card-body-custom">
-        <h5 class="card-title">${card.title ?? ''}</h5>
-        <hr class="card-hr">
-        <div class="card-footer-custom d-flex justify-content-between align-items-center">
-            <div class="card-date me-2">
-                <i class="bi bi-calendar-event"></i> ${card.date ?? ''}
+            ${imageHtml}
+            <div class="card-body-custom">
+                <h5 class="card-title">${card.title ?? ''}</h5>
+                <hr class="card-hr">
+                <div class="card-footer-custom d-flex justify-content-between align-items-center">
+                    <div class="card-date me-2">
+                        <i class="bi bi-calendar-event"></i> ${card.date ?? ''}
+                    </div>
+                    <div class="actions d-flex">
+                        <button class="action-btn edit-btn me-2" data-action="edit" data-index="${index}" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="action-btn delete-btn" data-action="delete" data-index="${index}" title="Deletar">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            
-            <div class="actions d-flex">
-                <button class="action-btn edit-btn me-2" onclick="editCard(event, ${index})" title="Editar">
-                    <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="action-btn delete-btn" onclick="deleteCard(event, ${index})" title="Deletar">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-        </div>
-      </div>
-    `;
+        `;
 
-        // abre ficha ao clicar no card
-        cardEl.onclick = () => openFicha(index);
+        cardEl.onclick = (e) => {
+            if (e.target.closest('[data-action]')) return;
+            openFicha(index);
+        };
 
-        container.appendChild(cardEl);
+        cardsContainer.appendChild(cardEl);
     });
+
     updateFichaCount();
 }
 
+// ========== Hash / Navegação ==========
 
-// ---------- Hash / Navegação ----------
 function handleHashChange() {
-    if (window.location.hash && window.location.hash.startsWith('#ficha')) {
+    if (window.location.hash?.startsWith('#ficha')) {
         const idx = parseInt(window.location.hash.replace('#ficha', ''), 10);
         if (!isNaN(idx)) openFicha(idx);
     } else {
-        // sem hash: volta para a lista
         backToCards();
     }
 }
 
-// ---------- Modal de edição (mini-card) ----------
+// ========== Modal de edição (mini-card) ==========
+
 function openModalFicha(index, isNew = false) {
     currentFichaIndex = index;
     const titleEl = document.getElementById('modalTitle');
     if (titleEl) titleEl.innerText = isNew ? 'Nova Ficha' : 'Editar Ficha';
 
     if (isNew) {
-        const nameEl = document.getElementById('modal-name');
-        const urlEl = document.getElementById('modal-url');
-        if (nameEl) nameEl.value = '';
-        if (urlEl) urlEl.value = '';
+        setElementValue('modal-name', '');
+        setElementValue('modal-url', '');
     } else {
-        const cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
+        const cards = getStoredCards();
         const card = cards[index];
         if (card) {
-            const nameEl = document.getElementById('modal-name');
-            const urlEl = document.getElementById('modal-url');
-            if (nameEl) nameEl.value = card.title ?? '';
-            if (urlEl) urlEl.value = card.image ?? '';
+            setElementValue('modal-name', card.title ?? '');
+            setElementValue('modal-url', card.image ?? '');
         }
     }
 
@@ -211,14 +300,17 @@ function openModalFicha(index, isNew = false) {
 }
 
 function saveModalFicha() {
-    const name = document.getElementById('modal-name')?.value.trim() || '';
-    const urlInput = document.getElementById('modal-url')?.value.trim() || '';
+    const name = getElementValue('modal-name').trim();
+    const urlInput = getElementValue('modal-url').trim();
     const fileEl = document.getElementById('modal-file');
-    const fileInput = fileEl?.files ? fileEl.files[0] : null;
+    const fileInput = fileEl?.files?.[0] || null;
 
-    if (!name) return alert('Nome é obrigatório');
+    if (!name) {
+        alert('Nome é obrigatório');
+        return;
+    }
 
-    let cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
+    let cards = getStoredCards();
     const date = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 
     const saveFichaData = (imageData) => {
@@ -231,60 +323,63 @@ function saveModalFicha() {
             currentFichaIndex = cards.length - 1;
         }
 
-        localStorage.setItem('rpgCards', JSON.stringify(cards));
-        // esconde modal via getInstance (seguro)
-        const modalInst = bootstrap.Modal.getInstance(modalFichaEl);
-        if (modalInst) modalInst.hide();
-
-        loadCards();
-
-        // atualiza hash para o card salvo (mantém referência)
-        window.location.hash = `ficha${currentFichaIndex}`;
+        if (saveCards(cards)) {
+            const modalInst = bootstrap.Modal.getInstance(modalFichaEl);
+            if (modalInst) modalInst.hide();
+            loadCards();
+            window.location.hash = `ficha${currentFichaIndex}`;
+        }
     };
 
     if (fileInput) {
         const reader = new FileReader();
-        reader.onload = function (e) {
-            saveFichaData(e.target.result); // imagem em Base64
-        };
+        reader.onload = (e) => saveFichaData(e.target.result);
         reader.readAsDataURL(fileInput);
     } else {
         saveFichaData(urlInput);
     }
 }
 
-// ---------- Salvar / Editar ficha completa ----------
+// ========== Tier Checkboxes ==========
+
+function getTierCheckboxes(tierId) {
+    const tier = document.getElementById(tierId);
+    if (!tier) return [];
+    return Array.from(tier.querySelectorAll('input[type="checkbox"]')).map(chk => chk.checked);
+}
+
+// ========== Salvar / Editar ficha completa ==========
+
 function saveFicha() {
-    let cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
+    let cards = getStoredCards();
 
-    // coleta campos (valores numéricos convertidos)
     const fichaData = {
-        title: document.getElementById('ficha-name')?.value.trim() || '',
-        level: parseInt(document.getElementById('ficha-level')?.value, 10) || 1,
-        race: document.getElementById('ficha-race')?.value || '',
-        classchar: document.getElementById('ficha-class')?.value || '',
-        subclass: document.getElementById('ficha-subclass')?.value || '',
-        community: document.getElementById('ficha-community')?.value || '',
+        title: getElementValue('ficha-name').trim(),
+        level: parseInt(getElementValue('ficha-level'), 10) || 1,
+        race: getElementValue('ficha-race'),
+        classchar: getElementValue('ficha-class'),
+        subclass: getElementValue('ficha-subclass'),
+        community: getElementValue('ficha-community'),
 
-        // atributos
         attributes: {
-            agi: parseInt(document.getElementById('attr-agi')?.value, 10) || 0,
-            forca: parseInt(document.getElementById('attr-for')?.value, 10) || 0,
-            fin: parseInt(document.getElementById('attr-fin')?.value, 10) || 0,
-            inst: parseInt(document.getElementById('attr-inst')?.value, 10) || 0,
-            pre: parseInt(document.getElementById('attr-pre')?.value, 10) || 0,
-            con: parseInt(document.getElementById('attr-con')?.value, 10) || 0,
-            evasao: parseInt(document.getElementById('evasao')?.value, 10) || 0,
-            proficiencia: parseInt(document.getElementById('proficiencia')?.value, 10) || 0,
-            dano_at: document.getElementById('dano_at')?.value || '',
+            agi: parseInt(getElementValue('attr-agi'), 10) || 0,
+            forca: parseInt(getElementValue('attr-for'), 10) || 0,
+            fin: parseInt(getElementValue('attr-fin'), 10) || 0,
+            inst: parseInt(getElementValue('attr-inst'), 10) || 0,
+            pre: parseInt(getElementValue('attr-pre'), 10) || 0,
+            con: parseInt(getElementValue('attr-con'), 10) || 0,
+            evasao: parseInt(getElementValue('evasao'), 10) || 0,
+            proficiencia: parseInt(getElementValue('proficiencia'), 10) || 0,
+            dano_at: getElementValue('dano_at'),
         },
 
-        // recursos / quantidades
         resources: {
-            hp: parseInt(document.getElementById('hpQtd')?.value, 10) || 6,
-            armadura: parseInt(document.getElementById('armaduraQtd')?.value, 10) || 6,
-            estresse: parseInt(document.getElementById('estresseQtd')?.value, 10) || 6,
-            esperanca: parseInt(document.getElementById('esperancaQtd')?.value, 10) || 6,
+            hp: parseInt(getElementValue('hpQtd'), 10) || DEFAULT_RESOURCE_VALUE,
+            armadura: parseInt(getElementValue('armaduraQtd'), 10) || DEFAULT_RESOURCE_VALUE,
+            estresse: parseInt(getElementValue('estresseQtd'), 10) || DEFAULT_RESOURCE_VALUE,
+            esperanca: parseInt(getElementValue('esperancaQtd'), 10) || DEFAULT_RESOURCE_VALUE,
+            especializacao: document.getElementById('check-especializacao')?.checked || false,
+            maestria: document.getElementById('check-maestria')?.checked || false,
             checks: {
                 hp: Array.from(document.querySelectorAll('#hpChecks input[type="checkbox"]')).map(chk => chk.checked),
                 armadura: Array.from(document.querySelectorAll('#armaduraChecks input[type="checkbox"]')).map(chk => chk.checked),
@@ -293,58 +388,52 @@ function saveFicha() {
             }
         },
 
-        // dano (captura por name, sem exigir id)
         damage: {
             menor: document.querySelector('input[name="danoMenor"]')?.value || '',
             maior: document.querySelector('input[name="danoMaior"]')?.value || ''
         },
 
-        // --- Experiências ---
         experiencias: [
-            document.getElementById('experiencia1')?.value.trim() || '',
-            document.getElementById('experiencia2')?.value.trim() || '',
-            document.getElementById('experiencia3')?.value.trim() || '',
-            document.getElementById('experiencia4')?.value.trim() || '',
-            document.getElementById('experiencia5')?.value.trim() || ''
+            getElementValue('experiencia1').trim(),
+            getElementValue('experiencia2').trim(),
+            getElementValue('experiencia3').trim(),
+            getElementValue('experiencia4').trim(),
+            getElementValue('experiencia5').trim()
         ],
         experienciasNum: [
-            document.getElementById('experiencia1-num')?.value.trim() || '',
-            document.getElementById('experiencia2-num')?.value.trim() || '',
-            document.getElementById('experiencia3-num')?.value.trim() || '',
-            document.getElementById('experiencia4-num')?.value.trim() || '',
-            document.getElementById('experiencia5-num')?.value.trim() || ''
+            getElementValue('experiencia1-num').trim(),
+            getElementValue('experiencia2-num').trim(),
+            getElementValue('experiencia3-num').trim(),
+            getElementValue('experiencia4-num').trim(),
+            getElementValue('experiencia5-num').trim()
         ],
-        // --- itens ---
+
         itens: {
             primaria: {
-                nome: document.getElementById("primariaNome")?.value || "",
-                traco: document.getElementById("primariaTraco")?.value || "",
-                alcance: document.getElementById("primariaAlcance")?.value || "",
-                tipo: document.getElementById("primariaTipo")?.value || "",
-                dano: document.getElementById("primariaDano")?.value || "",
-                caracteristica: document.getElementById("primariaCaracteristica")?.value || ""
+                nome: getElementValue("primariaNome"),
+                traco: getElementValue("primariaTraco"),
+                alcance: getElementValue("primariaAlcance"),
+                tipo: getElementValue("primariaTipo"),
+                dano: getElementValue("primariaDano"),
+                caracteristica: getElementValue("primariaCaracteristica")
             },
-
             secundaria: {
-                nome: document.getElementById("secNome")?.value || "",
-                traco: document.getElementById("secTraco")?.value || "",
-                alcance: document.getElementById("secAlcance")?.value || "",
-                tipo: document.getElementById("secTipo")?.value || "",
-                dano: document.getElementById("secDano")?.value || "",
-                caracteristica: document.getElementById("secCaracteristica")?.value || ""
+                nome: getElementValue("secNome"),
+                traco: getElementValue("secTraco"),
+                alcance: getElementValue("secAlcance"),
+                tipo: getElementValue("secTipo"),
+                dano: getElementValue("secDano"),
+                caracteristica: getElementValue("secCaracteristica")
             },
-
             armadura: {
-                nome: document.getElementById("armNome")?.value || "",
-                limiares: document.getElementById("armLimiares")?.value || "",
-                valor: document.getElementById("armValor")?.value || "",
-                caracteristicas: document.getElementById("armCaracteristicas")?.value || ""
+                nome: getElementValue("armNome"),
+                limiares: getElementValue("armLimiares"),
+                valor: getElementValue("armValor"),
+                caracteristicas: getElementValue("armCaracteristicas")
             },
-
-            inventario: document.getElementById("inventario")?.value || ""
+            inventario: getElementValue("inventario")
         },
 
-        // --- dominio ---
         dominios: cartasDominio.map(carta => ({
             id: carta.id,
             selecionada: carta.selecionada,
@@ -356,10 +445,7 @@ function saveFicha() {
             tier3: getTierCheckboxes('tier3'),
             tier4: getTierCheckboxes('tier4')
         }
-
     };
-
-
 
     if (currentFichaIndex !== null && cards[currentFichaIndex]) {
         const old = cards[currentFichaIndex];
@@ -374,44 +460,43 @@ function saveFicha() {
         showToast("Ficha salva com sucesso ✅");
     }
 
-    localStorage.setItem('rpgCards', JSON.stringify(cards));
-    window.location.hash = `ficha${currentFichaIndex}`;
-    loadCards();
-    updateFichaCount();
+    if (saveCards(cards)) {
+        window.location.hash = `ficha${currentFichaIndex}`;
+        loadCards();
+        updateFichaCount();
+    }
 }
 
-function getTierCheckboxes(tierId) {
-    const tier = document.getElementById(tierId);
-    if (!tier) return [];
-    return Array.from(tier.querySelectorAll('input[type="checkbox"]')).map(chk => chk.checked);
-}
+// ========== Deletar ==========
 
-// ---------- Deletar ----------
 function askDeleteFicha(index) {
     deleteIndex = index;
     if (modalDelete) modalDelete.show();
 }
 
-// ---------- Deletar ----------
 function confirmDeleteFicha() {
-    let cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
+    let cards = getStoredCards();
     if (deleteIndex !== null && cards[deleteIndex]) {
         cards.splice(deleteIndex, 1);
-        localStorage.setItem('rpgCards', JSON.stringify(cards));
-        showToast("Ficha deletada 🗑️");
+        if (saveCards(cards)) {
+            showToast("Ficha deletada 🗑️");
+        }
     }
     deleteIndex = null;
+
     if (modalDeleteEl) {
         const modalInst = bootstrap.Modal.getInstance(modalDeleteEl);
         if (modalInst) modalInst.hide();
     }
+
     backToCards();
     loadCards();
-    if (window.location.hash && window.location.hash.startsWith('#ficha')) window.location.hash = '';
+    if (window.location.hash?.startsWith('#ficha')) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
     updateFichaCount();
 }
 
-// ---------- Finalizar edição ----------
 function finishEditingFicha() {
     saveFicha();
     backToCards();
@@ -429,84 +514,69 @@ function editCard(event, index) {
     openModalFicha(index, false);
 }
 
-// ---------- Toast ----------
-function showToast(message) {
-    const container = document.getElementById("toast-container");
-    if (!container) return;
+// ========== Abrir ficha detalhada ==========
 
-    const toast = document.createElement("div");
-    toast.className = "toast-msg";
-    toast.textContent = message;
-
-    container.appendChild(toast);
-
-    // remove após a animação
-    setTimeout(() => {
-        toast.remove();
-    }, 3000); // 3 segundos
-}
-
-
-// ---------- Abrir ficha detalhada ----------
 function openFicha(index) {
-    const cards = JSON.parse(localStorage.getItem('rpgCards')) || [];
+    const cards = getStoredCards();
     const ficha = cards[index];
     if (!ficha) return;
 
-    // Mantém a URL sincronizada
     window.location.hash = `ficha${index}`;
 
-    // Mostra a seção da ficha
     if (cardsSection) cardsSection.classList.add('hidden');
     if (fichaSection) fichaSection.classList.remove('hidden');
 
     currentFichaIndex = index;
 
     // Campos básicos
-    if (document.getElementById('ficha-name')) document.getElementById('ficha-name').value = ficha.title || '';
-    if (document.getElementById('ficha-level')) document.getElementById('ficha-level').value = ficha.level || 1;
-    if (document.getElementById('ficha-race')) document.getElementById('ficha-race').value = ficha.race || '';
-    if (document.getElementById('ficha-community')) document.getElementById('ficha-community').value = ficha.community || '';
-    if (document.getElementById('ficha-class')) document.getElementById('ficha-class').value = ficha.classchar || '';
+    setElementValue('ficha-name', ficha.title || '');
+    setElementValue('ficha-level', ficha.level || 1);
+    setElementValue('ficha-race', ficha.race || '');
+    setElementValue('ficha-community', ficha.community || '');
+    setElementValue('ficha-class', ficha.classchar || '');
 
-    updateSubclasses(); // popula subclasse
-    if (document.getElementById('ficha-subclass')) document.getElementById('ficha-subclass').value = ficha.subclass || '';
-    setTimeout(generateResourcesText, 0);
+    updateSubclasses();
+    setElementValue('ficha-subclass', ficha.subclass || '');
 
-    // --- Atributos & Defesa ---
+
+    // Atributos & Defesa
     const attrs = ficha.attributes || {};
-    if (document.getElementById('attr-agi')) document.getElementById('attr-agi').value = attrs.agi ?? '';
-    if (document.getElementById('attr-for')) document.getElementById('attr-for').value = attrs.forca ?? '';
-    if (document.getElementById('attr-fin')) document.getElementById('attr-fin').value = attrs.fin ?? '';
-    if (document.getElementById('attr-inst')) document.getElementById('attr-inst').value = attrs.inst ?? '';
-    if (document.getElementById('attr-pre')) document.getElementById('attr-pre').value = attrs.pre ?? '';
-    if (document.getElementById('attr-con')) document.getElementById('attr-con').value = attrs.con ?? '';
-    if (document.getElementById('evasao')) document.getElementById('evasao').value = attrs.evasao ?? '';
-    if (document.getElementById('proficiencia')) document.getElementById('proficiencia').value = attrs.proficiencia ?? '';
-    if (document.getElementById('dano_at')) document.getElementById('dano_at').value = attrs.dano_at ?? '';
+    setElementValue('attr-agi', attrs.agi ?? '');
+    setElementValue('attr-for', attrs.forca ?? '');
+    setElementValue('attr-fin', attrs.fin ?? '');
+    setElementValue('attr-inst', attrs.inst ?? '');
+    setElementValue('attr-pre', attrs.pre ?? '');
+    setElementValue('attr-con', attrs.con ?? '');
+    setElementValue('evasao', attrs.evasao ?? '');
+    setElementValue('proficiencia', attrs.proficiencia ?? '');
+    setElementValue('dano_at', attrs.dano_at ?? '');
 
-    // --- Dano & Vida ---
+    // Dano
+    const dmg = ficha.damage || {};
     const danoMenorInput = document.querySelector('input[name="danoMenor"]');
     const danoMaiorInput = document.querySelector('input[name="danoMaior"]');
-    const dmg = ficha.damage || {};
     if (danoMenorInput) danoMenorInput.value = dmg.menor ?? '';
     if (danoMaiorInput) danoMaiorInput.value = dmg.maior ?? '';
 
-    // --- (HP / Armadura / Estresse / Esperança) ---
+    // Recursos
     const res = ficha.resources || {};
-    if (document.getElementById('hpQtd')) document.getElementById('hpQtd').value = res.hp ?? 6;
-    if (document.getElementById('armaduraQtd')) document.getElementById('armaduraQtd').value = res.armadura ?? 6;
-    if (document.getElementById('estresseQtd')) document.getElementById('estresseQtd').value = res.estresse ?? 6;
-    if (document.getElementById('esperancaQtd')) document.getElementById('esperancaQtd').value = res.esperanca ?? 6;
-    // quadradinhos
-    generateChecks('hpChecks', res.hp ?? 6);
-    generateChecks('armaduraChecks', res.armadura ?? 6);
-    generateChecks('estresseChecks', res.estresse ?? 6);
-    generateChecks('esperancaChecks', res.esperanca ?? 6);
+    setElementValue('hpQtd', res.hp ?? DEFAULT_RESOURCE_VALUE);
+    setElementValue('armaduraQtd', res.armadura ?? DEFAULT_RESOURCE_VALUE);
+    setElementValue('estresseQtd', res.estresse ?? DEFAULT_RESOURCE_VALUE);
+    setElementValue('esperancaQtd', res.esperanca ?? DEFAULT_RESOURCE_VALUE);
+
+    const specCheck = document.getElementById('check-especializacao');
+    const mastCheck = document.getElementById('check-maestria');
+    if (specCheck) specCheck.checked = !!res.especializacao;
+    if (mastCheck) mastCheck.checked = !!res.maestria;
+
+    generateChecks('hpChecks', res.hp ?? DEFAULT_RESOURCE_VALUE);
+    generateChecks('armaduraChecks', res.armadura ?? DEFAULT_RESOURCE_VALUE);
+    generateChecks('estresseChecks', res.estresse ?? DEFAULT_RESOURCE_VALUE);
+    generateChecks('esperancaChecks', res.esperanca ?? DEFAULT_RESOURCE_VALUE);
 
     if (res.checks) {
-        const grupos = ['hp', 'armadura', 'estresse', 'esperanca'];
-        grupos.forEach(grupo => {
+        ['hp', 'armadura', 'estresse', 'esperanca'].forEach(grupo => {
             const estados = res.checks[grupo];
             if (Array.isArray(estados)) {
                 const checkboxes = document.querySelectorAll(`#${grupo}Checks input[type="checkbox"]`);
@@ -515,54 +585,49 @@ function openFicha(index) {
         });
     }
 
-    // recursos (experiencias)
+    // Experiencias
     const experiencias = ficha.experiencias || [];
-    const experienciasNum = ficha.experienciasNum || []; // <- novo array pros números
+    const experienciasNum = ficha.experienciasNum || [];
     for (let i = 1; i <= 5; i++) {
-        const expEl = document.getElementById(`experiencia${i}`);
-        if (expEl) expEl.value = experiencias[i - 1] || '';
-
-        const expNumEl = document.getElementById(`experiencia${i}-num`);
-        if (expNumEl) expNumEl.value = experienciasNum[i - 1] || '';
+        setElementValue(`experiencia${i}`, experiencias[i - 1] || '');
+        setElementValue(`experiencia${i}-num`, experienciasNum[i - 1] || '');
     }
 
     // Itens
     const itens = ficha.itens || {};
-
     const p = itens.primaria || {};
     const s = itens.secundaria || {};
     const a = itens.armadura || {};
 
-    document.getElementById("primariaNome").value = p.nome || "";
-    document.getElementById("primariaTraco").value = p.traco || "";
-    document.getElementById("primariaAlcance").value = p.alcance || "";
-    document.getElementById("primariaTipo").value = p.tipo || "";
-    document.getElementById("primariaDano").value = p.dano || "";
-    document.getElementById("primariaCaracteristica").value = p.caracteristica || "";
+    setElementValue("primariaNome", p.nome || "");
+    setElementValue("primariaTraco", p.traco || "");
+    setElementValue("primariaAlcance", p.alcance || "");
+    setElementValue("primariaTipo", p.tipo || "");
+    setElementValue("primariaDano", p.dano || "");
+    setElementValue("primariaCaracteristica", p.caracteristica || "");
 
-    document.getElementById("secNome").value = s.nome || "";
-    document.getElementById("secTraco").value = s.traco || "";
-    document.getElementById("secAlcance").value = s.alcance || "";
-    document.getElementById("secTipo").value = s.tipo || "";
-    document.getElementById("secDano").value = s.dano || "";
-    document.getElementById("secCaracteristica").value = s.caracteristica || "";
+    setElementValue("secNome", s.nome || "");
+    setElementValue("secTraco", s.traco || "");
+    setElementValue("secAlcance", s.alcance || "");
+    setElementValue("secTipo", s.tipo || "");
+    setElementValue("secDano", s.dano || "");
+    setElementValue("secCaracteristica", s.caracteristica || "");
 
-    document.getElementById("armNome").value = a.nome || "";
-    document.getElementById("armLimiares").value = a.limiares || "";
-    document.getElementById("armValor").value = a.valor || "";
-    document.getElementById("armCaracteristicas").value = a.caracteristicas || "";
+    setElementValue("armNome", a.nome || "");
+    setElementValue("armLimiares", a.limiares || "");
+    setElementValue("armValor", a.valor || "");
+    setElementValue("armCaracteristicas", a.caracteristicas || "");
 
-    document.getElementById("inventario").value = itens.inventario || "";
+    setElementValue("inventario", itens.inventario || "");
 
-    // Dominio
-    document.getElementById('filtro-lvl').value = '';
-    document.getElementById('filtro-dominio').value = '';
+    // Domínio
+    setElementValue('filtro-lvl', '');
+    setElementValue('filtro-dominio', '');
 
     cartasDominio.forEach(c => {
         c.selecionada = false;
         c.naMao = false;
     });
-
 
     if (ficha.dominios && Array.isArray(ficha.dominios)) {
         ficha.dominios.forEach(d => {
@@ -574,771 +639,341 @@ function openFicha(index) {
         });
     }
 
+    // Level Up
     const levelUp = ficha.levelUp || {};
     ['tier2', 'tier3', 'tier4'].forEach(tierId => {
         const estados = levelUp[tierId] || [];
         const checkboxes = document.querySelectorAll(`#${tierId} input[type="checkbox"]`);
         checkboxes.forEach((chk, i) => {
-            chk.checked = !!estados[i]; // marca/desmarca conforme salvo
+            chk.checked = !!estados[i];
         });
     });
 
-
-    gerarCartasDominios(); // todas as cartas
-    atualizarSelecionadas(); // aba Selecionadas
-    atualizarMao(); // aba Mão
-
-
-
-    // atualiza texto de recursos (usa selects atuais)
+    gerarCartasDominios();
+    atualizarSelecionadas();
+    atualizarMao();
     generateResourcesText();
 }
 
-// ---------- Voltar para lista ----------
+// ========== Voltar para lista ==========
+
 function backToCards() {
     if (cardsSection) cardsSection.classList.remove('hidden');
     if (fichaSection) fichaSection.classList.add('hidden');
 
-    // limpa hash COMPLETAMENTE (não faz reload)
-    if (window.location.hash && window.location.hash.startsWith('#ficha')) {
-        // Usa history.replaceState para remover o # da URL
-        // O primeiro e segundo argumentos podem ser null ou objetos vazios.
-        // O terceiro argumento é o caminho da URL (sem o #).
+    if (window.location.hash?.startsWith('#ficha')) {
         history.replaceState(null, '', window.location.pathname + window.location.search);
     }
     currentFichaIndex = null;
 }
 
-// ---------- Helpers ----------
-function generateChecks(id, qtd) {
-    const container = document.getElementById(id);
-    if (!container) return;
-    container.innerHTML = '';
-    qtd = parseInt(qtd, 10) || 0;
-    for (let i = 0; i < qtd; i++) {
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        container.appendChild(cb);
+// ========== DADOS DE RAÇAS (imagens) ==========
+
+const raceImages = {
+    "Aetheris": "img3/Races/Aetheris.png",
+    "Clank": "img3/Races/Clank.png",
+    "Drakona": "img3/Races/Drakona.png",
+    "Dwarf": "img3/Races/Dwarf.png",
+    "Earthkin": "img3/Races/Earthkin.png",
+    "Elf": "img3/Races/Elf.png",
+    "Emberkin": "img3/Races/Emberkin.png",
+    "Faerie": "img3/Races/Faerie.png",
+    "Faun": "img3/Races/Faun.png",
+    "Firbolg": "img3/Races/Firbolg.png",
+    "Fungril": "img3/Races/Fungril.png",
+    "Galapa": "img3/Races/Galapa.png",
+    "Giant": "img3/Races/Giant.png",
+    "Gnome": "img3/Races/Gnome.png",
+    "Goblin": "img3/Races/Goblin.png",
+    "Halfling": "img3/Races/Halfling.png",
+    "Human": "img3/Races/Human.png",
+    "Infernis": "img3/Races/Infernis.png",
+    "Katari": "img3/Races/Katari.png",
+    "Orc": "img3/Races/Orc.png",
+    "Ribbet": "img3/Races/Ribbet.png",
+    "Simiah": "img3/Races/Simiah.png",
+    "Skykin": "img3/Races/Skykin.png",
+    "Tidekin": "img3/Races/Tidekin.png"
+};
+
+// ========== DADOS DE CLASSES (imagens) ==========
+
+const classImages = {
+    "Assassin": "img3/Classes/Assassin.png",
+    "Bard": "img3/Classes/Bard.png",
+    "Brawler": "img3/Classes/Brawler.png",
+    "Druid": "img3/Classes/Druid.png",
+    "Guardian": "img3/Classes/Guardian.png",
+    "Ranger": "img3/Classes/Ranger.png",
+    "Rogue": "img3/Classes/Rogue.png",
+    "Seraph": "img3/Classes/Seraph.png",
+    "Sorcerer": "img3/Classes/Sorcerer.png",
+    "Warlock": "img3/Classes/Warlock.png",
+    "Warrior": "img3/Classes/Warrior.png",
+    "Witch": "img3/Classes/Witch.png",
+    "Wizard": "img3/Classes/Wizard.png"
+};
+
+// ========== DADOS DE SUBCLASSES (imagens - 3 cartas por subclasse) ==========
+
+const subclassImages = {
+    // Assassin
+    "Poisoners Guild": [
+        "img3/Subclasses/Poisoners Guild1.png",
+        "img3/Subclasses/Poisoners Guild2.png",
+        "img3/Subclasses/Poisoners Guild3.png"
+    ],
+    "Executioners Guild": [
+        "img3/Subclasses/Executioners Guild1.png",
+        "img3/Subclasses/Executioners Guild2.png",
+        "img3/Subclasses/Executioners Guild3.png"
+    ],
+    // Bard
+    "Troubadour": [
+        "img3/Subclasses/Troubadour1.png",
+        "img3/Subclasses/Troubadour2.png",
+        "img3/Subclasses/Troubadour3.png"
+    ],
+    "Wordsmith": [
+        "img3/Subclasses/Wordsmith1.png",
+        "img3/Subclasses/Wordsmith2.png",
+        "img3/Subclasses/Wordsmith3.png"
+    ],
+    // Brawler
+    "Juggernaut": [
+        "img3/Subclasses/Juggernaut1.png",
+        "img3/Subclasses/Juggernaut2.png",
+        "img3/Subclasses/Juggernaut3.png"
+    ],
+    "Martial Artist": [
+        "img3/Subclasses/Martial Artist1.png",
+        "img3/Subclasses/Martial Artist2.png",
+        "img3/Subclasses/Martial Artist3.png"
+    ],
+    // Druid
+    "Warden of the Elements": [
+        "img3/Subclasses/Warden of the Elements1.png",
+        "img3/Subclasses/Warden of the Elements2.png",
+        "img3/Subclasses/Warden of the Elements3.png"
+    ],
+    "Warden of Renewal": [
+        "img3/Subclasses/Warden of Renewal1.png",
+        "img3/Subclasses/Warden of Renewal2.png",
+        "img3/Subclasses/Warden of Renewal3.png"
+    ],
+    // Guardian
+    "Stalwart": [
+        "img3/Subclasses/Stalwart1.png",
+        "img3/Subclasses/Stalwart2.png",
+        "img3/Subclasses/Stalwart3.png"
+    ],
+    "Vengeance": [
+        "img3/Subclasses/Vengeance1.png",
+        "img3/Subclasses/Vengeance2.png",
+        "img3/Subclasses/Vengeance3.png"
+    ],
+    // Ranger
+    "Wayfinder": [
+        "img3/Subclasses/Wayfinder1.png",
+        "img3/Subclasses/Wayfinder2.png",
+        "img3/Subclasses/Wayfinder3.png"
+    ],
+    "Beastbound": [
+        "img3/Subclasses/Beastbound1.png",
+        "img3/Subclasses/Beastbound2.png",
+        "img3/Subclasses/Beastbound3.png"
+    ],
+    // Rogue
+    "Nightwalker": [
+        "img3/Subclasses/Nightwalker1.png",
+        "img3/Subclasses/Nightwalker2.png",
+        "img3/Subclasses/Nightwalker3.png"
+    ],
+    "Syndicate": [
+        "img3/Subclasses/Syndicate1.png",
+        "img3/Subclasses/Syndicate2.png",
+        "img3/Subclasses/Syndicate3.png"
+    ],
+    // Seraph
+    "Divine Wielder": [
+        "img3/Subclasses/Divine Wielder1.png",
+        "img3/Subclasses/Divine Wielder2.png",
+        "img3/Subclasses/Divine Wielder3.png"
+    ],
+    "Winged Sentinel": [
+        "img3/Subclasses/Winged Sentinel1.png",
+        "img3/Subclasses/Winged Sentinel2.png",
+        "img3/Subclasses/Winged Sentinel3.png"
+    ],
+    // Sorcerer
+    "Primal Origin": [
+        "img3/Subclasses/Primal Origin1.png",
+        "img3/Subclasses/Primal Origin2.png",
+        "img3/Subclasses/Primal Origin3.png"
+    ],
+    "Elemental Origin": [
+        "img3/Subclasses/Elemental Origin1.png",
+        "img3/Subclasses/Elemental Origin2.png",
+        "img3/Subclasses/Elemental Origin3.png"
+    ],
+    // Warlock
+    "Pact of the Wraithful": [
+        "img3/Subclasses/Pact of the Wraithful1.png",
+        "img3/Subclasses/Pact of the Wraithful2.png",
+        "img3/Subclasses/Pact of the Wraithful3.png"
+    ],
+    "Pact of the Endless": [
+        "img3/Subclasses/Pact of the Endless1.png",
+        "img3/Subclasses/Pact of the Endless2.png",
+        "img3/Subclasses/Pact of the Endless3.png"
+    ],
+    // Warrior
+    "Call of the Brave": [
+        "img3/Subclasses/Call of the Brave1.png",
+        "img3/Subclasses/Call of the Brave2.png",
+        "img3/Subclasses/Call of the Brave3.png"
+    ],
+    "Call of the Slayer": [
+        "img3/Subclasses/Call of the Slayer1.png",
+        "img3/Subclasses/Call of the Slayer2.png",
+        "img3/Subclasses/Call of the Slayer3.png"
+    ],
+    // Witch
+    "Moon": [
+        "img3/Subclasses/Moon1.png",
+        "img3/Subclasses/Moon2.png",
+        "img3/Subclasses/Moon3.png"
+    ],
+    "Hedge": [
+        "img3/Subclasses/Hedge1.png",
+        "img3/Subclasses/Hedge2.png",
+        "img3/Subclasses/Hedge3.png"
+    ],
+    // Wizard
+    "School of Knowledge": [
+        "img3/Subclasses/School of Knowledge1.png",
+        "img3/Subclasses/School of Knowledge2.png",
+        "img3/Subclasses/School of Knowledge3.png"
+    ],
+    "School of War": [
+        "img3/Subclasses/School of War1.png",
+        "img3/Subclasses/School of War2.png",
+        "img3/Subclasses/School of War3.png"
+    ]
+};
+
+// ========== DADOS DE COMUNIDADES (imagens) ==========
+
+const communityImages = {
+    "Duneborne": "img3/Communities/Duneborne.png",
+    "Freeborne": "img3/Communities/Freeborne.png",
+    "Frostborne": "img3/Communities/Frostborne.png",
+    "Hearthborne": "img3/Communities/Hearthborne.png",
+    "Highborne": "img3/Communities/Highborne.png",
+    "Loreborne": "img3/Communities/Loreborne.png",
+    "Orderborne": "img3/Communities/Orderborne.png",
+    "Reborne": "img3/Communities/Reborne.png",
+    "Ridgeborne": "img3/Communities/Ridgeborne.png",
+    "Seaborne": "img3/Communities/Seaborne.png",
+    "Slyborne": "img3/Communities/Slyborne.png",
+    "Underborne": "img3/Communities/Underborne.png",
+    "Wanderborne": "img3/Communities/Wanderborne.png",
+    "Warborne": "img3/Communities/Warborne.png",
+    "Wildborne": "img3/Communities/Wildborne.png"
+};
+
+// ========== GENERATE RESOURCES (imagens) ==========
+
+/**
+ * Gera HTML de uma carta de recursos (imagem fixa, não selecionável)
+ */
+function gerarCartaRecurso(imgPath, altText) {
+    return `
+<div class="card-recurso2">
+    <img class="card-recurso-img2" src="${imgPath}" alt="${altText}">
+</div>
+
+    `;
+}
+
+/**
+ * Gera as imagens de recursos baseado nas seleções de raça, classe, subclasse e comunidade
+ */
+/**
+ * Atualiza a visibilidade das checkboxes de subclasse
+ */
+function updateSubclassVisibility(source) {
+    const spec = document.getElementById('check-especializacao');
+    const mast = document.getElementById('check-maestria');
+
+    if (source === 'maestria' && mast && mast.checked) {
+        if (spec) spec.checked = true;
     }
+    if (source === 'especializacao' && spec && !spec.checked) {
+        if (mast) mast.checked = false;
+    }
+    generateResourcesText();
 }
 
-function autoResize(el) {
-    el.style.height = "auto";               // reseta altura
-    el.style.height = (el.scrollHeight) + "px"; // ajusta para caber o conteúdo
-}
-
-// aplica em todos os campos de item
-document.querySelectorAll('.item-text').forEach(textarea => {
-    textarea.addEventListener('input', () => autoResize(textarea));
-    autoResize(textarea); // chama ao carregar para já ajustar se tiver valor salvo
-});
-
+/**
+ * Gera as imagens de recursos baseado nas seleções de raça, classe, subclasse e comunidade
+ */
 function generateResourcesText() {
-    const race = document.getElementById('ficha-race').value;
-    const classchar = document.getElementById('ficha-class').value;
-    const subclass = document.getElementById('ficha-subclass').value;
-    const community = document.getElementById('ficha-community').value;
+    const race = getElementValue('ficha-race');
+    const classchar = getElementValue('ficha-class');
+    const subclass = getElementValue('ficha-subclass');
+    const community = getElementValue('ficha-community');
 
-    let text = '';
-    let text2 = '';
-    let text3 = '';
+    let html = '';
 
-    text3 += `<span style="color:hsl(54, 100%, 83%)">PEGUE:</span> uma tocha, 15 metros de corda, suprimentos básicos e um punhado de ouro<br><span style="color:hsl(54, 100%, 83%)">DEPOIS ESCOLHA ENTRE:</span> uma Poção de Vida Menor OU uma Poção de Energia Menor<br>`;
+    // Container para as cartas de recursos
+    html += '<div class="recursos-cards-container">';
 
+    // Comunidade
+    if (community && communityImages[community]) {
+        html += gerarCartaRecurso(communityImages[community], community);
+    }
 
-    if (race) {
-        text += `<span style="color:#ff9359">Raça:</span> <span style="color:hsl(54, 100%, 83%)">${race}</span><br>`;
-        switch (race) {
-            case "Aetheris":
-                text += `<strong>Hallowed Aura:</strong> Once per rest, when an ally within Close range rolls with Fear, you can make it a roll with Hope instead.
-<br><strong>Divine Countenance:</strong> You have advantage on rolls to command or persuade.<br><br>`;
-                break;
-            case "Clank":
-                text += `<strong>Purposeful Design:</strong> Decide who made you and for what purpose. At character creation, choose one of your Experiences that best aligns with this purpose and gain a permanent +1 bonus to it.
-<br><strong>Efficient:</strong> When you take a short rest, you can choose a long rest move instead of a short rest move.<br><br>`;
-                break;
-            case "Drakona":
-                text += `<strong>Scales:</strong> Your scales act as natural protection. When you would take Severe damage, you can mark a Stress to mark 1 fewer Hit Poin</strong>ts.
-<br><strong>Elemental Breath:</strong> Choose an element for your breath (such as electricity, fire, or ice). You can use this breath against a target or group of targets within Very Close range, treating it as an Instinctweapon that deals d8 magic damage using your Proficiency.<br><br>`;
-                break;
-            case "Dwarf":
-                text += `<strong>Thick Skin:</strong> When you take Minor damage, you can mark 2 Stress instead of marking a Hit Point.
-<br><strong>Increased Fortitude:</strong> Spend 3 Hope to halve incoming physical damage.<br><br>`;
-                break;
-            case "Earthkin":
-                text += `<strong>Stonekin:</strong> Gain a +1 bonus to your Armor Score and Damage Thresholds.
-<br><strong>Immoveable:</strong> While your feet are touching the ground, you cannot be lifted or moved against your will.<br><br>`;
-                break;
-            case "Elf":
-                text += `<strong>Quick Reactions:</strong> Mark a Stress to gain advantage on a reaction roll.
-<br><strong>Celestial Trance:</strong> During a rest, you can drop into a trance to choose an additional downtime move.<br><br>`;
-                break;
-            case "Emberkin":
-                text += `<strong>Fireproof:</strong> You are immune to damage from magical or mundane flame.
-<br><strong>Ignition:</strong> Mark a Stress to wreathe your primary weapon in flame until the end of the scene. While ablaze, it gives off a bright light and grants a 1d6 bonus to damage rolls against targets within Melee range.<br><br>`;
-                break;
-            case "Faerie":
-                text += `<strong>Luckbender:</strong> Once per session, after you or a willing ally within Close range makes an action roll, you can spend 3 Hope to reroll the Duality Dice.
-<br><strong>Wings:</strong> You can fly. While flying, you can mark a Stress after an adversary makes an attack against you to gain a +2 bonus to your Evasion against that attack.<br><br>`;
-                break;
-            case "Faun":
-                text += `<strong>Caprine Leap:</strong> You can leap anywhere within Close range as though you were using normal movement, allowing you to vault obstacles, jump across gaps, or scale barriers with ease.
-<br><strong>Kick:</strong> When you succeed on an attack against a target within Melee range, you can mark a Stress to kick yourself off them, dealing an extra 2d6 damage and knocking back either yourself or the target to Very Close range.<br><br>`;
-                break;
-            case "Firbolg":
-                text += `<strong>Charge:</strong> When you succeed on an Agility Roll to move from Faror Very Far range into Melee range with one or more targets, you can mark a Stress to deal 1d12 physical damage to all targets within Melee range.
-<br><strong>Unshakable:</strong> When you would mark a Stress, roll a d6. On a result of 6, don’t mark it.<br><br>`;
-                break;
-            case "Fungril":
-                text += `<strong>Fungril Network:</strong> Make an Instinct Roll ( 12) to use your mycelial array to speak with others of your ancestry. On a success, you can communicate across any distance.
-<br><strong>Death Connection:</strong> While touching a corpse that died recently, you can mark a Stress to extract one memory from the corpse related to a specific emotion or sensation of your choice.<br><br>`;
-                break;
-            case "Galapa":
-                text += `<strong>Shell:</strong> Gain a bonus to your damage thresholds equal to your Proficiency.
-<br><strong>Retract:</strong> Mark a Stress to retract into your shell. While in your shell, you have resistance to physical damage, you have disadvantage on action rolls, and you can’t move.<br><br>`;
-                break;
-            case "Giant":
-                text += `<strong>Endurance:</strong> Gain an additional Hit Point slot at character creation.
-<br><strong>Reach:</strong> Treat any weapon, ability, spell, or other feature that has a Melee range as though it has a Very Close range instead.<br><br>`;
-                break;
-            case "Gnome":
-                text += `<strong>Nimble Fingers:</strong> When you make a Finesse Roll, you can spend 2 Hope to reroll your Hope Die.
-<br><strong>True Sight:</strong> You have advantage on rolls to see through illusions.<br><br>`;
-                break;
-            case "Goblin":
-                text += `<strong>Surefooted:</strong> You ignore disadvantage on Agility Rolls.
-<br><strong>Danger Sense:</strong> Once per rest, mark a Stress to force an adversary to reroll an attack against you or an ally within Very Close range.<br><br>`;
-                break;
-            case "Halfling":
-                text += `<strong>Luckbringer:</strong> At the start of each session, everyone in your party gains a Hope.
-<br><strong>Internal Compass:</strong> When you roll a 1 on your Hope Die, you can reroll it.<br><br>`;
-                break;
-            case "Human":
-                text += `<strong>High Stamina:</strong> Gain an additional Stress slot at character creation.
-<br><strong>Adaptability:</strong> When you fail a roll that utilized one of your Experiences, you can mark a Stress to reroll.<br><br>`;
-                break;
-            case "Infernis":
-                text += `<strong>Fear:</strong> When you roll with Fear, you can mark 2 Stress to change it into a roll with Hope instead.
-<br><strong>Dread Visage:</strong> You have advantage on rolls to intimidate hostile creatures.<br><br>`;
-                break;
-            case "Katari":
-                text += `<strong>Feline Instincts:</strong> When you make an Agility Roll, you can spend 2 Hope to reroll your Hope Die.
-<br><strong>Retracting Claws:</strong> Make an Agility Roll to scratch a target within Melee range. On a success, they become temporarily Vulnerable.<br><br>`;
-                break;
-            case "Orc":
-                text += `<strong>Sturdy:</strong> When you have 1 Hit Point remaining, attacks against you have disadvantage.
-<br><strong>Tusks:</strong> When you succeed on an attack against a target within Melee range, you can spend a Hope to gore the target with your tusks, dealing an extra 1d6 damage.<br><br>`;
-                break;
-            case "Ribbet":
-                text += `<strong>Amphibious:</strong> You can breathe and move naturally underwater.
-<br><strong>Long Tongue:</strong> You can use your long tongue to grab onto things within Close range. Mark a Stress to use your tongue as a Finesse Close weapon that deals d12 physical damage using your Proficiency.<br><br>`;
-                break;
-            case "Simiah":
-                text += `<strong>Natural Climber:</strong> You have advantage on Agility Rolls that involve balancing and climbing.
-<br><strong>Nimble:</strong> Gain a permanent +1 bonus to your Evasion at character creation.<br><br>`;
-                break;
-            case "Skykin":
-                text += `<strong>Gale Force:</strong> Mark a Stress to conjure a gust of wind that carries you or an ally up to Very Far range. Additionally, you can always control the speed at which you fall.
-<br><strong>Eye of the Storm:</strong> Spend 2 Hope to grant a +1 bonus to either your or an ally’s Evasion until you next take Severe damage or you use Eye of the Storm again.<br><br>`;
-                break;
-            case "Tidekin":
-                text += `<strong>Amphibious:</strong> You can breathe and move naturally underwater.
-<br><strong>Lifespring:</strong> Once per rest, when you have access to a small amount of water, you can mark 2 Stress to heal a Hit Point on yourself or an ally.<br><br>`;
-                break;
+    // Raça
+    if (race && raceImages[race]) {
+        html += gerarCartaRecurso(raceImages[race], race);
+    }
+
+    // Classe
+    if (classchar && classImages[classchar]) {
+        html += gerarCartaRecurso(classImages[classchar], classchar);
+    }
+
+    // Subclasse (3 cartas por subclasse)
+    // Subclasse (3 cartas por subclasse)
+    if (subclass && subclassImages[subclass]) {
+        const images = subclassImages[subclass];
+        const showSpec = document.getElementById('check-especializacao')?.checked || false;
+        const showMast = document.getElementById('check-maestria')?.checked || false;
+
+        // Imagem 1: Sempre mostra
+        if (images[0]) {
+            html += gerarCartaRecurso(images[0], `${subclass} 1`);
+        }
+        // Imagem 2: Especialização ou Maestria
+        if (images[1] && (showSpec || showMast)) {
+            html += gerarCartaRecurso(images[1], `${subclass} 2`);
+        }
+        // Imagem 3: Maestria
+        if (images[2] && showMast) {
+            html += gerarCartaRecurso(images[2], `${subclass} 3`);
         }
     }
 
-    if (classchar) {
-        text += `<span style="color:#ff9359">Classe:</span> <span style="color:hsl(54, 100%, 83%)">${classchar}</span><br>`;
 
-        switch (classchar) {
-            case "Assassin":
-                text += `<strong>Domain:</strong> Midnight & Blade<br><br>`
 
-                text += `<strong>Grim Resolve:</strong> Spend 3 Hope to clear 2 Stress.<br>
-                <strong>Marked for Death:</strong> On a successful weapon attack, you can mark a Stress to make the target Marked for Death. Attacks you make against a target that’s Marked for Death gain a bonus to damage equal to +1d4 per tier.
-You can only have one adversary Marked for Death at a time, and can’t transfer or remove the condition except by defeating the target. The GM can spend a number of Fear equal to your Proficiency to remove the Marked for Death condition. Otherwise, it ends automatically when you take a rest.<br>
-<strong>Get in & Get out:</strong> Spend a Hope to ask the GM for either a quick or inconspicuous way into or out of a building or structure you can see. The next roll you make that capitalizes on this information has advantage.<br><br>`;
-                break;
+    html += '</div>';
 
-            case "Bard":
-                text += `<strong>Domain:</strong> Grace & Codex<br><br>`
-
-                text += `<strong>Make a Scene:</strong> Spend 3 Hope to temporarily Distract a target within Close range, giving them a -2 penalty to their Difficulty.<br>
-    <strong>Rally:</strong> Once per session, describe how you rally the party and give yourself and each of your allies a Rally Die. At level 1, your Rally Die is a d6. A PC can spend their Rally Die to roll it, adding the result to their action roll, reaction roll, damage roll, or to clear a number of Stress equal to the result. At the end of each session, clear all unspent Rally Dice.
-At level 5, your Rally Die increases to a d8.<br><br>`;
-                break;
-
-            case "Brawler":
-                text += `<strong>Domain:</strong> Bone & Valor<br><br>`
-
-                text += `<strong>Staggering Strike:</strong> Spend 3 Hope when you succeed on an attack to temporarily Stagger your target and force them to mark a Stress. While Staggered, they have disadvantage on attack rolls.<br>
-    <strong>I am the Weapon:</strong> While you don’t have any equipped weapons:<br>
-    • You gain +1 bonus to Evasion.<br>
-    • Your unarmed strikes are considered a Melee weapon, use the trait of your choice, and deal d8+d6 phy damage using your Proficiency.<br>
-    <strong>Combo Strikes:</strong> After making a damage roll with a Melee weapon but before dealing that damage to the target, mark a Stress to start a combo strike. When you do, roll a Combo Die and note its value. Then, roll another Combo Die again. If the value of the second die is equal to or greater than your first Combo Die, continue rolling until the latest Combo Die’s roll is less than the roll that preceeded it. Total all rolled values and add that amount to your weapon’s damage. These values cannot be adjusted by features that affect damage dice.<br>
-    Your Combo Die starts as a d4. When you level up, once per tier you may use one of your advancement options to increase your Combo Die instead.<br><br>`;
-                break;
-
-            case "Druid":
-                text += `<strong>Domain:</strong> Sage & Arcana<br><br>`
-
-                text += `<strong>Evolution:</strong> Spend 3 Hope to transform into a Beastform without marking a Stress. When you do, choose one trait to raise by +1 until you drop out of that Beastform.<br>
-    <strong>Beastform:</strong> Mark a Stress to magically transform into a creature of your tier or lower from the Beastform list. You can drop out of this form at any time. While transformed, you can’t use weapons or cast spells from domain cards, but you can still use other features or abilities you have access to. Spells you cast before you transform stay active and last for their normal duration, and you can talk and communicate as normal. Additionally, you gain the Beastform’s features, add their Evasion bonus to your Evasion, and use the trait specified in their statistics for your attack. While you’re in a Beastform, your armor becomes part of your body and you mark Armor Slots as usual; when you drop out of a Beastform, those marked Armor Slots remain marked. If you mark your last Hit Point, you automatically drop out of this form.<br>
-    <strong>Wildtouch:</strong> You can perform harmless, subtle effects that involve nature—such as causing a flower to rapidly grow, summoning a slight gust of wind, or starting a campfire—at will.<br><br>`;
-                break;
-
-            case "Guardian":
-                text += `<strong>Domain:</strong> Valor & Blade<br><br>`
-
-                text += `<strong>Frontline Tank:</strong> Spend 3 Hope to clear 2 Armor Slots.<br>
-    <strong>Unstoppable:</strong> Once per long rest, you can become Unstoppable. You gain an Unstoppable Die. At level 1, your Unstoppable Die is a d4. Place it on your character sheet in the space provided, starting with the 1 value facing up. After you make a damage roll that deals 1 or more Hit Points to a target, increase the Unstoppable Die value by one. When the die’s value would exceed its maximum value or when the scene ends, remove the die and drop out of Unstoppable. At level 5, your Unstoppable Die increases to a d6.<br>
-    While Unstoppable, you gain the following benefits:<br>
-    • You reduce the severity of physical damage by one threshold (Severe to Major, Major to Minor, Minor to None).<br>
-    • You add the current value of the Unstoppable Die to your damage roll.<br>
-    • You can’t be Restrained or Vulnerable.<br><br>`;
-                break;
-
-            case "Ranger":
-                text += `<strong>Domain:</strong> Bone & Sage<br><br>`
-
-                text += `<strong>Hold Them Off:</strong> Spend 3 Hope when you succeed on an attack with a weapon to use that same roll against two additional adversaries within range of the attack.<br>
-    <strong>Ranger’s Focus:</strong> Spend a Hope and make an attack against a target. On a success, deal your attack’s normal damage and temporarily make the attack’s target your Focus. Until this feature ends or you make a different creature your Focus, you gain the following benefits against your Focus:<br>
-    • You know precisely what direction they are in.<br>
-    • When you deal damage to them, they must mark a Stress.<br>
-    • When you fail an attack against them, you can end your Ranger’s Focus feature to reroll your Duality Dice.<br><br>`;
-                break;
-
-            case "Rogue":
-                text += `<strong>Domain:</strong> Midnight & Grace<br><br>`
-
-                text += `<strong>Rogue’s Dodge:</strong> Spend 3 Hope to gain a +2 bonus to your Evasion until the next time an attack succeeds against you. Otherwise, this bonus lasts until your next rest.<br>
-    <strong>Cloaked:</strong> Any time you would be Hidden, you are instead Cloaked. In addition to the benefits of the Hidden condition, while Cloaked you remain unseen if you are stationary when an adversary moves to where they would normally see you. After you make an attack or end a move within line of sight of an adversary, you are no longer Cloaked.<br>
-    <strong>Sneak Attack:</strong> When you succeed on an attack while Cloaked or while an ally is within Melee range of your target, add a number of d6s equal to your tier to your damage roll.<br>
-    • Level 1 → Tier 1
-    • Levels 2–4 → Tier 2
-    • Levels 5–7 → Tier 3
-    • Levels 8–10 → Tier 4<br><br>`;
-                break;
-
-            case "Seraph":
-                text += `<strong>Domain:</strong> Splendor & Valor<br><br>`
-
-                text += `<strong>Life Support:</strong> Spend 3 Hope to clear a Hit Point on an ally within Close range.<br>
-    <strong>Prayer Dice:</strong> At the beginning of each session, roll a number of d4s equal to your subclass’s Spellcast trait and place them on your character sheet in the space provided. These are your Prayer Dice. You can spend any number of Prayer Dice to aid yourself or an ally within Far range. You can use a spent die’s value to reduce incoming damage, add to a roll’s result after the roll is made, or gain Hope equal to the result. At the end of each session, clear all unspent Prayer Dice.<br><br>`;
-                break;
-
-            case "Sorcerer":
-                text += `<strong>Domain:</strong> Arcana & Midnight<br><br>`
-
-                text += `<strong>Volatile Magic:</strong> Spend 3 Hope to reroll any number of your damage dice on an attack that deals magic damage.<br>
-    <strong>Arcane Sense:</strong> You can sense the presence of magical people and objects within Close range.<br>
-    <strong>Minor Illusion:</strong> Make a Spellcast Roll (10). On a success, you create a minor visual illusion no larger than yourself within Close range. This illusion is convincing to anyone at Close range or farther.<br>
-    <strong>Channel Raw Power:</strong> Once per long rest, you can place a domain card from your loadout into your vault and choose to either:
-• Gain Hope equal to the level of the card.
-• Enhance a spell that deals damage, gaining a bonus to your damage roll equal to twice the level of the card.<br><br>`;
-                break;
-
-            case "Warlock":
-                text += `<strong>Domain:</strong> Dread & Grace<br><br>`
-
-                text += `<strong>Patron’s Boon:</strong> Spend 3 Hope to call out to your patron for help, gaining 1d4 Favor.<br>
-    <strong>Warlock Patron:</strong> You have committed yourself to a patron (god, demon, fae, or other supernatural entity) in exchange for power. Write their name above. Then, choose their spheres of influence, at GM discretion (Nature & Mischief, Love & War, Knowledge & Shadow, etc.), record them below and set their value to +2. Anytime you increase your tier, these spheres of influence also gain a permanent +1 bonus. Before making an action roll that relates to one of your patron’s spheres of influence, you can spend a Favor to call on them and add its value to the roll.<br>
-    <strong>Favor:</strong> Start with 3 Favor. During a rest, take one of your downtime actions to tithe to your patron. When you do, gain Favor equal to your Presence. If you choose to forgo this offering, the GM instead gains a Fear.<br><br>`;
-                break;
-
-            case "Warrior":
-                text += `<strong>Domain:</strong> Blade & Bone<br><br>`
-
-                text += `<strong>No Mercy:</strong> Spend 3 Hope to gain a +1 bonus to your attack rolls until your next rest.<br>
-    <strong>Attack of Opportunity:</strong> If an adversary within Melee range attempts to leave that range, make a reaction roll using a trait of your choice against their Difficulty. Choose one effect on a success, or two if you critically succeed:
-• They can’t move from where they are.
-• You deal damage to them equal to your primary weapon’s damage.
-• You move with them.<br>
-    <strong>Combat Training:</strong> You ignore burden when equipping weapons. When you deal physical damage, you gain a bonus to your damage roll equal to your level.<br><br>`;
-                break;
-
-            case "Witch":
-                text += `<strong>Domain:</strong> Dread & Sage<br><br>`
-
-                text += `<strong>Witch's Charm:</strong> When you or an ally within Far range rolls a failure on an action roll, you can spend 3 Hope to change it into a success with Fear instead.<br>
-    <strong>Hex:</strong> When a creature causes you or an ally within Close range to mark any number of Hit Points, you can mark a Stress to Hex them. Action and damage rolls against a Hexed creature gain a bonus equal to your tier.
-This condition lasts until the GM spends a number of Fear equal to your Spellcast trait to remove it or you Hex another creature. Otherwise, remove it when the scene ends.<br>
-    <strong>Commune:</strong> Once per long rest, during a moment of calm, you can commune with an ancestor, deity, nature spirit, or otherworldly being. Ask them a question, then roll a number of d6s equal to your Spellcast trait. Choose one value from the rolled results and reference the chart below for the effect:
-• 1-3: You taste a flavor, smell a scent, or feel a sensation relevant to the answer.
-• 4-5: You hear sounds or see a vision relevant to the answer.
-• 6: You psychically experience a scene relevant to the answer as if you were there.<br><br>`;
-                break;
-
-            case "Wizard":
-                text += `<strong>Domain:</strong> Codex & Splendor<br><br>`
-
-                text += `<strong>Not This Time:</strong> Spend 3 Hope to force an adversary within Far range to reroll an attack or damage roll.<br>
-    <strong>Prestidigitation:</strong> You can perform harmless, subtle magical effects at will. For example, you can change an object’s color, create a smell, light a candle, cause a tiny object to float, illuminate a room, or repair a small object.<br>
-    <strong>Strange Patterns:</strong> Choose a number between 1 and 12. When you roll that number on a Duality Die, gain a Hope or clear a Stress. You can change this number when you take a long rest.<br><br>`;
-                break;
-
-        }
-    }
-
-    if (subclass) {
-        text += `<span style="color:#ff9359">Subclasse:</span> <span style="color:hsl(54, 100%, 83%)">${subclass}</span><br>`;
-
-        switch (subclass) {
-            // Assassin
-            case "Poisoners Guild":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Toxic Concoctions: Mark a Stress to add 1d4+1 tokens to this card. On your next long rest, clear this card. You know these poisons:
-• Gorgon Root: The target gains a permanent -1 penalty to their Difficulty. This can only affect them once.
-• Grave Spore: The target must also mark a Stress.
-• Leech Weed: Gain a +1d6 damage bonus on this attack.
-Envenomate: When you make a successful weapon attack, you can spend a token from this card to afflict the target with a known poison’s effect.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Poison Compendium: You also know these poisons:
-• Midnight’s Veil: The target gains a permanent -2 penalty to attack rolls. This can only affect them once.
-• Ghost Petal: Permanently decrease the damage dice of the target’s standard attack by one step (d10 to d8, d8 to d6, etc.). This can only affect them once.
-Adder’s Blessing: You are immune to poisons and other toxins.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Venomancer: You also know these poisons:
-• Blight Seed: The target gains a permanent -3 penalty to their damage thresholds. This can only affect them once.
-• Fear Leaf: The damage from this attack gains a bonus equal to the result of your Fear Die.
-Twin Fang: When you afflict a target with a known poison’s effect, you can spend an additional token to inflict the effect of a second known poison.<br><br>`;
-                break;
-            case "Executioners Guild":
-                text += `<strong>Foundation</strong><br>`;
-                text += `First Strike: The first time in a scene you succeed on an attack roll, double the damage of the attack.
-Ambush: Your “Marked for Death” feature uses d6s instead of d4s.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Death Strike: When you deal Severe damage to a creature, you can mark a Stress to make them mark an additional Hit Point.
-Scorpion’s Poise: You gain a +2 bonus to your Evasion against any attacks made by the creature Marked for Death.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `True Strike: Once per long rest, when you fail an attack roll, you can spend a Hope to make it a success instead.
-Backstab: Your “Marked for Death” feature uses d8s instead of d6s.<br><br>`;
-                break;
-
-            // Bard
-            case "Troubadour":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Gifted Performer: Describe how you perform for others. You can play each song once per long rest:
-• Relaxing Song: You and all allies within Close range clear a Hit Point.
-• Epic Song: Make a target within Close range temporarily Vulnerable.
-• Heartbreaking Song: You and all allies within Close range gain a Hope.<br><br>`;
-                text += `<strong>Specialization</strong><br>`;
-                text += `Maestro: Your rallying songs steel the courage of those who listen. When you give a Rally Die to an ally, they can gain a Hope or clear a Stress.<br><br>`;
-                text += `<strong>Mastery</strong><br>`;
-                text += `Virtuoso: You are among the greatest of your craft and your skill is boundless. You can perform each of your “Gifted Performer” feature’s songs twice instead of once per long rest.<br><br>`;
-                break;
-            case "Wordsmith":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Rousing Speech: Once per long rest, you can give a heartfelt, inspiring speech. All allies within Far range clear 2 Stress.
-Heart of a Poet: After you make an action roll to impress, persuade, or offend someone, you can spend a Hope to add a d4 to the roll.<br><br>`;
-                text += `<strong>Specialization</strong><br>`;
-                text += `Eloquent: Your moving words boost morale. Once per session, when you encourage an ally, you can do one of the following:
-• Allow them to find a mundane object or tool they need.
-• Help an Ally without spending Hope.
-• Give them an additional downtime move during their next rest.<br><br>`;
-                text += `<strong>Mastery</strong><br>`;
-                text += `Epic Poetry: Your Rally Die increases to a d10. Additionally, when you Help an Ally, you can narrate the moment as if you were writing the tale of their heroism in a memoir. When you do, roll a d10 as your advantage die.<br><br>`;
-                break;
-
-            // Brawler
-            case "Juggernaut":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Powerhouse: Increase the d8 damage dice for your unarmed attack to d10s. Additionally, you can mark a Stress to target two creatures within Melee range with a single attack roll.
-Overwhelm: On a successful attack, you can spend a Hope to force the target to mark a Stress or to throw them within Close range.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Rugged: Gain a permanent +3 bonus to your Severe damage threshold. Additionally, your “Powerhouse” feature can target three creatures instead of two.
-Eye for an Eye: When you mark more than one Hit Point from an attack in melee range, the attacker must make a Reaction Roll (13). On a failure, once per rest, they immediately mark the same number of Hit Points in return.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Pummeljoy: When you critically succeed on a weapon attack in Melee range, you gain an additional Hope, clear an additional Stress, and gain a +1 bonus to your Proficiency for the attack.
-Not Done Yet: When you mark more than one HP from an attack, you may gain a Hope or clear a Stress.<br><br>`;
-                break;
-            case "Martial Artist":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Martial Form: Take the Martial Form sheet. You start with two martial stances from Tier 1. When you reach a new tier, take two additional stances at your tier or lower.
-Focus: During a rest, roll a number of d6s equal to your Instinct and place a number of Focus tokens equal to the highest value rolled on this card. Spend a Focus to shift into a stance until you take Severe damage, the scene ends, you mark your last Hit Point, or you shift into another stance.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Keen Defenses: When you are targeted by an attack, you can spend a Focus to make the adversary’s attack roll have disadvantage.
-Spirit Blast: Spend a Focus to make an Instinct Roll against an adversary within Close range. On a success, you deal d20+3 magic damage using your Proficiency and can spend an additional Focus to make them temporarily Vulnerable.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Limit Breaker: Once per rest, you can pull off an unbelievable feat like running across water, leaping between distant rooftops, or scaling the side of a building without needing to roll. When you do, gain a Hope and clear a Stress.<br><br>`;
-                break;
-
-            // Druid
-            case "Warden of the Elements":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Elemental Incarnation: Mark a Stress to Channel one of the following elements until you take Severe damage or until your next rest:
-• Fire: When an adversary within Melee range deals damage to you, they take 1d10 magic damage.
-• Earth: Gain a bonus to your damage thresholds equal to your Proficiency.
-• Water: When you deal damage to an adversary within Melee range, all other adversaries within Very Close range must mark a Stress.
-• Air: You can hover, gaining advantage on Agility Rolls.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Elemental Aura: Once per rest while Channeling, you can assume an aura matching your element. The aura affects targets within Close range until your Channeling ends.
-• Fire: When an adversary marks 1 or more Hit Points, they must also mark a Stress.
-• Earth: Your allies gain a +1 bonus to Strength.
-• Water: When an adversary deals damage to you, you can mark a Stress to move them anywhere within Very Close range of where they are.
-• Air: When you or an ally takes damage from an attack beyond Melee range, reduce the damage by 1d8.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Elemental Dominion: You further embody your element. While Channeling, you gain the following benefit:
-• Fire: You gain a +1 bonus to your Proficiency for attacks and spells that deal damage.
-• Earth: When you would mark Hit Points, roll a d6 per Hit Point marked. For each result of 6, reduce the number of Hit Points you mark by 1.
-• Water: When an attack against you succeeds, you can mark a Stress to make the attacker temporarily Vulnerable.
-• Air: You gain a +1 bonus to your Evasion and can fly.<br><br>`;
-                break;
-            case "Warden of Renewal":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Clarity of Nature: Once per long rest, you can create a space of natural serenity within Close range. When you spend a few minutes resting within the space, clear Stress equal to your Instinct, distributed as you choose between you and your allies.
-Regeneration: Touch a creature and spend 3 Hope. That creature clears 1d4 Hit Points.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Regenerative Reach: You can target creatures within Very Close range with your “Regeneration” feature.
-Warden’s Protection: Once per long rest, spend 2 Hope to clear 2 Hit Points on 1d4 allies within Close range.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Defender: Your animal transformation embodies a healing guardian spirit. When you’re in Beastform and an ally within Close range marks 2 or more Hit Points, you can mark a Stress to reduce the number of Hit Points they mark by 1.<br><br>`;
-                break;
-
-            // Guardian
-            case "Stalwart":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Unwavering: Gain a permanent +1 bonus to your damage thresholds.
-Iron Will: When you take physical damage, you can mark an additional Armor Slot to reduce the severity.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Unrelenting: Gain a permanent +2 bonus to your damage thresholds.
-Partners-in-Arms: When an ally within Very Close range takes damage, you can mark an Armor Slot to reduce the severity by one threshold.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Undaunted: Gain a permanent +3 bonus to your damage thresholds.
-Loyal Protector: When an ally within Close range has 2 or fewer Hit Points and would take damage, you can mark a Stress to sprint to their side and take the damage instead.<br><br>`;
-                break;
-            case "Vengeance":
-                text += `<strong>Foundation</strong><br>`;
-                text += `At Ease: Gain an additional Stress slot.
-Revenge: When an adversary within Melee range succeeds on an attack against you, you can mark 2 Stress to force the attacker to mark a Hit Point.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Act of Reprisal: When an adversary damages an ally within Melee range, you gain a +1 bonus to your Proficiency for the next successful attack you make against that adversary.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Nemesis: Spend 2 Hope to Prioritize an adversary until your next rest. When you make an attack against your Prioritized adversary, you can swap the results of your Hope and Fear Dice. You can only Prioritize one adversary at a time.<br><br>`;
-                break;
-
-            // Ranger
-            case "Wayfinder":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Ruthless Predator: When you make a damage roll, you can mark a Stress to gain a +1 bonus to your Proficiency. Additionally, when you deal Severe damage to an adversary, they must mark a Stress.
-Path Forward: When you’re traveling to a place you’ve previously visited or you carry an object that has been at the location before, you can identify the shortest, most direct path to your destination.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Elusive Predator: When your Focus makes an attack against you, you gain a +2 bonus to your Evasion against the attack.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Apex Predator: Before you make an attack roll against your Focus, you can spend a Hope. On a successful attack, you remove a Fear from the GM’s Fear pool.<br><br>`;
-                break;
-            case "Beastbound":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Companion: You have an animal companion of your choice (at the GM’s discretion). They stay by your side unless you tell them otherwise.
-Take the Ranger Companion sheet. When you level up your character, choose a level-up option for your companion from this sheet as well.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Expert Training: Choose an additional level-up option for your companion.
-Battle-Bonded: When an adversary attacks you while they’re within your companion’s Melee range, you gain a +2 bonus to your Evasion against the attack.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Advanced Training: Choose two additional level-up options for your companion.
-Loyal Friend: Once per long rest, when the damage from an attack would mark your companion’s last Stress or your last Hit Point and you’re within Close range of each other, you or your companion can rush to the other’s side and take that damage instead.<br><br>`;
-                break;
-
-            // Rogue
-            case "Nightwalker":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Shadow Stepper: You can move from shadow to shadow. When you move into an area of darkness or a shadow cast by another creature or object, you can mark a Stress to disappear from where you are and reappear inside another shadow within Far range. When you reappear, you are Cloaked.
-Dark Cloud: Make a Spellcast Roll (15). On a success, create a temporary dark cloud that covers any area within Close range. Anyone in this cloud can’t see outside of it, and anyone outside of it can’t see in. You’re considered Cloaked from any adversary for whom the cloud blocks line of sight.
-Adrenaline: While you’re Vulnerable, add your level to your damage rolls.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Fleeting Shadow: Gain a permanent +1 bonus to your Evasion. You can use your “Shadow Stepper” feature to move within Very Far range.
-Vanishing Act: Mark a Stress to become Cloaked at any time. When Cloaked from this feature, you automatically clear the Restrained condition if you have it. You remain Cloaked in this way until you roll with Fear or until your next rest.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `<br><br>`;
-                break;
-            case "Syndicate":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Well-Connected: When you arrive in a prominent town or environment, you know somebody who calls this place home. Give them a name, note how you think they could be useful, and choose one fact from the following list:
-• They owe me a favor, but they’ll be hard to find.
-• They’re going to ask for something in exchange.
-• They’re always in a great deal of trouble.
-• We used to be together. It’s a long story.
-• We didn’t part on great terms.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Contacts Everywhere: Once per session, you can briefly call on a shady contact. Choose one of the following benefits and describe what brought them here to help you in this moment:
-• They provide 1 handful of gold, a unique tool, or a mundane object that the situation requires.
-• On your next action roll, their help provides a +3 bonus to the result of your Hope or Fear Die.
-• The next time you deal damage, they snipe from the shadows, adding 2d8 to your damage roll.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Reliable Backup: You can use your “Contacts Everywhere” feature three times per session. The following options are added to the list of benefits you can choose from when you use that feature:
-• When you mark 1 or more Hit Points, they can rush out to shield you, reducing the Hit Points marked by 1.
-• When you make a Presence Roll in conversation, they back you up. You can roll a d20 as your Hope Die.<br><br>`;
-                break;
-
-            // Seraph
-            case "Divine Wielder":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Spirit Weapon: When you have an equipped weapon with a range of Melee or Very Close, it can fly from your hand to attack an adversary within Close range and then return to you. You can mark a Stress to target an additional adversary within range with the same attack roll.
-Sparing Touch: Once per long rest, touch a creature and clear 2 Hit Points or 2 Stress from them.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Devout: When you roll your Prayer Dice, you can roll an additional die and discard the lowest result. Additionally, you can use your “Sparing Touch” feature twice instead of once per long rest.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Sacred Resonance: When you roll damage for your “Spirit Weapon” feature, if any of the die results match, double the value of each matching die. For example, if you roll two 5s, they count as two 10s.<br><br>`;
-                break;
-            case "Winged Sentinel":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Wings of Light: You can fly. While flying, you can do the following:
-• Mark a Stress to pick up and carry another willing creature approximately your size or smaller.
-• Spend a Hope to deal an extra 1d8 damage on a successful attack.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Ethereal Visage: Your supernatural visage strikes awe and fear. While flying, you have advantage on Presence Rolls. When you succeed with Hope on a Presence Roll, you can remove a Fear from the GM’s Fear pool instead of gaining Hope.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Ascendant: Gain a permanent +4 bonus to your Severe damage threshold.
-Power of the Gods: While flying, you deal an extra 1d12 damage instead of 1d8 from your “Wings of Light” feature.<br><br>`;
-                break;
-
-            // Sorcerer
-            case "Primal Origin":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Manipulate Magic: Your primal origin allows you to modify the essence of magic itself. After you cast a spell or make an attack using a weapon that deals magic damage, you can mark a Stress to do one of the following:
-• Extend the spell or attack’s reach by one range
-• Gain a +2 bonus to the action roll’s result
-• Double a damage die of your choice
-• Hit an additional target within range<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Enchanted Aid: You can enhance the magic of others with your essence. When you Help an Ally with a Spellcast Roll, you can roll a d8 as your advantage die. Once per long rest, after an ally has made a Spellcast Roll with your help, you can swap the results of their Duality Dice.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Arcane Charge: You can gather magical energy to enhance your capabilities. When you take magic damage, you become Charged. Alternatively, you can spend 2 Hope to become Charged. When you successfully make an attack that deals magic damage while Charged, you can clear your Charge to either gain a +10 bonus to the damage roll or gain a +3 bonus to the Difficulty of a reaction roll the spell causes the target to make. You stop being Charged at your next long rest.<br><br>`;
-                break;
-            case "Elemental Origin":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Elementalist: Choose one of the following elements at character creation:
-                Air • Earth • Fire • Lightning • Water
-You can shape this element into harmless effects. Additionally, spend a Hope and describe how your control over this element helps an action roll you’re about to make, then either gain a +2 bonus to the roll or a +3 bonus to the roll’s damage.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Natural Evasion: You can call forth your element to protect you from harm. When an attack roll against you succeeds, you can mark a Stress and describe how you use your element to defend you. When you do, roll a d6 and add its result to your Evasion against the attack.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Transcendence: Once per long rest, you can transform into a physical manifestation of your element. When you do, describe your transformation and choose two of the following benefits to gain until your next rest:
-• +4 bonus to your Severe threshold
-• +1 bonus to a character trait of your choice
-• +1 bonus to your Proficiency
-• +2 bonus to your Evasion<br><br>`;
-                break;
-
-            // Warlock
-            case "Pact of the Wraithful":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Favored Weapon: Mark a Stress to Imbue your weapon with your Patron’s fury until you deal Severe damage. On a successful Imbued weapon attack, you can spend any number of Favor to gain a +1d6 damage bonus for each Favor spent.
-Herald of Death: When you fail an attack roll, you can spend a Favor to reroll it. If it fails again, mark a Stress and take the new result.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Menacing Reach: When you Imbue your weapon with your Patron’s fury, you can mark an additional Stress to increase its range by one step (Melee to Very Close, Very Close to Close, etc.).
-Diminish My Foes: When you succeed with Hope on an action roll against a target, you can spend a Hope to make your target mark a Stress.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Fearsome Attack: You can always spend a Favor to reroll any number of your damage dice. You can continue spending Favor to reroll the same dice as many times as you’d like.
-Divine Ire: Once per rest, when you take damage, you can spend any number of Favor to target that many adversaries within Close range. Each target must mark a Hit Point.<br><br>`;
-                break;
-            case "Pact of the Endless":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Patron’s Mantle: Mark a Stress to cloak yourself in a terrifying aspect of your Patron that lasts until you take Severe damage or the scene ends:
-• When you would mark an Armor Slot, you can spend 2 Favor instead.
-• You gain a bonus equal to your tier on action rolls to intimidate a target.
-Deadly Devotion: On a successful attack, you can spend a Favor to gain a +1 bonus to your Evasion until you mark a Hit Point or take a rest.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Draining Invocation: When an adversary attacks you or an ally within Very Close range, you can spend a Favor to make them roll a d12 instead of a d20 for the attack. Additionally, the adversary must mark a Stress, and you can clear a Stress.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Dark Aegis: Once per long rest, when you would mark any number of Hit Points, you can spend a Favor instead.
-Draining Bane: When an adversary attacks you or an ally within Very Close range, you can spend 2 Favor to temporarily Drain them. When you do, they must mark a Stress and you can clear a Stress. A Drained creature uses a d12 instead of a d20 for attack rolls.<br><br>`;
-                break;
-
-            // Warrior
-            case "Call of the Brave":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Courage: When you fail a roll with Fear, you gain a Hope.
-Battle Ritual: Once per long rest, before you attempt something incredibly dangerous or face off against a foe who clearly outmatches you, describe what ritual you perform or preparations you make. When you do, clear 2 Stress and gain 2 Hope.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Rise to the Challenge: You are vigilant in the face of mounting danger. While you have 2 or fewer Hit Points unmarked, you can roll a d20 as your Hope Die.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Camaraderie: Your unwavering bravery is a rallying point for your allies. You can initiate a Tag Team Roll one additional time per session. Additionally, when an ally initiates a Tag Team Roll with you, they only need to spend 2 Hope to do so.<br><br>`;
-                break;
-            case "Call of the Slayer":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Slayer: You gain a pool of dice called Slayer Dice. On a roll with Hope, you can place a d6 on this card instead of gaining a Hope, adding the die to the pool. You can store a number of Slayer Dice equal to your Proficiency. When you make an attack roll or damage roll, you can spend any number of these Slayer Dice, rolling them and adding their result to the roll. At the end of each session, clear any unspent Slayer Dice on this card and gain a Hope per die cleared.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Weapon Specialist: You can wield multiple weapons with dangerous ease. When you succeed on an attack, you can spend a Hope to add one of the damage dice from your secondary weapon to the damage roll. Additionally, once per long rest when you roll your Slayer Dice, reroll any 1s.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Martial Preparation: You’re an inspirational warrior to all who travel with you. Your party gains access to the Martial Preparation downtime move. To use this move during a rest, describe how you instruct and train with your party. You and each ally who chooses this downtime move gain a d6 Slayer Die. A PC with a Slayer Die can spend it to roll the die and add the result to an attack or damage roll of their choice.<br><br>`;
-                break;
-
-            // Witch
-            case "Moon":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Night’s Glamour: Mark a Stress to Glamour yourself in a magical facade that lasts until you mark a Hit Point, make an attack, or take a rest. While Glamoured, you can:
-• Disguise yourself to look like any creature of your approximate size that you’ve seen.
-• Enhance your own appearance. You gain advantage on Presence Rolls that leverage this change.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Moonbeam: Once per session, you can conjure a column of moonlight that illuminates the area within Close range until the end of the scene. While bathed in this moonlight, you and any allies gain a +1 bonus to Spellcast Rolls and advantage on rolls to see through illusions.
-Ire of Pale Light: When a Hexed creature within Far range fails an attack roll, they must mark a Stress.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Lunar Phases: Your spirit ebbs and flows like the phases of the moon. At the beginning of each session, roll a d4 and gain the matching effect until the end of the session:
-• 1: New - You can always spend a Hope to reduce Minor damage to None.
-• 2: Waxing - Gain a +2 bonus to your damage rolls.
-• 3: Full - Gain a +2 bonus to your damage thresholds.
-• 4: Waning - Gain a +1 bonus to your Evasion.<br><br>`;
-                break;
-            case "Hedge":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Herbal Remedies: When you or an ally clear one or more Hit Points or Stress as the result of using a consumable, increase the number cleared by one.
-Tethered Talisman: Once per rest, you can imbue a small item with your protective essence. When the person holding the talisman takes damage, you can expend its magic to reduce the number of Hit Points they mark by one. You can’t create a new talisman until the old one has been used.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Walk Between Worlds: Make a Spellcast Roll (13) to step beyond the veil of death and converse with any nearby spirits. Place a number of tokens equal to your Spellcast trait on this card and remove one each time a spirit answers a question. You return to the mortal realm when the last token is removed.
-Enhanced Hex: Attacks you make against Hexed creatures gain a damage bonus equal to your Proficiency.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Circle of Power: Once per rest, mark a circle on the ground around you up to Very Close range and place a number of tokens equal to your Spellcast Trait on this card. Each time you or any ally within the circle makes an action roll or is hit with an attack, remove a token. This spell lasts until the last token is removed or you step out of the circle. While within this circle, you and any allies:
-• Gain a +4 bonus to your damage thresholds.
-• Gain a +2 bonus to your attack rolls.
-• Gain a +1 bonus to your Evasion.<br><br>`;
-                break;
-
-            // Wizard
-            case "School of Knowledge":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Prepared: Take an additional domain card of your level or lower from a domain you have access to.
-Adept: When you Utilize an Experience, you can mark a Stress instead of spending a Hope. If you do, double your Experience modifier for that roll.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Accomplished: Take an additional domain card of your level or lower from a domain you have access to.
-Perfect Recall: Once per rest, when you recall a domain card in your vault, you can reduce its Recall Cost by 1.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Brilliant: Take an additional domain card of your level or lower from a domain you have access to.
-Honed Expertise: When you use an Experience, roll a d6. On a result of 5 or higher, you can use it without spending Hope.<br><br>`;
-                break;
-            case "School of War":
-                text += `<strong>Foundation</strong><br>`;
-                text += `Battlemage: You’ve focused your studies on becoming an unconquerable force on the battlefield. Gain an additional Hit Point slot.
-Face Your Fear: When you succeed with Fear on an attack roll, you deal an extra 1d10 magic damage.<br><br>`;
-
-                text += `<strong>Specialization</strong><br>`;
-                text += `Conjure Shield: You can maintain a protective barrier of magic. While you have at least 2 Hope, you add your Proficiency to your Evasion.
-Fueled by Fear: The extra magic damage from your “Face Your Fear” feature increases to 2d10.<br><br>`;
-
-                text += `<strong>Mastery</strong><br>`;
-                text += `Thrive in Chaos: When you succeed on an attack, you can mark a Stress after rolling damage to force the target to mark an additional Hit Point.
-Have No Fear: The extra magic damage from your “Face Your Fear” feature increases to 3d10.<br><br>`;
-                break;
-        }
-    }
-
-    if (community) {
-        text += `<span style="color:#ff9359">Comunidade:</span> <span style="color:hsl(54, 100%, 83%)">${community}</span>\n`;
-
-        switch (community) {
-            case "Duneborne":
-                text +=
-                    `<strong>Oasis:</strong> During a short rest, you or an ally can reroll a die used for a downtime action.\n\n`;
-                break;
-            case "Freeborne":
-                text += `<strong>Unbound:</strong> Once per session, when you make an action roll with Fear, you can instead change it to a roll with Hope instead.\n\n`;
-                break;
-            case "Frostborne":
-                text += `<strong>Hardy:</strong> Once per rest, you can Help an Ally traverse difficult terrain without spending a Hope.\n\n`;
-                break;
-            case "Hearthborne":
-                text += `<strong>Close-Knit:</strong> Once per long rest, you can spend any number of Hope to give an ally the same number of Hope.\n\n`;
-                break;
-            case "Highborne":
-                text += `<strong>Privilege:</strong> You have advantage on rolls to consort with nobles, negotiate prices, or leverage your reputation to get what you want.\n\n`;
-                break;
-            case "Loreborne":
-                text += `<strong>Well-Read:</strong> You have advantage on rolls that involve the history, culture, or politics of a prominent person or place.\n\n`;
-                break;
-            case "Orderborne":
-                text += `<strong>Dedicated:</strong> Record three sayings or values your upbringing instilled in you. Once per rest, when you describe how you’re embodying one of these principles through your current action, you can roll a d20 as your Hope Die.\n\n`;
-                break;
-            case "Reborne":
-                text += `<strong>Found Family:</strong> Once per session, you can spend a Hope to use an ally’s community ability. When you do, your ally gains a Hope.
-At any point, when you’ve discovered the community you were once a part of, or have joined a new community, you can permanently trade this community card for that one instead.\n\n`;
-                break;
-            case "Ridgeborne":
-                text += `<strong>Steady:</strong> You have advantage on rolls to traverse dangerous cliffs and ledges, navigate harsh environments, and use your survival knowledge.\n\n`;
-                break;
-            case "Seaborne":
-                text += `<strong>Know the Tide:</strong> You can sense the ebb and flow of life. When you roll with Fear, place a token on this card. You can hold a number of tokens equal to your level. Before you make an action roll, you can spend any number of these tokens to gain a +1 bonus to the roll for each token spent. At the end of each session, clear all unspent tokens.\n\n`;
-                break;
-            case "Slyborne":
-                text += `<strong>Scoundrel:</strong> You have advantage on rolls to negotiate with criminals, detect lies, or find a safe place to hide.\n\n`;
-                break;
-            case "Underborne":
-                text += `<strong>Low-Light Living:</strong> When you’re in an area with low light or heavy shadow, you have advantage on rolls to hide, investigate, or perceive details within that area.\n\n`;
-                break;
-            case "Wanderborne":
-                text += `<strong>Nomadic Pack:</strong> Add a Nomadic Pack to your inventory. Once per session, you can spend a Hope to reach into this pack and pull out a mundane item that’s useful to your situation. Work with the GM to figure out what item you take out.\n\n`;
-                break;
-            case "Warborne":
-                text += `<strong>Brave Face:</strong> Once per session, when an attack would cause you to mark a Stress, you can spend a Hope instead.\n\n`;
-                break;
-            case "Wildborne":
-                text += `<strong>Lightfoot:</strong> Your movement is naturally silent. You have advantage on rolls to move without being heard.\n\n`;
-                break;
-        }
-    }
-
-    // Conecta o botão do modal com a função que realmente deleta
-    document.getElementById('confirmDelete').addEventListener('click', confirmDeleteFicha);
-
-
-    window.addEventListener('load', () => {
-        populateDropdowns();
-        loadCards();
-        // abre ficha caso haja hash
-        handleHashChange();
-        // escuta mudanças de hash (usuário ou link externo)
-        window.addEventListener('hashchange', handleHashChange);
-    });
-
-
-    document.getElementById('recursosText').innerHTML = text;
+    const recursosEl = document.getElementById('recursosText');
+    if (recursosEl) recursosEl.innerHTML = html;
 }
+
+// ========== CARTAS DE DOMÍNIO ==========
 
 const cartasDominio = [
     // bone
@@ -1573,13 +1208,15 @@ const cartasDominio = [
     { id: 211, dominio: "Dread", lvl: 10, img: "img/Dread/10 Invocar Tormento.png", selecionada: false, clicked: false },
 ];
 
+// ========== FUNÇÕES DE DOMÍNIO ==========
 
 function gerarCartasDominios() {
-    const lvl = parseInt(document.getElementById("filtro-lvl").value) || "";
-    const dominio = document.getElementById("filtro-dominio").value;
+    const lvl = parseInt(getElementValue("filtro-lvl")) || "";
+    const dominio = getElementValue("filtro-dominio");
 
-    const container = document.getElementById("cartas-disponiveis");
-    container.innerHTML = "";
+    const dominioContainer = document.getElementById("cartas-disponiveis");
+    if (!dominioContainer) return;
+    dominioContainer.innerHTML = "";
 
     const filtradas = cartasDominio.filter(carta => {
         return (lvl === "" || carta.lvl === lvl) &&
@@ -1589,7 +1226,6 @@ function gerarCartasDominios() {
     filtradas.forEach(carta => {
         const cardEl = document.createElement("div");
         cardEl.className = "card-dominio";
-
         cardEl.innerHTML = `
             <div class="card-img-wrapper">
                 <img src="${carta.img}" alt="${carta.dominio}">
@@ -1598,8 +1234,7 @@ function gerarCartasDominios() {
                 ${carta.selecionada ? 'Selecionada' : 'Selecionar'}
             </button>
         `;
-
-        container.appendChild(cardEl);
+        dominioContainer.appendChild(cardEl);
     });
 
     atualizarSelecionadas();
@@ -1608,34 +1243,32 @@ function gerarCartasDominios() {
 function atualizarSelecionadas() {
     const selecionadasContainer = document.getElementById("cartas-selecionadas");
     const maoContainer = document.getElementById("cartas-mao");
+    if (!selecionadasContainer || !maoContainer) return;
+
     selecionadasContainer.innerHTML = "";
     maoContainer.innerHTML = "";
 
     const selecionadas = cartasDominio.filter(carta => carta.selecionada && !carta.naMao);
     const cartasMao = cartasDominio.filter(carta => carta.naMao);
 
-    // --- Cartas Selecionadas ---
     selecionadas.forEach(carta => {
         const cardEl = document.createElement("div");
         cardEl.className = "card-dominio";
-
         cardEl.innerHTML = `
-    <div class="card-img-wrapper">
-        <img src="${carta.img}" alt="${carta.dominio}">
-    </div>
-    <div class="card-actions">
-        <button class="select-btn remove-btn" onclick="removerSelecionada(${carta.id})">Remover</button>
-        <button class="select-btn mao-btn" onclick="mandarParaMao(${carta.id})">Para Mão</button>
-    </div>
-`;
+            <div class="card-img-wrapper">
+                <img src="${carta.img}" alt="${carta.dominio}">
+            </div>
+            <div class="card-actions">
+                <button class="select-btn remove-btn" onclick="removerSelecionada(${carta.id})">Remover</button>
+                <button class="select-btn mao-btn" onclick="mandarParaMao(${carta.id})">Para Mão</button>
+            </div>
+        `;
         selecionadasContainer.appendChild(cardEl);
     });
 
-    // --- Cartas na Mão ---
     cartasMao.forEach(carta => {
         const cardEl = document.createElement("div");
         cardEl.className = "card-dominio";
-
         cardEl.innerHTML = `
             <div class="card-img-wrapper">
                 <img src="${carta.img}" alt="${carta.dominio}">
@@ -1649,14 +1282,17 @@ function atualizarSelecionadas() {
     });
 }
 
+function atualizarMao() {
+    atualizarSelecionadas();
+}
 
 function mandarParaMao(id) {
     const carta = cartasDominio.find(c => c.id === id);
     if (!carta) return;
 
     const cartasNaMao = cartasDominio.filter(c => c.naMao).length;
-    if (cartasNaMao >= 5) {
-        alert("Você só pode ter até 5 cartas na mão.");
+    if (cartasNaMao >= MAX_CARTAS_MAO) {
+        alert(`Você só pode ter até ${MAX_CARTAS_MAO} cartas na mão.`);
         return;
     }
 
@@ -1672,66 +1308,69 @@ function tirarDaMao(id) {
     atualizarSelecionadas();
 }
 
+// ÚNICA DEFINIÇÃO de removerSelecionada (corrigido)
 function removerSelecionada(id) {
     const carta = cartasDominio.find(c => c.id === id);
-    if (!carta || carta.naMao) return; // não remove cartas que estão na mão
+    if (!carta || carta.naMao) return; // Não remove cartas que estão na mão
 
     carta.selecionada = false;
-    atualizarSelecionadas();
-}
-
-
-function removerSelecionada(id) {
-    const carta = cartasDominio.find(c => c.id === id);
-    if (carta) carta.selecionada = false;
     gerarCartasDominios();
 }
 
-// =======================
-// INIT ÚNICO (FORMA CERTA)
-// =======================
+// ========== INICIALIZAÇÃO (SEM DUPLICAÇÃO) ==========
 
 function init() {
-
-    // ---------- Inicialização principal ----------
     populateDropdowns();
     loadCards();
     handleHashChange();
     gerarCartasDominios();
     generateResourcesText();
 
-
-    // ---------- auto resize item-text ----------
+    // Auto resize item-text
     document.querySelectorAll('.item-text').forEach(textarea => {
         textarea.addEventListener('input', () => autoResize(textarea));
         autoResize(textarea);
     });
 
-
-    // ---------- filtros domínio ----------
+    // Filtros domínio
     document.getElementById("filtro-lvl")?.addEventListener("change", gerarCartasDominios);
     document.getElementById("filtro-dominio")?.addEventListener("change", gerarCartasDominios);
 
-
-    // ---------- clique selecionar carta ----------
+    // Clique selecionar carta (delegação de eventos)
     document.addEventListener("click", e => {
-        if (e.target.classList.contains("select-btn") && !e.target.classList.contains("selected")) {
+        // Seleção de carta
+        if (e.target.classList.contains("select-btn") && !e.target.classList.contains("selected") && e.target.dataset.id) {
             const id = parseInt(e.target.dataset.id);
             const carta = cartasDominio.find(c => c.id === id);
             if (carta) carta.selecionada = true;
             gerarCartasDominios();
         }
+
+        // Delegação para botões de editar/deletar cards
+        const actionBtn = e.target.closest('[data-action]');
+        if (actionBtn) {
+            const action = actionBtn.dataset.action;
+            const index = parseInt(actionBtn.dataset.index);
+            if (action === 'edit') {
+                e.stopPropagation();
+                openModalFicha(index, false);
+            } else if (action === 'delete') {
+                e.stopPropagation();
+                deleteIndex = index;
+                if (modalDelete) modalDelete.show();
+            }
+        }
     });
 
+    // Selects ficha - eventos de change
+    ['ficha-race', 'ficha-class', 'ficha-subclass', 'ficha-community'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', generateResourcesText);
+    });
 
-    // ---------- selects ficha ----------
-    document.getElementById('ficha-race')?.addEventListener('change', generateResourcesText);
-    document.getElementById('ficha-class')?.addEventListener('change', generateResourcesText);
-    document.getElementById('ficha-subclass')?.addEventListener('change', generateResourcesText);
-    document.getElementById('ficha-community')?.addEventListener('change', generateResourcesText);
+    // Atualiza subclasses quando classe muda
+    document.getElementById('ficha-class')?.addEventListener('change', updateSubclasses);
 
-
-    // ---------- recursos (HP/Armadura/etc) ----------
+    // Recursos (HP/Armadura/etc)
     const recursos = [
         { inputId: 'hpQtd', checkId: 'hpChecks' },
         { inputId: 'armaduraQtd', checkId: 'armaduraChecks' },
@@ -1744,31 +1383,33 @@ function init() {
         if (!input) return;
 
         input.addEventListener('input', () => {
-            if (input.value > 15) input.value = 15;
-            if (input.value < 0) input.value = 0;
+            const val = parseInt(input.value) || 0;
+            input.value = Math.min(Math.max(val, MIN_RESOURCE_VALUE), MAX_RESOURCE_VALUE);
             generateChecks(checkId, input.value);
         });
 
         generateChecks(checkId, input.value);
     });
 
-
-    // ---------- exp-text auto height ----------
-    document.querySelectorAll(".exp-text").forEach((textarea) => {
+    // Exp-text auto height
+    document.querySelectorAll(".exp-text").forEach(textarea => {
         textarea.addEventListener("input", function () {
             this.style.height = "auto";
             this.style.height = this.scrollHeight + "px";
         });
-
         textarea.style.height = textarea.scrollHeight + "px";
     });
 
-
-    // ---------- hash ----------
+    // Hash change
     window.addEventListener('hashchange', handleHashChange);
 
+    // Botão confirmar delete (apenas uma vez)
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', confirmDeleteFicha);
+    }
 
-    // ---------- export global (onclick inline) ----------
+    // Export global para onclick inline
     window.askDeleteFicha = askDeleteFicha;
     window.confirmDeleteFicha = confirmDeleteFicha;
     window.saveModalFicha = saveModalFicha;
@@ -1778,17 +1419,19 @@ function init() {
     window.openModalFicha = openModalFicha;
     window.openFicha = openFicha;
     window.backToCards = backToCards;
+    window.finishEditingFicha = finishEditingFicha;
+    window.removerSelecionada = removerSelecionada;
+    window.mandarParaMao = mandarParaMao;
+    window.tirarDaMao = tirarDaMao;
 }
 
+// ========== EVENTOS DE INICIALIZAÇÃO ==========
 
-// =======================
-// EVENTOS CORRETOS
-// =======================
-
-// primeira carga
+// Primeira carga
 document.addEventListener('DOMContentLoaded', init);
 
-// CORREÇÃO CRÍTICA MOBILE (bfcache)
+// Correção para bfcache (mobile)
 window.addEventListener('pageshow', (e) => {
     if (e.persisted) init();
 });
+
