@@ -275,6 +275,17 @@ h6 {
     /* cursor de bloqueio */
 }
 
+#ficha-multirace:disabled {
+    background-color: #2D2E46;
+    /* cor de fundo */
+    color: #aaa;
+    /* cor do texto */
+    opacity: 1;
+    /* impede que o Bootstrap deixe opaco */
+    cursor: not-allowed;
+    /* cursor de bloqueio */
+}
+
 
 /* === Ficha Section === */
 .ficha-section {

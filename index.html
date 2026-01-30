@@ -89,15 +89,37 @@
 
                         <hr class="atributos-separador">
 
-                        <!-- Linha: Ancestralidade e Comunidade -->
+                        <!-- Linha: Raça e Multi Raça -->
                         <div class="row mb-2">
                             <div class="col-6">
                                 <label>Raça</label>
                                 <select id="ficha-race" class="form-select"></select>
                             </div>
                             <div class="col-6">
+                                <label>Multi Raça</label>
+                                <select id="ficha-multirace" class="form-select" disabled>
+                                    <option value="">Selecione uma Raça primeiro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Linha: Comunidade e Transformação -->
+                        <div class="row mb-2">
+                            <div class="col-6">
                                 <label>Comunidade</label>
                                 <select id="ficha-community" class="form-select"></select>
+                            </div>
+                            <div class="col-6">
+                                <label>Transformação</label>
+                                <select id="ficha-mutation" class="form-select">
+                                    <option value="">Nenhum</option>
+                                    <option value="Lobisomem">Werewolf</option>
+                                    <option value="Vampiro">Vampire</option>
+                                    <option value="Semideus">Demigod</option>
+                                    <option value="Metamorfo">Shapeshifter</option>
+                                    <option value="Reanimado">Reanimated</option>
+                                    <option value="Fantasma">Ghost</option>
+                                </select>
                             </div>
                         </div>
                         <!-- Linha: Classe e Subclasse -->

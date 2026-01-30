@@ -169,6 +169,35 @@ function populateDropdowns() {
     }
 
     updateSubclasses();
+    updateMultiRace();
+}
+
+function updateMultiRace() {
+    const raceSelect = document.getElementById('ficha-race');
+    const multiRaceSelect = document.getElementById('ficha-multirace');
+
+    if (!raceSelect || !multiRaceSelect) return;
+
+    const selectedRace = raceSelect.value;
+    const currentMulti = multiRaceSelect.value;
+
+    multiRaceSelect.innerHTML = '<option value="">Nenhum</option>';
+
+    if (selectedRace) {
+        multiRaceSelect.disabled = false;
+        races.forEach(r => {
+            if (r !== selectedRace) {
+                multiRaceSelect.appendChild(new Option(r, r));
+            }
+        });
+        // Tenta manter a seleção anterior se ainda for válida
+        if (currentMulti && currentMulti !== selectedRace) {
+            multiRaceSelect.value = currentMulti;
+        }
+    } else {
+        multiRaceSelect.innerHTML = '<option value="">Selecione uma Raça primeiro</option>';
+        multiRaceSelect.disabled = true;
+    }
 }
 
 function updateFichaCount() {
@@ -430,6 +459,8 @@ function saveFicha() {
         classchar: getElementValue('ficha-class'),
         subclass: getElementValue('ficha-subclass'),
         community: getElementValue('ficha-community'),
+        mutation: getElementValue('ficha-mutation'),
+        multirace: getElementValue('ficha-multirace'),
 
         attributes: {
             agi: parseInt(getElementValue('attr-agi'), 10) || 0,
@@ -612,7 +643,12 @@ function openFicha(index) {
     setElementValue('ficha-level', ficha.level || 1);
     setElementValue('ficha-race', ficha.race || '');
     setElementValue('ficha-community', ficha.community || '');
+
     setElementValue('ficha-class', ficha.classchar || '');
+    setElementValue('ficha-mutation', ficha.mutation || '');
+
+    updateMultiRace(); // Popula multi-race baseado na raça
+    setElementValue('ficha-multirace', ficha.multirace || '');
 
     updateSubclasses();
     setElementValue('ficha-subclass', ficha.subclass || '');
@@ -974,6 +1010,17 @@ const communityImages = {
     "Wildborne": "img3/Communities/Wildborne.png"
 };
 
+// ========== DADOS DE TRANSFORMAÇÕES (imagens) ==========
+
+const mutationImages = {
+    "Lobisomem": "img3/Mutations/Lobisomem.png",
+    "Vampiro": "img3/Mutations/Vampiro.png",
+    "Semideus": "img3/Mutations/Semideus.png",
+    "Metamorfo": "img3/Mutations/Metamorfo.png",
+    "Reanimado": "img3/Mutations/Reanimado.png",
+    "Fantasma": "img3/Mutations/Fantasma.png"
+};
+
 // ========== GENERATE RESOURCES (imagens) ==========
 
 /**
@@ -1014,7 +1061,10 @@ function generateResourcesText() {
     const race = getElementValue('ficha-race');
     const classchar = getElementValue('ficha-class');
     const subclass = getElementValue('ficha-subclass');
+
     const community = getElementValue('ficha-community');
+    const mutation = getElementValue('ficha-mutation');
+    const multirace = getElementValue('ficha-multirace');
 
     let html = '';
 
@@ -1029,6 +1079,16 @@ function generateResourcesText() {
     // Raça
     if (race && raceImages[race]) {
         html += gerarCartaRecurso(raceImages[race], race);
+    }
+
+    // Multi Raça
+    if (multirace && raceImages[multirace]) {
+        html += gerarCartaRecurso(raceImages[multirace], multirace);
+    }
+
+    // Transformação
+    if (mutation && mutationImages[mutation]) {
+        html += gerarCartaRecurso(mutationImages[mutation], mutation);
     }
 
     // Classe
@@ -1455,12 +1515,15 @@ function init() {
     });
 
     // Selects ficha - eventos de change
-    ['ficha-race', 'ficha-class', 'ficha-subclass', 'ficha-community'].forEach(id => {
+    ['ficha-race', 'ficha-class', 'ficha-subclass', 'ficha-community', 'ficha-mutation', 'ficha-multirace'].forEach(id => {
         document.getElementById(id)?.addEventListener('change', generateResourcesText);
     });
 
     // Atualiza subclasses quando classe muda
     document.getElementById('ficha-class')?.addEventListener('change', updateSubclasses);
+
+    // Atualiza multi race quando raça muda
+    document.getElementById('ficha-race')?.addEventListener('change', updateMultiRace);
 
     // Recursos (HP/Armadura/etc)
     const recursos = [
