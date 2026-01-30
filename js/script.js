@@ -46,6 +46,111 @@ const races = ["Aetheris", "Clank", "Drakona", "Dwarf", "Earthkin", "Elf", "Embe
 const classes = ["Assassin", "Bard", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Warlock", "Warrior", "Witch", "Wizard"];
 const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Highborne", "Loreborne", "Orderborne", "Reborne", "Ridgeborne", "Seaborne", "Slyborne", "Underborne", "Wanderborne", "Warborne", "Wildborne"];
 
+// ========== TRADUÇÕES ==========
+
+const classTranslations = {
+    "Assassin": "Assassino",
+    "Bard": "Bardo",
+    "Brawler": "Lutador",
+    "Druid": "Druida",
+    "Guardian": "Guardião",
+    "Ranger": "Patrulheiro",
+    "Rogue": "Ladino",
+    "Seraph": "Serafim",
+    "Sorcerer": "Feiticeiro",
+    "Warlock": "Bruxo",
+    "Warrior": "Guerreiro",
+    "Witch": "Ocultista",
+    "Wizard": "Mago"
+};
+
+const raceTranslations = {
+    "Aetheris": "Etério",
+    "Clank": "Clank",
+    "Drakona": "Drakona",
+    "Dwarf": "Anão",
+    "Earthkin": "Terríneo",
+    "Elf": "Elfo",
+    "Emberkin": "Ígneo",
+    "Faerie": "Fada",
+    "Faun": "Fauno",
+    "Firbolg": "Firbolg",
+    "Fungril": "Fungril",
+    "Galapa": "Galapa",
+    "Giant": "Gigante",
+    "Gnome": "Gnomo",
+    "Goblin": "Goblin",
+    "Halfling": "Pequenino",
+    "Human": "Humano",
+    "Infernis": "Infernis",
+    "Katari": "Katari",
+    "Orc": "Orc",
+    "Ribbet": "Quacho",
+    "Simiah": "Símio",
+    "Skykin": "Celeste",
+    "Tidekin": "Marídeo"
+};
+
+const communityTranslations = {
+    "Duneborne": "Dunista",
+    "Freeborne": "Nascido Livre",
+    "Frostborne": "Congelado",
+    "Hearthborne": "Acolhido",
+    "Highborne": "Aristocrata",
+    "Loreborne": "Erudita",
+    "Orderborne": "Disciplinado",
+    "Reborne": "Renascido",
+    "Ridgeborne": "Montanhesa",
+    "Seaborne": "Marítima",
+    "Slyborne": "Fora da Lei",
+    "Underborne": "Subterrânea",
+    "Wanderborne": "Nômade",
+    "Warborne": "Nascido na Guerra",
+    "Wildborne": "Silvestre"
+};
+
+const subclassTranslations = {
+    // Assassin
+    "Poisoners Guild": "",
+    "Executioners Guild": "",
+    // Bard
+    "Troubadour": "Trovador",
+    "Wordsmith": "Beletrista",
+    // Brawler
+    "Juggernaut": "",
+    "Martial Artist": "",
+    // Druid
+    "Warden of the Elements": "Protetor dos Elementos",
+    "Warden of Renewal": "Protetor da Renovação",
+    // Guardian
+    "Stalwart": "Baluarte",
+    "Vengeance": "Vingador",
+    // Ranger
+    "Wayfinder": "Rastreador",
+    "Beastbound": "Treinador",
+    // Rogue
+    "Nightwalker": "Gatuno",
+    "Syndicate": "Mafioso",
+    // Seraph
+    "Divine Wielder": "Portador Divino",
+    "Winged Sentinel": "Sentinela Alada",
+    // Sorcerer
+    "Primal Origin": "Primordialista",
+    "Elemental Origin": "Elementalista",
+    // Warlock
+    "Pact of the Wraithful": "",
+    "Pact of the Endless": "",
+    // Warrior
+    "Call of the Brave": "Escolhido da Bravura",
+    "Call of the Slayer": "Escolhido da Matança",
+    // Witch
+    "Moon": "",
+    "Hedge": "",
+    // Wizard
+    "School of Knowledge": "Discípulo do Conhecimento",
+    "School of War": "Discípulo da Guerra"
+};
+
 // ========== MODAIS (instância única) ==========
 const modalFichaEl = document.getElementById('modalFicha');
 const modalFicha = modalFichaEl ? new bootstrap.Modal(modalFichaEl) : null;
@@ -155,17 +260,26 @@ function populateDropdowns() {
 
     if (raceSelect) {
         raceSelect.innerHTML = '<option value="">Selecione</option>';
-        races.forEach(r => raceSelect.appendChild(new Option(r, r)));
+        races.forEach(r => {
+            const label = raceTranslations[r] || r;
+            raceSelect.appendChild(new Option(label, r));
+        });
     }
 
     if (classSelect) {
         classSelect.innerHTML = '<option value="">Selecione</option>';
-        classes.forEach(c => classSelect.appendChild(new Option(c, c)));
+        classes.forEach(c => {
+            const label = classTranslations[c] || c;
+            classSelect.appendChild(new Option(label, c));
+        });
     }
 
     if (communitySelect) {
         communitySelect.innerHTML = '<option value="">Selecione</option>';
-        communities.forEach(c => communitySelect.appendChild(new Option(c, c)));
+        communities.forEach(c => {
+            const label = communityTranslations[c] || c;
+            communitySelect.appendChild(new Option(label, c));
+        });
     }
 
     updateSubclasses();
@@ -187,7 +301,8 @@ function updateMultiRace() {
         multiRaceSelect.disabled = false;
         races.forEach(r => {
             if (r !== selectedRace) {
-                multiRaceSelect.appendChild(new Option(r, r));
+                const label = raceTranslations[r] || r;
+                multiRaceSelect.appendChild(new Option(label, r));
             }
         });
         // Tenta manter a seleção anterior se ainda for válida
@@ -215,7 +330,10 @@ function updateSubclasses() {
 
     subclassSelect.innerHTML = '';
     if (cls && subclasses[cls]) {
-        subclasses[cls].forEach(sc => subclassSelect.appendChild(new Option(sc, sc)));
+        subclasses[cls].forEach(sc => {
+            const label = subclassTranslations[sc] || sc;
+            subclassSelect.appendChild(new Option(label, sc));
+        });
         subclassSelect.disabled = false;
     } else {
         subclassSelect.appendChild(new Option('Selecione uma classe primeiro', ''));
