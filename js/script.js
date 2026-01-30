@@ -460,7 +460,9 @@ function saveFicha() {
         subclass: getElementValue('ficha-subclass'),
         community: getElementValue('ficha-community'),
         mutation: getElementValue('ficha-mutation'),
+
         multirace: getElementValue('ficha-multirace'),
+        history: getElementValue('ficha-history'),
 
         attributes: {
             agi: parseInt(getElementValue('attr-agi'), 10) || 0,
@@ -643,6 +645,7 @@ function openFicha(index) {
     setElementValue('ficha-level', ficha.level || 1);
     setElementValue('ficha-race', ficha.race || '');
     setElementValue('ficha-community', ficha.community || '');
+    setElementValue('ficha-history', ficha.history || '');
 
     setElementValue('ficha-class', ficha.classchar || '');
     setElementValue('ficha-mutation', ficha.mutation || '');
