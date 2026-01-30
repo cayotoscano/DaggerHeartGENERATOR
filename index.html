@@ -67,6 +67,10 @@
                         <button class="nav-link" id="level-tab" data-bs-toggle="tab" data-bs-target="#level"
                             type="button" role="tab">LvL Up</button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="galeria-tab" data-bs-toggle="tab" data-bs-target="#galeria"
+                            type="button" role="tab">Galeria</button>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <!-- Informações -->
@@ -606,6 +610,18 @@
                         </div>
                     </div>
 
+                    <!-- Galeria -->
+                    <div class="tab-pane fade" id="galeria" role="tabpanel">
+                        <h5>Galeria</h5>
+                        <div id="gallery-container" class="gallery-grid mb-3"></div>
+                        <div class="galeria-controls mb-3 text-center">
+                            <label for="gallery-upload" class="btn btn-primary" id="gallery-upload">
+                                <i class="bi bi-upload me-2"></i> Adicionar Imagens
+                            </label>
+                            <input type="file" id="gallery-upload" multiple accept="image/*" style="display: none;"
+                                onchange="handleGalleryUpload(this)">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -656,6 +672,12 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Lightbox Gallery Modal -->
+    <div id="gallery-lightbox" class="gallery-lightbox" onclick="closeGalleryLightbox()">
+        <span class="gallery-lightbox-close">&times;</span>
+        <img class="gallery-lightbox-img" id="gallery-lightbox-img">
     </div>
 
     <!-- Container para notificações -->

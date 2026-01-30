@@ -23,6 +23,7 @@ const fichaSection = document.getElementById('ficha-section');
 // ========== ESTADO ==========
 let currentFichaIndex = null;
 let deleteIndex = null;
+let currentFichaGallery = [];
 
 // ========== DADOS ESTÁTICOS ==========
 const subclasses = {
@@ -354,6 +355,69 @@ function getTierCheckboxes(tierId) {
     return Array.from(tier.querySelectorAll('input[type="checkbox"]')).map(chk => chk.checked);
 }
 
+// ========== Gallery Logic ==========
+
+function handleGalleryUpload(input) {
+    if (!input.files || input.files.length === 0) return;
+
+    Array.from(input.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            currentFichaGallery.push(e.target.result);
+            renderGallery();
+        };
+        reader.readAsDataURL(file);
+    });
+
+    input.value = '';
+}
+
+function renderGallery() {
+    const container = document.getElementById('gallery-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    currentFichaGallery.forEach((imgSrc, index) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML = `
+            <img src="${imgSrc}" class="gallery-img" onclick="viewImage('${imgSrc}')" title="Clique para ampliar">
+            <button class="gallery-remove-btn" onclick="removeGalleryImage(${index})" title="Remover imagem">
+                <i class="bi bi-trash"></i>
+            </button>
+        `;
+        container.appendChild(item);
+    });
+}
+
+function removeGalleryImage(index) {
+    // Removed confirm dialog as requested
+    currentFichaGallery.splice(index, 1);
+    renderGallery();
+}
+
+function viewImage(src) {
+    const lightbox = document.getElementById('gallery-lightbox');
+    const lightboxImg = document.getElementById('gallery-lightbox-img');
+
+    if (lightbox && lightboxImg) {
+        lightboxImg.src = src;
+        lightbox.classList.add('active');
+    }
+}
+
+function closeGalleryLightbox() {
+    const lightbox = document.getElementById('gallery-lightbox');
+    if (lightbox) {
+        lightbox.classList.remove('active');
+        setTimeout(() => {
+            const lightboxImg = document.getElementById('gallery-lightbox-img');
+            if (lightboxImg) lightboxImg.src = '';
+        }, 300);
+    }
+}
+
 // ========== Salvar / Editar ficha completa ==========
 
 function saveFicha() {
@@ -457,7 +521,9 @@ function saveFicha() {
             tier2: getTierCheckboxes('tier2'),
             tier3: getTierCheckboxes('tier3'),
             tier4: getTierCheckboxes('tier4')
-        }
+        },
+
+        gallery: currentFichaGallery
     };
 
     if (currentFichaIndex !== null && cards[currentFichaIndex]) {
@@ -669,6 +735,10 @@ function openFicha(index) {
         });
     });
 
+    // Gallery
+    currentFichaGallery = ficha.gallery || [];
+    renderGallery();
+
     gerarCartasDominios();
     atualizarSelecionadas();
     atualizarMao();
@@ -685,6 +755,8 @@ function backToCards() {
         history.replaceState(null, '', window.location.pathname + window.location.search);
     }
     currentFichaIndex = null;
+    currentFichaGallery = []; // Clear gallery when closing
+    renderGallery();
 }
 
 // ========== DADOS DE RAÇAS (imagens) ==========
@@ -1442,7 +1514,12 @@ function init() {
     window.finishEditingFicha = finishEditingFicha;
     window.removerSelecionada = removerSelecionada;
     window.mandarParaMao = mandarParaMao;
+    window.mandarParaMao = mandarParaMao;
     window.tirarDaMao = tirarDaMao;
+    window.handleGalleryUpload = handleGalleryUpload;
+    window.removeGalleryImage = removeGalleryImage;
+    window.viewImage = viewImage;
+    window.closeGalleryLightbox = closeGalleryLightbox;
 }
 
 // ========== EVENTOS DE INICIALIZAÇÃO ==========
