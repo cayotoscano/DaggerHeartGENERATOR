@@ -643,7 +643,8 @@ function saveFicha() {
                 alcance: getElementValue("primariaAlcance"),
                 tipo: getElementValue("primariaTipo"),
                 dano: getElementValue("primariaDano"),
-                caracteristica: getElementValue("primariaCaracteristica")
+                caracteristica: getElementValue("primariaCaracteristica"),
+                empunhadura: getElementValue("primariaEmpunhadura")
             },
             secundaria: {
                 nome: getElementValue("secNome"),
@@ -651,7 +652,8 @@ function saveFicha() {
                 alcance: getElementValue("secAlcance"),
                 tipo: getElementValue("secTipo"),
                 dano: getElementValue("secDano"),
-                caracteristica: getElementValue("secCaracteristica")
+                caracteristica: getElementValue("secCaracteristica"),
+                empunhadura: getElementValue("secEmpunhadura")
             },
             armadura: {
                 nome: getElementValue("armNome"),
@@ -848,6 +850,7 @@ function openFicha(index) {
     setElementValue("primariaTipo", p.tipo || "");
     setElementValue("primariaDano", p.dano || "");
     setElementValue("primariaCaracteristica", p.caracteristica || "");
+    setElementValue("primariaEmpunhadura", p.empunhadura || "");
 
     setElementValue("secNome", s.nome || "");
     setElementValue("secTraco", s.traco || "");
@@ -855,6 +858,7 @@ function openFicha(index) {
     setElementValue("secTipo", s.tipo || "");
     setElementValue("secDano", s.dano || "");
     setElementValue("secCaracteristica", s.caracteristica || "");
+    setElementValue("secEmpunhadura", s.empunhadura || "");
 
     setElementValue("armNome", a.nome || "");
     setElementValue("armLimiares", a.limiares || "");
@@ -1704,6 +1708,11 @@ function init() {
     window.removeGalleryImage = removeGalleryImage;
     window.viewImage = viewImage;
     window.closeGalleryLightbox = closeGalleryLightbox;
+
+    // Item Helpers
+    window.openItemModal = openItemModal;
+    window.selectItem = selectItem;
+    window.openHelpModal = openHelpModal;
 }
 
 // ========== EVENTOS DE INICIALIZAÇÃO ==========

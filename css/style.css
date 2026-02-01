@@ -1010,7 +1010,7 @@ input[type=number]::-webkit-outer-spin-button {
     margin-top: 0;
 }
 
-@media (max-width: 410px) {
+@media (max-width: 450px) {
     .lado-lado {
         flex-direction: column;
     }
@@ -1254,4 +1254,98 @@ input[type=number]::-webkit-outer-spin-button {
 #gallery-button:hover {
     color: #000000;
     background-color: #FFC107 !important;
+}
+
+/* === LvL Up Tab Aesthetics === */
+.lvl-tier-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-left: 4px solid #FECB73;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.lvl-tier-card h3 {
+    color: #FECB73;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+}
+
+.lvl-tier-card p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.lvl-fixed-reward {
+    background-color: rgba(254, 203, 115, 0.1);
+    border: 1px dashed rgba(254, 203, 115, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 15px;
+}
+
+.lvl-options-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.lvl-option-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+    cursor: pointer;
+}
+
+.lvl-option-item:hover {
+    background-color: rgba(254, 203, 115, 0.05);
+    transform: translateX(5px);
+}
+
+/* Custom Checkbox */
+.lvl-check-container {
+    display: inline-flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.lvl-check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 26px;
+    height: 26px;
+    border: 2px solid #FECB73;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+}
+
+.lvl-check:checked {
+    background-color: #FECB73;
+    box-shadow: 0 0 10px rgba(254, 203, 115, 0.4);
+}
+
+.lvl-check:checked::after {
+    content: '\2714';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -51%);
+    color: #1a1a1a;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.lvl-check:hover {
+    box-shadow: 0 0 8px rgba(254, 203, 115, 0.4);
 }

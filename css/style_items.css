@@ -1,0 +1,131 @@
+/* Item Help Icon */
+.btn-help-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #FECB73;
+    border-radius: 50%;
+    color: #FECB73;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.btn-help-item:hover {
+    background-color: #FECB73;
+    color: #211E41;
+}
+
+.btn-help-item i {
+    pointer-events: none;
+}
+
+
+/* Modal Styles */
+.modal-item-content {
+    background-color: #1a1a1a;
+    color: #fff;
+    border: 1px solid #FECB73;
+}
+
+.modal-item-header {
+    border-bottom: 1px solid #333;
+    padding: 1rem;
+}
+
+.modal-item-body {
+    padding: 1rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Tabs inside Modal */
+.item-tabs .nav-link {
+    color: #A0A3C0;
+    border: none;
+    background: transparent;
+    font-weight: 500;
+}
+
+.item-tabs .nav-link:hover {
+    color: #fff;
+}
+
+.item-tabs .nav-link.active {
+    color: #FECB73;
+    background: transparent;
+    border-bottom: 2px solid #FECB73;
+}
+
+/* Item Lists */
+.item-section-title {
+    color: #FECB73;
+    font-size: 1.1rem;
+    margin: 1rem 0 0.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(254, 203, 115, 0.2);
+    padding-bottom: 5px;
+}
+
+.item-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item-row-split {
+    display: flex;
+    gap: 20px;
+}
+
+.item-col {
+    flex: 1;
+}
+
+/* Item Card (Mini) */
+.item-card-mini {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+.item-card-mini:hover {
+    transform: translateX(4px);
+    background-color: #333;
+    border-color: #FECB73;
+}
+
+.item-name {
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+}
+
+.item-details {
+    color: #A0A3C0;
+    font-size: 0.8rem;
+}
+
+.item-trait {
+    color: #FECB73;
+    font-size: 0.75rem;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+    .item-row-split {
+        flex-direction: column;
+    }
+}
