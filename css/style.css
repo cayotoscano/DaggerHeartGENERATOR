@@ -871,6 +871,8 @@ input[type=number]::-webkit-outer-spin-button {
     flex: 1;
     /* textarea ocupa todo o espaço disponível */
     min-height: 50px;
+    resize: none;
+    overflow: hidden;
 }
 
 .exp-num {

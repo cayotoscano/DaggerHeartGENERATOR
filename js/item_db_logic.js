@@ -2137,6 +2137,9 @@ function openHelpModal(type) {
         renderDomainsList();
         const modal = new bootstrap.Modal(document.getElementById('modalDominiosList'));
         modal.show();
+    } else if (type === 'multirace') {
+        const modal = new bootstrap.Modal(document.getElementById('modalMultiRace'));
+        modal.show();
     }
 }
 

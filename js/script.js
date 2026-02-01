@@ -169,6 +169,19 @@ function getElementValue(id, defaultValue = '') {
 }
 
 /**
+ * Ajusta automaticamente a altura de um textarea
+ */
+function autoResize(el) {
+    if (!el || el.tagName !== 'TEXTAREA') return;
+    // Se o elemento estiver oculto, o scrollHeight pode ser 0 ou impreciso.
+    // Só redimensionamos se ele estiver visível (offsetParent !== null).
+    if (el.offsetParent === null) return;
+
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight) + 'px';
+}
+
+/**
  * Define valor de elemento de forma segura
  */
 function setElementValue(id, value) {
@@ -178,6 +191,9 @@ function setElementValue(id, value) {
             el.checked = !!value;
         } else {
             el.value = value;
+            if (el.tagName === 'TEXTAREA') {
+                autoResize(el);
+            }
         }
     }
 }
@@ -209,14 +225,7 @@ function saveCards(cards) {
     }
 }
 
-/**
- * Auto resize para textareas
- */
-function autoResize(el) {
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = (el.scrollHeight) + "px";
-}
+// Função duplicada removida
 
 /**
  * Gera checkboxes para recursos
@@ -904,6 +913,9 @@ function openFicha(index) {
     atualizarSelecionadas();
     atualizarMao();
     generateResourcesText();
+
+    // Redimensionar apenas o que estiver visível agora
+    document.querySelectorAll('.item-text, .exp-text').forEach(autoResize);
 }
 
 // ========== Voltar para lista ==========
@@ -1603,10 +1615,21 @@ function init() {
     gerarCartasDominios();
     generateResourcesText();
 
-    // Auto resize item-text
-    document.querySelectorAll('.item-text').forEach(textarea => {
+    // Auto resize textareas (itens e experiências)
+    document.querySelectorAll('.item-text, .exp-text').forEach(textarea => {
         textarea.addEventListener('input', () => autoResize(textarea));
         autoResize(textarea);
+    });
+
+    // Redimensionar textareas quando a tab for mostrada (Bootstrap 5)
+    document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabEl => {
+        tabEl.addEventListener('shown.bs.tab', () => {
+            const targetId = tabEl.getAttribute('data-bs-target');
+            const targetPane = document.querySelector(targetId);
+            if (targetPane) {
+                targetPane.querySelectorAll('.item-text, .exp-text').forEach(autoResize);
+            }
+        });
     });
 
     // Filtros domínio
@@ -1669,15 +1692,6 @@ function init() {
         });
 
         generateChecks(checkId, input.value);
-    });
-
-    // Exp-text auto height
-    document.querySelectorAll(".exp-text").forEach(textarea => {
-        textarea.addEventListener("input", function () {
-            this.style.height = "auto";
-            this.style.height = this.scrollHeight + "px";
-        });
-        textarea.style.height = textarea.scrollHeight + "px";
     });
 
     // Hash change

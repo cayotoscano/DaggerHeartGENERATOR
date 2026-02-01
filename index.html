@@ -141,7 +141,13 @@
                         <hr class="atributos-separador">
 
                         <div class="grupo recursos">
-                            <h5>Recursos</h5>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h5 class="mb-0">Recursos</h5>
+                                <button class="btn-help-item" onclick="openHelpModal('multirace')"
+                                    title="Ancestralidade Múltipla">
+                                    <i class="fa-solid fa-question"></i>
+                                </button>
+                            </div>
                             <div class="mb-2">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" id="check-especializacao"
@@ -903,8 +909,10 @@
                         <div
                             style="background: #2a2a2a; padding: 15px; border-radius: 8px; border-left: 4px solid #FECB73; margin-bottom: 15px;">
                             <h6 style="color: #FECB73;">Regra de Domínios</h6>
-                            <p class="mb-0 small">Durante a criação do personagem no nível 1, você deve escolher duas
-                                cartas de domínios entre aqueles oferecidos pela sua classe.
+                            <p class="mb-0 small">Para começar, veja todas as cartas de 1º nível dos domínios
+                                da sua classe e escolha duas delas, devolvendo as restantes
+                                aos respectivos baralhos. Você pode escolher uma de cada
+                                domínio ou duas do mesmo domínio.
                             </p>
                         </div>
                         <table class="table table-dark table-hover mb-0">
@@ -919,6 +927,27 @@
                                 <!-- Preenchido via JS -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalMultiRace" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-white" style="background-color: #1a1a1a; border: 1px solid #FECB73;">
+                <div class="modal-header" style="border-bottom: 1px solid #333;">
+                    <h5 class="modal-title" style="color: #FECB73;">Ancestralidade Múltipla</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div
+                        style="background: #2a2a2a; padding: 20px; border-radius: 8px; border-left: 4px solid #FECB73;">
+                        <p class="mb-0">Se seu personagem descende de várias ancestralidades e você quiser
+                            representar
+                            isso mecanicamente, você deve escolher a <strong>primeira habilidade</strong> de uma
+                            ancestralidade e a <strong>segunda</strong> da outra.</p>
                     </div>
                 </div>
             </div>
