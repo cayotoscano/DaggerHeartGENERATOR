@@ -359,6 +359,32 @@ h6 {
 }
 
 /* Checkboxes vida/estresse/esperança */
+.recursos-container .check-group input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    width: 18px;
+    height: 18px;
+    transform: scale(1.4);
+    margin: 3px;
+    /* +15% */
+
+    border: 2px solid #555;
+    border-radius: 50%;
+    cursor: pointer;
+
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* estado marcado */
+.recursos-container .check-group input[type="checkbox"]:checked {
+    background-color: #555;
+    box-shadow: inset 0 0 0 4px #fff;
+}
+
+
 .check-group {
     display: flex;
     flex-wrap: wrap;
