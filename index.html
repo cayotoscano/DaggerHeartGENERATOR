@@ -96,25 +96,32 @@
                         <!-- Linha: Raça e Multi Raça -->
                         <div class="row mb-2">
                             <div class="col-6">
-                                <label>Raça</label>
+                                <label class="mb-2">Raça</label>
                                 <select id="ficha-race" class="form-select"></select>
                             </div>
                             <div class="col-6">
-                                <label>Multi Raça</label>
+                                <div class="d-flex justify-content-between">
+                                    <label class="mb-2">Multi Raça</label>
+                                    <button class="btn-help-item" onclick="openHelpModal('multirace')"
+                                        title="Ancestralidade Múltipla">
+                                        <i class="fa-solid fa-question"></i>
+                                    </button>
+                                </div>
                                 <select id="ficha-multirace" class="form-select" disabled>
                                     <option value="">Selecione uma Raça primeiro</option>
                                 </select>
+
                             </div>
                         </div>
 
                         <!-- Linha: Comunidade e Transformação -->
                         <div class="row mb-2">
                             <div class="col-6">
-                                <label>Comunidade</label>
+                                <label class="mb-2">Comunidade</label>
                                 <select id="ficha-community" class="form-select"></select>
                             </div>
                             <div class="col-6">
-                                <label>Transformação</label>
+                                <label class="mb-2">Transformação</label>
                                 <select id="ficha-mutation" class="form-select">
                                     <option value="">Nenhum</option>
                                     <option value="Lobisomem">Lobisomem</option>
@@ -129,11 +136,11 @@
                         <!-- Linha: Classe e Subclasse -->
                         <div class="row mb-2">
                             <div class="col-6">
-                                <label>Classe</label>
+                                <label class="mb-2">Classe</label>
                                 <select id="ficha-class" class="form-select" onchange="updateSubclasses()"></select>
                             </div>
                             <div class="col-6">
-                                <label>Subclasse</label>
+                                <label class="mb-2">Subclasse</label>
                                 <select id="ficha-subclass" class="form-select" disabled></select>
                             </div>
                         </div>
@@ -143,10 +150,6 @@
                         <div class="grupo recursos">
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <h5 class="mb-0">Recursos</h5>
-                                <button class="btn-help-item" onclick="openHelpModal('multirace')"
-                                    title="Ancestralidade Múltipla">
-                                    <i class="fa-solid fa-question"></i>
-                                </button>
                             </div>
                             <div class="mb-2">
                                 <div class="form-check form-check-inline">
@@ -323,9 +326,9 @@
 
                             <div class="d-flex align-items-center justify-content-between">
                                 <h5 style="margin-bottom: 0;">Primária</h5>
-                                <button class="btn-help-item" onclick="openItemModal('primary')"
+                                <button class="btn-itens-modal" onclick="openItemModal('primary')"
                                     title="Selecionar Arma Primária">
-                                    <i class="fa-solid fa-question"></i>
+                                    ITENS
                                 </button>
                             </div>
 
@@ -379,9 +382,9 @@
 
                             <div class="d-flex align-items-center justify-content-between mt-4">
                                 <h5 class="mb-0">Secundária</h5>
-                                <button class="btn-help-item" onclick="openItemModal('secondary')"
+                                <button class="btn-itens-modal" onclick="openItemModal('secondary')"
                                     title="Selecionar Arma Secundária">
-                                    <i class="fa-solid fa-question"></i>
+                                    ITENS
                                 </button>
                             </div>
 
@@ -433,9 +436,9 @@
 
                             <div class="d-flex align-items-center justify-content-between mt-4">
                                 <h5 class="mb-0">Armadura</h5>
-                                <button class="btn-help-item" onclick="openItemModal('armor')"
+                                <button class="btn-itens-modal" onclick="openItemModal('armor')"
                                     title="Selecionar Armadura">
-                                    <i class="fa-solid fa-question"></i>
+                                    ITENS
                                 </button>
                             </div>
 
@@ -936,17 +939,17 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-white" style="background-color: #1a1a1a; border: 1px solid #FECB73;">
                 <div class="modal-header" style="border-bottom: 1px solid #333;">
-                    <h5 class="modal-title" style="color: #FECB73;">Ancestralidade Múltipla</h5>
+                    <h5 class="modal-title" style="color: #FECB73;">Raça Múltipla</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div
                         style="background: #2a2a2a; padding: 20px; border-radius: 8px; border-left: 4px solid #FECB73;">
-                        <p class="mb-0">Se seu personagem descende de várias ancestralidades e você quiser
+                        <p class="mb-0">Se seu personagem descende de várias raças e você quiser
                             representar
                             isso mecanicamente, você deve escolher a <strong>primeira habilidade</strong> de uma
-                            ancestralidade e a <strong>segunda</strong> da outra.</p>
+                            raça e a <strong>segunda</strong> da outra.</p>
                     </div>
                 </div>
             </div>

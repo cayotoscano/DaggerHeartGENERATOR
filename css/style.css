@@ -1260,13 +1260,10 @@ input[type=number]::-webkit-outer-spin-button {
 
 /* === LvL Up Tab Aesthetics === */
 .lvl-tier-card {
-    background-color: #1a1a1a;
-    border: 1px solid #333;
     border-left: 4px solid #FECB73;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 25px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .lvl-tier-card h3 {

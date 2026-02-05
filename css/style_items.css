@@ -26,6 +26,31 @@
     pointer-events: none;
 }
 
+/* New ITENS Button Style */
+.btn-itens-modal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border: 2px solid #FECB73;
+    border-radius: 6px;
+    color: #FECB73;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-itens-modal:hover {
+    background-color: #FECB73;
+    color: #211E41;
+}
+
 
 /* Modal Styles */
 .modal-item-content {
