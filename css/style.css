@@ -381,7 +381,7 @@ h6 {
 /* estado marcado */
 .recursos-container .check-group input[type="checkbox"]:checked {
     background-color: #555;
-    box-shadow: inset 0 0 0 4px #fff;
+    box-shadow: inset 0 0 0 4px #FECB73;
 }
 
 
