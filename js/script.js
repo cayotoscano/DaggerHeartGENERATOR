@@ -111,14 +111,14 @@ const communityTranslations = {
 
 const subclassTranslations = {
     // Assassin
-    "Poisoners Guild": "",
-    "Executioners Guild": "",
+    "Poisoners Guild": "Víbora",
+    "Executioners Guild": "Executor",
     // Bard
     "Troubadour": "Trovador",
     "Wordsmith": "Beletrista",
     // Brawler
-    "Juggernaut": "",
-    "Martial Artist": "",
+    "Juggernaut": "Colosso",
+    "Martial Artist": "Artista Marcial",
     // Druid
     "Warden of the Elements": "Protetor dos Elementos",
     "Warden of Renewal": "Protetor da Renovação",
@@ -138,14 +138,14 @@ const subclassTranslations = {
     "Primal Origin": "Primordialista",
     "Elemental Origin": "Elementalista",
     // Warlock
-    "Pact of the Wraithful": "",
-    "Pact of the Endless": "",
+    "Pact of the Wraithful": "Pacto do Colérico",
+    "Pact of the Endless": "Pacto do Perpétuo",
     // Warrior
     "Call of the Brave": "Escolhido da Bravura",
     "Call of the Slayer": "Escolhido da Matança",
     // Witch
-    "Moon": "",
-    "Hedge": "",
+    "Moon": "Lua",
+    "Hedge": "Limiar",
     // Wizard
     "School of Knowledge": "Discípulo do Conhecimento",
     "School of War": "Discípulo da Guerra"
@@ -1495,6 +1495,14 @@ const cartasDominio = [
     { id: 209, dominio: "Dread", lvl: 9, img: "img/Dread/9 Saboreie a Angustia.png", selecionada: false, clicked: false },
     { id: 210, dominio: "Dread", lvl: 10, img: "img/Dread/10 Avatar da Malícia.png", selecionada: false, clicked: false },
     { id: 211, dominio: "Dread", lvl: 10, img: "img/Dread/10 Invocar Tormento.png", selecionada: false, clicked: false },
+
+    //Uso Único
+    { id: 212, dominio: "Uso Único", lvl: 1, img: "img/Uso Único/Conta Comigo.jpg", selecionada: false, clicked: false },
+    { id: 213, dominio: "Uso Único", lvl: 1, img: "img/Uso Único/Estamos Apenas Começando.jpg", selecionada: false, clicked: false },
+    { id: 214, dominio: "Uso Único", lvl: 1, img: "img/Uso Único/Revigorado.jpg", selecionada: false, clicked: false },
+    { id: 215, dominio: "Uso Único", lvl: 1, img: "img/Uso Único/Sem Pressa.jpg", selecionada: false, clicked: false },
+    { id: 216, dominio: "Uso Único", lvl: 1, img: "img/Uso Único/Suporte Comunitário.jpg", selecionada: false, clicked: false },
+    { id: 217, dominio: "Uso Único", lvl: 1, img: "img/Uso Único/Tamo Junto.jpg", selecionada: false, clicked: false },
 ];
 
 // ========== FUNÇÕES DE DOMÍNIO ==========
