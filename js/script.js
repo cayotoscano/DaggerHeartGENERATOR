@@ -1518,7 +1518,27 @@ const cartasDominio = [
     { id: 211, dominio: "Dread", lvl: 10, img: "img/Dread/10 Invocar Tormento.png", selecionada: false, clicked: false },
 
     // Blood
-    { id: 218, dominio: "Blood", lvl: 1, img: "img/Blood/", selecionada: false, clicked: false },
+    { id: 218, dominio: "Blood", lvl: 1, img: "img/Blood/SANGUE-PTBR-1-21-1.png", selecionada: false, clicked: false },
+    { id: 219, dominio: "Blood", lvl: 1, img: "img/Blood/SANGUE-PTBR-1-21-2.png", selecionada: false, clicked: false },
+    { id: 220, dominio: "Blood", lvl: 1, img: "img/Blood/SANGUE-PTBR-1-21-3.png", selecionada: false, clicked: false },
+    { id: 221, dominio: "Blood", lvl: 2, img: "img/Blood/SANGUE-PTBR-1-21-4.png", selecionada: false, clicked: false },
+    { id: 222, dominio: "Blood", lvl: 2, img: "img/Blood/SANGUE-PTBR-1-21-5.png", selecionada: false, clicked: false },
+    { id: 223, dominio: "Blood", lvl: 3, img: "img/Blood/SANGUE-PTBR-1-21-6.png", selecionada: false, clicked: false },
+    { id: 224, dominio: "Blood", lvl: 3, img: "img/Blood/SANGUE-PTBR-1-21-7.png", selecionada: false, clicked: false },
+    { id: 225, dominio: "Blood", lvl: 4, img: "img/Blood/SANGUE-PTBR-1-21-8.png", selecionada: false, clicked: false },
+    { id: 226, dominio: "Blood", lvl: 4, img: "img/Blood/SANGUE-PTBR-1-21-9.png", selecionada: false, clicked: false },
+    { id: 227, dominio: "Blood", lvl: 5, img: "img/Blood/SANGUE-PTBR-1-21-10.png", selecionada: false, clicked: false },
+    { id: 228, dominio: "Blood", lvl: 5, img: "img/Blood/SANGUE-PTBR-1-21-11.png", selecionada: false, clicked: false },
+    { id: 229, dominio: "Blood", lvl: 6, img: "img/Blood/SANGUE-PTBR-1-21-12.png", selecionada: false, clicked: false },
+    { id: 230, dominio: "Blood", lvl: 6, img: "img/Blood/SANGUE-PTBR-1-21-13.png", selecionada: false, clicked: false },
+    { id: 231, dominio: "Blood", lvl: 7, img: "img/Blood/SANGUE-PTBR-1-21-14.png", selecionada: false, clicked: false },
+    { id: 232, dominio: "Blood", lvl: 7, img: "img/Blood/SANGUE-PTBR-1-21-15.png", selecionada: false, clicked: false },
+    { id: 233, dominio: "Blood", lvl: 8, img: "img/Blood/SANGUE-PTBR-1-21-16.png", selecionada: false, clicked: false },
+    { id: 234, dominio: "Blood", lvl: 8, img: "img/Blood/SANGUE-PTBR-1-21-17.png", selecionada: false, clicked: false },
+    { id: 235, dominio: "Blood", lvl: 9, img: "img/Blood/SANGUE-PTBR-1-21-18.png", selecionada: false, clicked: false },
+    { id: 236, dominio: "Blood", lvl: 9, img: "img/Blood/SANGUE-PTBR-1-21-19.png", selecionada: false, clicked: false },
+    { id: 237, dominio: "Blood", lvl: 10, img: "img/Blood/SANGUE-PTBR-1-21-20.png", selecionada: false, clicked: false },
+    { id: 238, dominio: "Blood", lvl: 10, img: "img/Blood/SANGUE-PTBR-1-21-21.png", selecionada: false, clicked: false },
 
     //Uso Único
     { id: 212, dominio: "Uso Único", lvl: 1, img: "img/Uso Único/Conta Comigo.jpg", selecionada: false, clicked: false },
