@@ -2100,7 +2100,8 @@ const subclassStats = [
     { name: "Bruxo", evasion: 10, hp: 6 },
     { name: "Guerreiro", evasion: 11, hp: 6 },
     { name: "Ocultista", evasion: 10, hp: 6 },
-    { name: "Mago", evasion: 10, hp: 6 }
+    { name: "Mago", evasion: 10, hp: 6 },
+    { name: "Caçador de Sangue", evasion: 9, hp: 7 }
 ];
 
 const classDomains = [
@@ -2116,7 +2117,8 @@ const classDomains = [
     { name: "Bruxo", d1: "Grace", d2: "Dread" },
     { name: "Guerreiro", d1: "Blade", d2: "Bone" },
     { name: "Ocultista", d1: "Dread", d2: "Sage" },
-    { name: "Mago", d1: "Splendor", d2: "Codex" }
+    { name: "Mago", d1: "Splendor", d2: "Codex" },
+    { name: "Caçador de Sangue", d1: "Blood", d2: "Blade" }
 ];
 
 /**

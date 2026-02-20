@@ -29,6 +29,7 @@ let currentFichaGallery = [];
 const subclasses = {
     Assassin: ["Poisoners Guild", "Executioners Guild"],
     Bard: ["Troubadour", "Wordsmith"],
+    BloodHunter: ["Ghost Slayer", "Mutant", "Lycan"],
     Brawler: ["Juggernaut", "Martial Artist"],
     Druid: ["Warden of the Elements", "Warden of Renewal"],
     Guardian: ["Stalwart", "Vengeance"],
@@ -43,7 +44,7 @@ const subclasses = {
 };
 
 const races = ["Aetheris", "Clank", "Drakona", "Dwarf", "Earthkin", "Elf", "Emberkin", "Faerie", "Faun", "Firbolg", "Fungril", "Galapa", "Giant", "Gnome", "Goblin", "Halfling", "Human", "Infernis", "Katari", "Orc", "Ribbet", "Simiah", "Skykin", "Tidekin"];
-const classes = ["Assassin", "Bard", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Warlock", "Warrior", "Witch", "Wizard"];
+const classes = ["Assassin", "Bard", "BloodHunter", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Warlock", "Warrior", "Witch", "Wizard"];
 const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Highborne", "Loreborne", "Orderborne", "Reborne", "Ridgeborne", "Seaborne", "Slyborne", "Underborne", "Wanderborne", "Warborne", "Wildborne"];
 
 // ========== TRADUÇÕES ==========
@@ -51,6 +52,7 @@ const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Hig
 const classTranslations = {
     "Assassin": "Assassino",
     "Bard": "Bardo",
+    "BloodHunter": "Blood Hunter",
     "Brawler": "Lutador",
     "Druid": "Druida",
     "Guardian": "Guardião",
@@ -111,11 +113,15 @@ const communityTranslations = {
 
 const subclassTranslations = {
     // Assassin
-    "Poisoners Guild": "Víbora",
-    "Executioners Guild": "Executor",
+    "Poisoners Guild": "Guilda dos Envenenadores",
+    "Executioners Guild": "Guilda dos Executores",
     // Bard
     "Troubadour": "Trovador",
     "Wordsmith": "Beletrista",
+    // BloodHunter
+    "Ghost Slayer": "Ordem do Exterminador",
+    "Mutant": "Ordem do Mutante",
+    "Lycan": "Ordem do Licantropo",
     // Brawler
     "Juggernaut": "Colosso",
     "Martial Artist": "Artista Marcial",
@@ -139,13 +145,13 @@ const subclassTranslations = {
     "Elemental Origin": "Elementalista",
     // Warlock
     "Pact of the Wraithful": "Pacto do Colérico",
-    "Pact of the Endless": "Pacto do Perpétuo",
+    "Pact of the Endless": "Pacto do Infinito",
     // Warrior
     "Call of the Brave": "Escolhido da Bravura",
     "Call of the Slayer": "Escolhido da Matança",
     // Witch
-    "Moon": "Lua",
-    "Hedge": "Limiar",
+    "Moon": "Lunar",
+    "Hedge": "Herbalista",
     // Wizard
     "School of Knowledge": "Discípulo do Conhecimento",
     "School of War": "Discípulo da Guerra"
@@ -966,6 +972,7 @@ const raceImages = {
 const classImages = {
     "Assassin": "img3/Classes/Assassin.png",
     "Bard": "img3/Classes/Bard.png",
+    "BloodHunter": "img3/Classes/BloodHunter.png",
     "Brawler": "img3/Classes/Brawler.png",
     "Druid": "img3/Classes/Druid.png",
     "Guardian": "img3/Classes/Guardian.png",
@@ -1003,6 +1010,22 @@ const subclassImages = {
         "img3/Subclasses/Wordsmith1.png",
         "img3/Subclasses/Wordsmith2.png",
         "img3/Subclasses/Wordsmith3.png"
+    ],
+    // BloodHunter
+    "Ghost Slayer": [
+        "img3/Subclasses/Ghost Slayer1.png",
+        "img3/Subclasses/Ghost Slayer2.png",
+        "img3/Subclasses/Ghost Slayer3.png"
+    ],
+    "Mutant": [
+        "img3/Subclasses/Mutant1.png",
+        "img3/Subclasses/Mutant2.png",
+        "img3/Subclasses/Mutant3.png"
+    ],
+    "Lycan": [
+        "img3/Subclasses/Lycan1.png",
+        "img3/Subclasses/Lycan2.png",
+        "img3/Subclasses/Lycan3.png"
     ],
     // Brawler
     "Juggernaut": [
@@ -1402,8 +1425,6 @@ const cartasDominio = [
     { id: 125, dominio: "Midnight", lvl: 10, img: "img/Midnight/10 Eclipse.png", selecionada: false, clicked: false },
     { id: 126, dominio: "Midnight", lvl: 10, img: "img/Midnight/10 Espectro da Escuridão.png", selecionada: false, clicked: false },
 
-    // Dread
-
     // Arcana
     { id: 127, dominio: "Arcana", lvl: 1, img: "img/Arcana/1 Andar na parede.png", selecionada: false, clicked: false },
     { id: 128, dominio: "Arcana", lvl: 1, img: "img/Arcana/1 Liberar O Caos.png", selecionada: false, clicked: false },
@@ -1495,6 +1516,9 @@ const cartasDominio = [
     { id: 209, dominio: "Dread", lvl: 9, img: "img/Dread/9 Saboreie a Angustia.png", selecionada: false, clicked: false },
     { id: 210, dominio: "Dread", lvl: 10, img: "img/Dread/10 Avatar da Malícia.png", selecionada: false, clicked: false },
     { id: 211, dominio: "Dread", lvl: 10, img: "img/Dread/10 Invocar Tormento.png", selecionada: false, clicked: false },
+
+    // Blood
+    { id: 218, dominio: "Blood", lvl: 1, img: "img/Blood/", selecionada: false, clicked: false },
 
     //Uso Único
     { id: 212, dominio: "Uso Único", lvl: 1, img: "img/Uso Único/Conta Comigo.jpg", selecionada: false, clicked: false },
