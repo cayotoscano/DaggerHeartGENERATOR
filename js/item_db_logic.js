@@ -2105,20 +2105,20 @@ const subclassStats = [
 ];
 
 const classDomains = [
-    { name: "Assassino", d1: "Midnight", d2: "Blade" },
-    { name: "Bardo", d1: "Codex", d2: "Grace" },
-    { name: "Lutador", d1: "Valor", d2: "Bone" },
-    { name: "Druida", d1: "Sage", d2: "Arcana" },
-    { name: "Guardião", d1: "Blade", d2: "Valor" },
-    { name: "Patrulheiro", d1: "Sage", d2: "Bone" },
-    { name: "Ladino", d1: "Midnight", d2: "Grace" },
-    { name: "Serafim", d1: "Valor", d2: "Splendor" },
-    { name: "Feiticeiro", d1: "Arcana", d2: "Midnight" },
-    { name: "Bruxo", d1: "Grace", d2: "Dread" },
-    { name: "Guerreiro", d1: "Blade", d2: "Bone" },
-    { name: "Ocultista", d1: "Dread", d2: "Sage" },
-    { name: "Mago", d1: "Splendor", d2: "Codex" },
-    { name: "Blood Hunter", d1: "Blood", d2: "Blade" }
+    { name: "Assassino", d1: "Meia-Noite", d2: "Lâmina" },
+    { name: "Bardo", d1: "Códice", d2: "Graça" },
+    { name: "Lutador", d1: "Valor", d2: "Falange" },
+    { name: "Druida", d1: "Sabedoria", d2: "Arcano" },
+    { name: "Guardião", d1: "Lâmina", d2: "Valor" },
+    { name: "Patrulheiro", d1: "Sabedoria", d2: "Falange" },
+    { name: "Ladino", d1: "Meia-Noite", d2: "Graça" },
+    { name: "Serafim", d1: "Valor", d2: "Esplendor" },
+    { name: "Feiticeiro", d1: "Arcano", d2: "Meia-Noite" },
+    { name: "Bruxo", d1: "Graça", d2: "Pavor" },
+    { name: "Guerreiro", d1: "Lâmina", d2: "Falange" },
+    { name: "Ocultista", d1: "Pavor", d2: "Sabedoria" },
+    { name: "Mago", d1: "Esplendor", d2: "Códice" },
+    { name: "Blood Hunter", d1: "Sangue", d2: "Lâmina" }
 ];
 
 /**
