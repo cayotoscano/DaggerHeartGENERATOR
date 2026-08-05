@@ -29,7 +29,7 @@ let currentFichaGallery = [];
 const subclasses = {
     Assassin: ["Poisoners Guild", "Executioners Guild"],
     Bard: ["Troubadour", "Wordsmith"],
-    BloodHunter: ["Ghost Slayer", "Mutant", "Lycan"],
+    BloodHunter: ["Ordem do Mutante", "Ordem do Exterminador de Espectros", "Ordem do Licantropo"],
     Brawler: ["Juggernaut", "Martial Artist"],
     Druid: ["Warden of the Elements", "Warden of Renewal"],
     Guardian: ["Stalwart", "Vengeance"],
@@ -37,6 +37,7 @@ const subclasses = {
     Rogue: ["Nightwalker", "Syndicate"],
     Seraph: ["Divine Wielder", "Winged Sentinel"],
     Sorcerer: ["Primal Origin", "Elemental Origin"],
+    Sumoner: ["Necromancy", "Theurgy"],
     Warlock: ["Pact of the Wraithful", "Pact of the Endless"],
     Warrior: ["Call of the Brave", "Call of the Slayer"],
     Witch: ["Moon", "Hedge"],
@@ -44,7 +45,7 @@ const subclasses = {
 };
 
 const races = ["Aetheris", "Clank", "Drakona", "Dwarf", "Earthkin", "Elf", "Emberkin", "Faerie", "Faun", "Firbolg", "Fungril", "Galapa", "Giant", "Gnome", "Goblin", "Halfling", "Human", "Infernis", "Katari", "Orc", "Ribbet", "Simiah", "Skykin", "Tidekin"];
-const classes = ["Assassin", "Bard", "BloodHunter", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Warlock", "Warrior", "Witch", "Wizard"];
+const classes = ["Assassin", "Bard", "BloodHunter", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Sumoner", "Warlock", "Warrior", "Witch", "Wizard"];
 const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Highborne", "Loreborne", "Orderborne", "Reborne", "Ridgeborne", "Seaborne", "Slyborne", "Underborne", "Wanderborne", "Warborne", "Wildborne"];
 
 // ========== TRADUÇÕES ==========
@@ -60,6 +61,7 @@ const classTranslations = {
     "Rogue": "Ladino",
     "Seraph": "Serafim",
     "Sorcerer": "Feiticeiro",
+    "Sumoner": "Sumoner",
     "Warlock": "Bruxo",
     "Warrior": "Guerreiro",
     "Witch": "Ocultista",
@@ -119,7 +121,10 @@ const subclassTranslations = {
     "Troubadour": "Trovador",
     "Wordsmith": "Beletrista",
     // BloodHunter
-    "Ghost Slayer": "Ordem do Exterminador",
+    "Ghost Slayer": "Ordem do Exterminador de Espectros",
+    "Ordem do Exterminador de Espectros": "Ordem do Exterminador de Espectros",
+    "Ordem do Mutante": "Ordem do Mutante",
+    "Ordem do Licantropo": "Ordem do Licantropo",
     "Mutant": "Ordem do Mutante",
     "Lycan": "Ordem do Licantropo",
     // Brawler
@@ -143,6 +148,9 @@ const subclassTranslations = {
     // Sorcerer
     "Primal Origin": "Primordialista",
     "Elemental Origin": "Elementalista",
+    // Sumoner
+    "Necromancy": "Necromancia",
+    "Theurgy": "Teurgia",
     // Warlock
     "Pact of the Wraithful": "Pacto do Colérico",
     "Pact of the Endless": "Pacto do Infinito",
@@ -353,6 +361,23 @@ function updateSubclasses() {
     } else {
         subclassSelect.appendChild(new Option('Selecione uma classe primeiro', ''));
         subclassSelect.disabled = true;
+    }
+}
+
+function applyClassSpecificDefaults() {
+    const cls = getElementValue('ficha-class');
+    if (cls !== 'Sumoner') return;
+
+    const evasionInput = document.getElementById('evasao');
+    const hpInput = document.getElementById('hpQtd');
+
+    if (evasionInput && (!evasionInput.value || parseInt(evasionInput.value, 10) <= 0)) {
+        evasionInput.value = '10';
+    }
+
+    if (hpInput && (!hpInput.value || parseInt(hpInput.value, 10) <= 0)) {
+        hpInput.value = '6';
+        generateChecks('hpChecks', hpInput.value);
     }
 }
 
@@ -789,6 +814,7 @@ function openFicha(index) {
     setElementValue('ficha-multirace', ficha.multirace || '');
 
     updateSubclasses();
+    applyClassSpecificDefaults();
     setElementValue('ficha-subclass', ficha.subclass || '');
 
 
@@ -980,6 +1006,7 @@ const classImages = {
     "Rogue": "img3/Classes/Rogue.png",
     "Seraph": "img3/Classes/Seraph.png",
     "Sorcerer": "img3/Classes/Sorcerer.png",
+    "Sumoner": "img3/Classes/Sumoner.png",
     "Warlock": "img3/Classes/Warlock.png",
     "Warrior": "img3/Classes/Warrior.png",
     "Witch": "img3/Classes/Witch.png",
@@ -1012,20 +1039,35 @@ const subclassImages = {
         "img3/Subclasses/Wordsmith3.png"
     ],
     // BloodHunter
+    "Ordem do Exterminador de Espectros": [
+        "img3/Subclasses/Ordem do Exterminador de Espectros1.png",
+        "img3/Subclasses/Ordem do Exterminador de Espectros2.png",
+        "img3/Subclasses/Ordem do Exterminador de Espectros3.png"
+    ],
+    "Ordem do Mutante": [
+        "img3/Subclasses/Ordem do Mutante1.png",
+        "img3/Subclasses/Ordem do Mutante2.png",
+        "img3/Subclasses/Ordem do Mutante3.png"
+    ],
+    "Ordem do Licantropo": [
+        "img3/Subclasses/Ordem do Licantropo1.png",
+        "img3/Subclasses/Ordem do Licantropo2.png",
+        "img3/Subclasses/Ordem do Licantropo3.png"
+    ],
     "Ghost Slayer": [
-        "img3/Subclasses/Ghost Slayer1.png",
-        "img3/Subclasses/Ghost Slayer2.png",
-        "img3/Subclasses/Ghost Slayer3.png"
+        "img3/Subclasses/Ordem do Exterminador de Espectros1.png",
+        "img3/Subclasses/Ordem do Exterminador de Espectros2.png",
+        "img3/Subclasses/Ordem do Exterminador de Espectros3.png"
     ],
     "Mutant": [
-        "img3/Subclasses/Mutant1.png",
-        "img3/Subclasses/Mutant2.png",
-        "img3/Subclasses/Mutant3.png"
+        "img3/Subclasses/Ordem do Mutante1.png",
+        "img3/Subclasses/Ordem do Mutante2.png",
+        "img3/Subclasses/Ordem do Mutante3.png"
     ],
     "Lycan": [
-        "img3/Subclasses/Lycan1.png",
-        "img3/Subclasses/Lycan2.png",
-        "img3/Subclasses/Lycan3.png"
+        "img3/Subclasses/Ordem do Licantropo1.png",
+        "img3/Subclasses/Ordem do Licantropo2.png",
+        "img3/Subclasses/Ordem do Licantropo3.png"
     ],
     // Brawler
     "Juggernaut": [
@@ -1103,6 +1145,17 @@ const subclassImages = {
         "img3/Subclasses/Elemental Origin1.png",
         "img3/Subclasses/Elemental Origin2.png",
         "img3/Subclasses/Elemental Origin3.png"
+    ],
+    // Sumoner
+    "Necromancy": [
+        "img3/Subclasses/Necromancy1.png",
+        "img3/Subclasses/Necromancy2.png",
+        "img3/Subclasses/Necromancy3.png"
+    ],
+    "Theurgy": [
+        "img3/Subclasses/Theurgy1.png",
+        "img3/Subclasses/Theurgy2.png",
+        "img3/Subclasses/Theurgy3.png"
     ],
     // Warlock
     "Pact of the Wraithful": [
@@ -1384,6 +1437,7 @@ const cartasDominio = [
     { id: 85, dominio: "Grace", lvl: 1, img: "img/Grace/1 Enganador Habil.png", selecionada: false, clicked: false },
     { id: 86, dominio: "Grace", lvl: 1, img: "img/Grace/1 Enlevado.png", selecionada: false, clicked: false },
     { id: 87, dominio: "Grace", lvl: 1, img: "img/Grace/1 Palavras Inspiradoras.png", selecionada: false, clicked: false },
+    { id: 218, dominio: "Grace", lvl: 2, img: "img/Grace/2 Nao conte mentiras.png", selecionada: false, clicked: false },
     { id: 88, dominio: "Grace", lvl: 2, img: "img/Grace/2 Encrenqueiro.png", selecionada: false, clicked: false },
     { id: 89, dominio: "Grace", lvl: 3, img: "img/Grace/3 Brilho Hipnótico.png", selecionada: false, clicked: false },
     { id: 90, dominio: "Grace", lvl: 3, img: "img/Grace/3 Invisibilidade.png", selecionada: false, clicked: false },
@@ -1476,9 +1530,9 @@ const cartasDominio = [
     { id: 170, dominio: "Blade", lvl: 1, img: "img/Blade/1 Nunca caído.png", selecionada: false, clicked: false },
     { id: 171, dominio: "Blade", lvl: 1, img: "img/Blade/1 Redemoinho.png", selecionada: false, clicked: false },
     { id: 172, dominio: "Blade", lvl: 2, img: "img/Blade/2 Imprudente.png", selecionada: false, clicked: false },
+    { id: 175, dominio: "Blade", lvl: 2, img: "img/Blade/2 Vínculo De Soldado.png", selecionada: false, clicked: false },
     { id: 173, dominio: "Blade", lvl: 3, img: "img/Blade/3 Guerreiro Versatil.png", selecionada: false, clicked: false },
     { id: 174, dominio: "Blade", lvl: 3, img: "img/Blade/3 Rolamento.png", selecionada: false, clicked: false },
-    { id: 175, dominio: "Blade", lvl: 3, img: "img/Blade/3 Vínculo De Soldado.png", selecionada: false, clicked: false },
     { id: 176, dominio: "Blade", lvl: 4, img: "img/Blade/4 Armadura Fortificada.png", selecionada: false, clicked: false },
     { id: 177, dominio: "Blade", lvl: 4, img: "img/Blade/4 Foco Mortal.png", selecionada: false, clicked: false },
     { id: 178, dominio: "Blade", lvl: 5, img: "img/Blade/5 Vantagem do Campeão.png", selecionada: false, clicked: false },
@@ -1719,8 +1773,12 @@ function init() {
         document.getElementById(id)?.addEventListener('change', generateResourcesText);
     });
 
-    // Atualiza subclasses quando classe muda
-    document.getElementById('ficha-class')?.addEventListener('change', updateSubclasses);
+    // Atualiza subclasses e defaults quando classe muda
+    document.getElementById('ficha-class')?.addEventListener('change', () => {
+        updateSubclasses();
+        applyClassSpecificDefaults();
+        generateResourcesText();
+    });
 
     // Atualiza multi race quando raça muda
     document.getElementById('ficha-race')?.addEventListener('change', updateMultiRace);
