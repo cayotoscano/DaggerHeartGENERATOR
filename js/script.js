@@ -38,6 +38,7 @@ const subclasses = {
     Seraph: ["Divine Wielder", "Winged Sentinel"],
     Sorcerer: ["Primal Origin", "Elemental Origin"],
     Sumoner: ["Necromancy", "Theurgy"],
+    Perjurador: ["Ruptor", "Renascido"],
     Warlock: ["Pact of the Wraithful", "Pact of the Endless"],
     Warrior: ["Call of the Brave", "Call of the Slayer"],
     Witch: ["Moon", "Hedge"],
@@ -45,7 +46,7 @@ const subclasses = {
 };
 
 const races = ["Aetheris", "Clank", "Drakona", "Dwarf", "Earthkin", "Elf", "Emberkin", "Faerie", "Faun", "Firbolg", "Fungril", "Galapa", "Giant", "Gnome", "Goblin", "Halfling", "Human", "Infernis", "Katari", "Orc", "Ribbet", "Simiah", "Skykin", "Tidekin"];
-const classes = ["Assassin", "Bard", "BloodHunter", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Sumoner", "Warlock", "Warrior", "Witch", "Wizard"];
+const classes = ["Assassin", "Bard", "BloodHunter", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Sumoner", "Perjurador", "Warlock", "Warrior", "Witch", "Wizard"];
 const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Highborne", "Loreborne", "Orderborne", "Reborne", "Ridgeborne", "Seaborne", "Slyborne", "Underborne", "Wanderborne", "Warborne", "Wildborne"];
 
 // ========== TRADUÇÕES ==========
@@ -62,6 +63,7 @@ const classTranslations = {
     "Seraph": "Serafim",
     "Sorcerer": "Feiticeiro",
     "Sumoner": "Sumoner",
+    "Perjurador": "Perjurador",
     "Warlock": "Bruxo",
     "Warrior": "Guerreiro",
     "Witch": "Ocultista",
@@ -366,18 +368,27 @@ function updateSubclasses() {
 
 function applyClassSpecificDefaults() {
     const cls = getElementValue('ficha-class');
-    if (cls !== 'Sumoner') return;
-
     const evasionInput = document.getElementById('evasao');
     const hpInput = document.getElementById('hpQtd');
 
-    if (evasionInput && (!evasionInput.value || parseInt(evasionInput.value, 10) <= 0)) {
-        evasionInput.value = '10';
+    if (cls === 'Sumoner') {
+        if (evasionInput && (!evasionInput.value || parseInt(evasionInput.value, 10) <= 0)) {
+            evasionInput.value = '10';
+        }
+        if (hpInput && (!hpInput.value || parseInt(hpInput.value, 10) <= 0)) {
+            hpInput.value = '6';
+            generateChecks('hpChecks', hpInput.value);
+        }
     }
 
-    if (hpInput && (!hpInput.value || parseInt(hpInput.value, 10) <= 0)) {
-        hpInput.value = '6';
-        generateChecks('hpChecks', hpInput.value);
+    if (cls === 'Perjurador') {
+        if (evasionInput && (!evasionInput.value || parseInt(evasionInput.value, 10) <= 0)) {
+            evasionInput.value = '9';
+        }
+        if (hpInput && (!hpInput.value || parseInt(hpInput.value, 10) <= 0)) {
+            hpInput.value = '7';
+            generateChecks('hpChecks', hpInput.value);
+        }
     }
 }
 
@@ -1007,6 +1018,7 @@ const classImages = {
     "Seraph": "img3/Classes/Seraph.png",
     "Sorcerer": "img3/Classes/Sorcerer.png",
     "Sumoner": "img3/Classes/Sumoner.png",
+    "Perjurador": "img3/Classes/Perjurador.png",
     "Warlock": "img3/Classes/Warlock.png",
     "Warrior": "img3/Classes/Warrior.png",
     "Witch": "img3/Classes/Witch.png",
@@ -1156,6 +1168,17 @@ const subclassImages = {
         "img3/Subclasses/Theurgy1.png",
         "img3/Subclasses/Theurgy2.png",
         "img3/Subclasses/Theurgy3.png"
+    ],
+    // Perjurador
+    "Ruptor": [
+        "img3/Subclasses/Ruptor1.png",
+        "img3/Subclasses/Ruptor2.png",
+        "img3/Subclasses/Ruptor3.png"
+    ],
+    "Renascido": [
+        "img3/Subclasses/Renascido1.png",
+        "img3/Subclasses/Renascido2.png",
+        "img3/Subclasses/Renascido3.png"
     ],
     // Warlock
     "Pact of the Wraithful": [
@@ -1413,23 +1436,24 @@ const cartasDominio = [
     // Splendor
     { id: 65, dominio: "Splendor", lvl: 1, img: "img/Splendor/1 Farol de Luz.png", selecionada: false, clicked: false },
     { id: 66, dominio: "Splendor", lvl: 1, img: "img/Splendor/1 Toque Curativo.png", selecionada: false, clicked: false },
-    { id: 67, dominio: "Splendor", lvl: 1, img: "img/Splendor/2 Cura Pelas Mãos.png", selecionada: false, clicked: false },
+    { id: 66, dominio: "Splendor", lvl: 1, img: "img/Splendor/1 Resseguro.png", selecionada: false, clicked: false },
+    { id: 67, dominio: "Splendor", lvl: 2, img: "img/Splendor/2 Cura Pelas Mãos.png", selecionada: false, clicked: false },
     { id: 68, dominio: "Splendor", lvl: 2, img: "img/Splendor/2 Palavras Finais.png", selecionada: false, clicked: false },
-    { id: 69, dominio: "Splendor", lvl: 2, img: "img/Splendor/3 Recuperar O Folego.png", selecionada: false, clicked: false },
+    { id: 69, dominio: "Splendor", lvl: 3, img: "img/Splendor/3 Recuperar O Folego.png", selecionada: false, clicked: false },
     { id: 70, dominio: "Splendor", lvl: 3, img: "img/Splendor/3 Voz da Razão.png", selecionada: false, clicked: false },
-    { id: 71, dominio: "Splendor", lvl: 3, img: "img/Splendor/4 Adivinhação.png", selecionada: false, clicked: false },
+    { id: 71, dominio: "Splendor", lvl: 4, img: "img/Splendor/4 Adivinhação.png", selecionada: false, clicked: false },
     { id: 72, dominio: "Splendor", lvl: 4, img: "img/Splendor/4 Glifo Da Vida.png", selecionada: false, clicked: false },
-    { id: 73, dominio: "Splendor", lvl: 4, img: "img/Splendor/5 Destruir.png", selecionada: false, clicked: false },
+    { id: 73, dominio: "Splendor", lvl: 5, img: "img/Splendor/5 Destruir.png", selecionada: false, clicked: false },
     { id: 74, dominio: "Splendor", lvl: 5, img: "img/Splendor/5 Moldar Material.png", selecionada: false, clicked: false },
-    { id: 75, dominio: "Splendor", lvl: 5, img: "img/Splendor/6 Restauração.png", selecionada: false, clicked: false },
+    { id: 75, dominio: "Splendor", lvl: 6, img: "img/Splendor/6 Restauração.png", selecionada: false, clicked: false },
     { id: 76, dominio: "Splendor", lvl: 6, img: "img/Splendor/6 Zona de Proteção.png", selecionada: false, clicked: false },
-    { id: 77, dominio: "Splendor", lvl: 6, img: "img/Splendor/7 Golpe Curativo.png", selecionada: false, clicked: false },
+    { id: 77, dominio: "Splendor", lvl: 7, img: "img/Splendor/7 Golpe Curativo.png", selecionada: false, clicked: false },
     { id: 78, dominio: "Splendor", lvl: 7, img: "img/Splendor/7 Tocado pelo Esplendor.png", selecionada: false, clicked: false },
-    { id: 79, dominio: "Splendor", lvl: 7, img: "img/Splendor/8 Aura de Escudo.png", selecionada: false, clicked: false },
+    { id: 79, dominio: "Splendor", lvl: 8, img: "img/Splendor/8 Aura de Escudo.png", selecionada: false, clicked: false },
     { id: 80, dominio: "Splendor", lvl: 8, img: "img/Splendor/8 Luz Solar Deslumbrante.png", selecionada: false, clicked: false },
-    { id: 81, dominio: "Splendor", lvl: 8, img: "img/Splendor/9 Aura Avassaladora.png", selecionada: false, clicked: false },
+    { id: 81, dominio: "Splendor", lvl: 9, img: "img/Splendor/9 Aura Avassaladora.png", selecionada: false, clicked: false },
     { id: 82, dominio: "Splendor", lvl: 9, img: "img/Splendor/9 Feixe de Salvação.png", selecionada: false, clicked: false },
-    { id: 83, dominio: "Splendor", lvl: 9, img: "img/Splendor/10 Resurreição.png", selecionada: false, clicked: false },
+    { id: 83, dominio: "Splendor", lvl: 10, img: "img/Splendor/10 Resurreição.png", selecionada: false, clicked: false },
     { id: 84, dominio: "Splendor", lvl: 10, img: "img/Splendor/10 Revigoração.png", selecionada: false, clicked: false },
 
 
