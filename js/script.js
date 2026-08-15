@@ -39,6 +39,7 @@ const subclasses = {
     Sorcerer: ["Primal Origin", "Elemental Origin"],
     Sumoner: ["Necromancy", "Theurgy"],
     Perjurador: ["Ruptor", "Renascido"],
+    Monge: ["Astral", "Abissal"],
     Warlock: ["Pact of the Wraithful", "Pact of the Endless"],
     Warrior: ["Call of the Brave", "Call of the Slayer"],
     Witch: ["Moon", "Hedge"],
@@ -46,7 +47,7 @@ const subclasses = {
 };
 
 const races = ["Aetheris", "Clank", "Drakona", "Dwarf", "Earthkin", "Elf", "Emberkin", "Faerie", "Faun", "Firbolg", "Fungril", "Galapa", "Giant", "Gnome", "Goblin", "Halfling", "Human", "Infernis", "Katari", "Orc", "Ribbet", "Simiah", "Skykin", "Tidekin"];
-const classes = ["Assassin", "Bard", "BloodHunter", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Sumoner", "Perjurador", "Warlock", "Warrior", "Witch", "Wizard"];
+const classes = ["Assassin", "Bard", "BloodHunter", "Brawler", "Druid", "Guardian", "Ranger", "Rogue", "Seraph", "Sorcerer", "Sumoner", "Perjurador", "Monge", "Warlock", "Warrior", "Witch", "Wizard"];
 const communities = ["Duneborne", "Freeborne", "Frostborne", "Hearthborne", "Highborne", "Loreborne", "Orderborne", "Reborne", "Ridgeborne", "Seaborne", "Slyborne", "Underborne", "Wanderborne", "Warborne", "Wildborne"];
 
 // ========== TRADUÇÕES ==========
@@ -63,6 +64,7 @@ const classTranslations = {
     "Seraph": "Serafim",
     "Sorcerer": "Feiticeiro",
     "Sumoner": "Sumoner",
+    "Monge": "Monge",
     "Perjurador": "Perjurador",
     "Warlock": "Bruxo",
     "Warrior": "Guerreiro",
@@ -153,6 +155,9 @@ const subclassTranslations = {
     // Sumoner
     "Necromancy": "Necromancia",
     "Theurgy": "Teurgia",
+    // Monge
+    "Astral": "Astral",
+    "Abissal": "Abissal",
     // Warlock
     "Pact of the Wraithful": "Pacto do Colérico",
     "Pact of the Endless": "Pacto do Infinito",
@@ -387,6 +392,16 @@ function applyClassSpecificDefaults() {
         }
         if (hpInput && (!hpInput.value || parseInt(hpInput.value, 10) <= 0)) {
             hpInput.value = '7';
+            generateChecks('hpChecks', hpInput.value);
+        }
+    }
+
+    if (cls === 'Monge') {
+        if (evasionInput && (!evasionInput.value || parseInt(evasionInput.value, 10) <= 0)) {
+            evasionInput.value = '11';
+        }
+        if (hpInput && (!hpInput.value || parseInt(hpInput.value, 10) <= 0)) {
+            hpInput.value = '6';
             generateChecks('hpChecks', hpInput.value);
         }
     }
@@ -1019,6 +1034,7 @@ const classImages = {
     "Sorcerer": "img3/Classes/Sorcerer.png",
     "Sumoner": "img3/Classes/Sumoner.png",
     "Perjurador": "img3/Classes/Perjurador.png",
+    "Monge": "img3/Classes/Monge.png",
     "Warlock": "img3/Classes/Warlock.png",
     "Warrior": "img3/Classes/Warrior.png",
     "Witch": "img3/Classes/Witch.png",
@@ -1168,6 +1184,28 @@ const subclassImages = {
         "img3/Subclasses/Theurgy1.png",
         "img3/Subclasses/Theurgy2.png",
         "img3/Subclasses/Theurgy3.png"
+    ],
+    // Perjurador
+    "Ruptor": [
+        "img3/Subclasses/Ruptor1.png",
+        "img3/Subclasses/Ruptor2.png",
+        "img3/Subclasses/Ruptor3.png"
+    ],
+    "Renascido": [
+        "img3/Subclasses/Renascido1.png",
+        "img3/Subclasses/Renascido2.png",
+        "img3/Subclasses/Renascido3.png"
+    ],
+    // Monge
+    "Astral": [
+        "img3/Subclasses/Astral1.png",
+        "img3/Subclasses/Astral2.png",
+        "img3/Subclasses/Astral3.png"
+    ],
+    "Abissal": [
+        "img3/Subclasses/Abissal1.png",
+        "img3/Subclasses/Abissal2.png",
+        "img3/Subclasses/Abissal3.png"
     ],
     // Perjurador
     "Ruptor": [
